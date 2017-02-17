@@ -1,5 +1,5 @@
-# ServiceStack.WebHooks
-Webhooks for ServiceStack services
+# ServiceStack.Webhooks
+Add Webhooks to your ServiceStack services
 
 This project aims to make it very easy to expose your own Webhooks to your ServiceStack services, and to manage 3rd party subscriptions to those webhooks. 
 

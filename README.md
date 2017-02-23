@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/j2a8skqibee6d7vt/branch/master?svg=true)](https://ci.appveyor.com/project/JezzSantos/servicestack-webhooks/branch/master)
+
 # ServiceStack.Webhooks
 Add Webhooks to your ServiceStack services
 

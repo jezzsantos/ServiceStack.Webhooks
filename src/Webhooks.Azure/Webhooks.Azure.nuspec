@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <licenseUrl>https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/jezzsantos/ServiceStack.Webhooks/tree/master/src/Webhooks.Azure</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>JezzSantos</tags>
+  </metadata>
+</package>

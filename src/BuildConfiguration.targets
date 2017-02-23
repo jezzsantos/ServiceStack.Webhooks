@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Strong naming for all projects -->
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>436</NoWarn>
+  </PropertyGroup>
+
+  <!-- Build flavors for all projects -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">DEBUG;TRACE;ASSEMBLYSIGNED;TESTINGONLY</DefineConstants>
+    <DefineConstants Condition="'$(SignAssembly)' != 'true'">DEBUG;TRACE;TESTINGONLY</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">TRACE;ASSEMBLYSIGNED;TESTINGONLY</DefineConstants>
+    <DefineConstants Condition="'$(SignAssembly)' != 'true'">TRACE;TESTINGONLY</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseNoTestDeploy|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\ReleaseNoTestDeploy\</OutputPath>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">TRACE;ASSEMBLYSIGNED</DefineConstants>
+    <DefineConstants Condition="'$(SignAssembly)' != 'true'">TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <!-- Enable NuGet Package Restore for all projects -->
+  <PropertyGroup>
+    <SolutionDir>..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <RequireRestoreConsent>false</RequireRestoreConsent>
+    <RestoreOutputDir>$(MSBuildProjectDirectory)\..\packages</RestoreOutputDir>
+    <BclBuildImported>true</BclBuildImported>
+  </PropertyGroup>
+
+  <!-- NuGet Pack all projects that have a .nuspec defined -->
+  <Target Name="CreateNugetPackage" AfterTargets="Build" Condition="'$(Configuration)' == 'ReleaseNoTestDeploy'">
+    <PropertyGroup>
+      <Info>$([System.IO.File]::ReadAllText('$(SolutionDir)GlobalAssemblyInfo.cs'))</Info>
+      <Pattern>^\s*\[assembly: AssemblyDescription\(\s*"([^"]+)"</Pattern>
+      <AssemblyDescription>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</AssemblyDescription>
+      <Pattern>^\s*\[assembly: AssemblyCompany\(\s*"([^"]+)"</Pattern>
+      <AssemblyCompany>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</AssemblyCompany>
+      <Pattern>^\s*\[assembly: AssemblyCopyright\(\s*"([^"]+)"</Pattern>
+      <AssemblyCopyright>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</AssemblyCopyright>
+      <Pattern>^\s*\[assembly: AssemblyInformationalVersion\(\s*"([^"]+)"</Pattern>
+      <AssemblyInformationalVersion>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</AssemblyInformationalVersion>
+    </PropertyGroup>
+    <Exec Command="$(SolutionDir).nuget\nuget.exe pack $(ProjectName).csproj -Symbols -IncludeReferencedProjects -Properties Configuration=$(Configuration);Copyright=&quot;$(AssemblyCopyright)&quot;"
+          Condition="Exists('$(ProjectDir)$(ProjectName).nuspec')"/>
+    <Exec Command="$(SolutionDir).nuget\nuget.exe pack $(ProjectName).custom.nuspec -Version $(AssemblyInformationalVersion) -Symbols -Properties Configuration=$(Configuration);Description=&quot;$(AssemblyDescription)&quot;;Author=&quot;$(AssemblyCompany)&quot;;Copyright=&quot;$(AssemblyCopyright)&quot;;Id=$(AssemblyName)"
+          Condition="Exists('$(ProjectDir)$(ProjectName).custom.nuspec')"/>
+  </Target>
+  <Target Name="DeleteNugetNuSpecPackages" AfterTargets="Clean">
+    <ItemGroup>
+      <FilesToClean Include="$(ProjectDir)\**\*.nupkg" />
+    </ItemGroup>
+
+    <Delete Files="@(FilesToClean)"/>
+  </Target>
+</Project>

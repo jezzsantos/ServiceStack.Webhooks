@@ -10,8 +10,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         {
         }
 
-        [Test]
-        [Category("Integration")]
+        [Test, Category("Integration")]
         public void When_Then()
         {
             Assert.That(true, Is.True);

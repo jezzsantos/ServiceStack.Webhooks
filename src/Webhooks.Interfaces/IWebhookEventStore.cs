@@ -1,4 +1,4 @@
-﻿namespace ServiceStack.Webhooks.Interfaces
+﻿namespace ServiceStack.Webhooks
 {
     public interface IWebhookEventStore
     {

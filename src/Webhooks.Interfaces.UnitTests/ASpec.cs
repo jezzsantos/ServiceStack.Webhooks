@@ -10,8 +10,7 @@ namespace ServiceStack.Webhooks.Interfaces.UnitTests
         {
         }
 
-        [Test]
-        [Category("Unit")]
+        [Test, Category("Unit")]
         public void When_Then()
         {
             Assert.That(true, Is.True);

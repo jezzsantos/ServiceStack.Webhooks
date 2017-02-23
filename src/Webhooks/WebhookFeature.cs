@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ServiceStack.Validation;
+using ServiceStack.Webhooks.ServiceInterface;
+using ServiceStack.Webhooks.ServiceModel;
 
 namespace ServiceStack.Webhooks
 {
@@ -6,7 +8,15 @@ namespace ServiceStack.Webhooks
     {
         public void Register(IAppHost appHost)
         {
-            throw new NotImplementedException();
+            var container = appHost.GetContainer();
+            appHost.RegisterService(typeof(SubscriptionService));
+
+            container.RegisterValidators(typeof(WebHookInterfaces).Assembly, typeof(SubscriptionService).Assembly);
+            container.RegisterAutoWiredAs<SubscriptionEventsValidator, ISubscriptionEventsValidator>();
+            container.RegisterAutoWiredAs<SubscriptionConfigValidator, ISubscriptionConfigValidator>();
+
+            container.RegisterAutoWiredAs<AuthSessionCurrentCaller, ICurrentCaller>();
+            container.RegisterAutoWiredAs<MemoryWebhookSubscriptionStore, IWebhookSubscriptionStore>();
         }
     }
 }

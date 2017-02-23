@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UnitTesting.Common\UnitTesting.Common.csproj">
+      <Project>{6468d272-eba8-46bb-8d57-19e9ec3ab100}</Project>
+      <Name>UnitTesting.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Webhooks.Azure\Webhooks.Azure.csproj">
       <Project>{d32ba10f-0bc5-439d-afe6-f6afa0ec99cf}</Project>
       <Name>Webhooks.Azure</Name>

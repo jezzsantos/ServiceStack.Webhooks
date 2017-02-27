@@ -14,67 +14,67 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceModel
         [TestFixture]
         public class GivenADto
         {
-            private CreateSubscription _dto;
-            private Mock<ISubscriptionEventsValidator> _eventsValidator;
-            private Mock<ISubscriptionConfigValidator> _subscriptionConfigValidator;
-            private CreateSubscriptionValidator _validator;
+            private CreateSubscription dto;
+            private Mock<ISubscriptionEventsValidator> eventsValidator;
+            private Mock<ISubscriptionConfigValidator> subscriptionConfigValidator;
+            private CreateSubscriptionValidator validator;
 
             [SetUp]
             public void Initialize()
             {
-                _dto = new CreateSubscription
+                dto = new CreateSubscription
                 {
                     Name = "aname",
                     Events = new List<string>(),
                     Config = new SubscriptionConfig()
                 };
-                _subscriptionConfigValidator = new Mock<ISubscriptionConfigValidator>();
-                _subscriptionConfigValidator.Setup(val => val.Validate(It.IsAny<ValidationContext>()))
+                subscriptionConfigValidator = new Mock<ISubscriptionConfigValidator>();
+                subscriptionConfigValidator.Setup(val => val.Validate(It.IsAny<ValidationContext>()))
                     .Returns(new ValidationResult());
-                _eventsValidator = new Mock<ISubscriptionEventsValidator>();
-                _eventsValidator.Setup(val => val.Validate(It.IsAny<ValidationContext>()))
+                eventsValidator = new Mock<ISubscriptionEventsValidator>();
+                eventsValidator.Setup(val => val.Validate(It.IsAny<ValidationContext>()))
                     .Returns(new ValidationResult());
-                _validator = new CreateSubscriptionValidator(_eventsValidator.Object, _subscriptionConfigValidator.Object);
+                validator = new CreateSubscriptionValidator(eventsValidator.Object, subscriptionConfigValidator.Object);
             }
 
             [Test, Category("Unit")]
             public void WhenAllPropertiesValid_ThenSucceeds()
             {
-                _validator.ValidateAndThrow(_dto);
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]
             public void WhenNameIsNull_ThenThrows()
             {
-                _dto.Name = null;
+                dto.Name = null;
 
-                _validator.Validate(_dto);
+                validator.Validate(dto);
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidName));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidName));
             }
 
             [Test, Category("Unit")]
             public void WhenNameIsInvalid_ThenThrows()
             {
-                _dto.Name = "^";
+                dto.Name = "^";
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidName));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidName));
             }
 
             [Test, Category("Unit")]
             public void WhenEventsIsNull_ThenThrows()
             {
-                _dto.Events = null;
+                dto.Events = null;
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidEvents));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidEvents));
             }
 
             [Test, Category("Unit")]
             public void WhenConfigIsNull_ThenThrows()
             {
-                _dto.Config = null;
+                dto.Config = null;
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidConfig));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.CreateSubscriptionValidator_InvalidConfig));
             }
         }
     }

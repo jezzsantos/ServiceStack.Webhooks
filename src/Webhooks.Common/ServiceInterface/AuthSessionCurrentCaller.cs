@@ -7,8 +7,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
 {
     public class AuthSessionCurrentCaller : ICurrentCaller, IRequiresRequest
     {
-        private IRequest _currentRequest;
-        private IAuthSession _currentSession;
+        private IRequest currentRequest;
+        private IAuthSession currentSession;
 
         public string Username
         {
@@ -73,27 +73,27 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public IRequest Request
         {
-            get { return _currentRequest; }
+            get { return currentRequest; }
             set
             {
-                _currentRequest = value;
-                _currentSession = null;
+                currentRequest = value;
+                currentSession = null;
             }
         }
 
         private IAuthSession GetSession()
         {
-            if (_currentRequest == null)
+            if (currentRequest == null)
             {
                 return null;
             }
 
-            if (_currentSession == null)
+            if (currentSession == null)
             {
-                _currentSession = _currentRequest.GetSession();
+                currentSession = currentRequest.GetSession();
             }
 
-            return _currentSession;
+            return currentSession;
         }
     }
 }

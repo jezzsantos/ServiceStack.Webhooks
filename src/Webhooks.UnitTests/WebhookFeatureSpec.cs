@@ -5,12 +5,12 @@ namespace ServiceStack.Webhooks.UnitTests
     [TestFixture]
     public class WebhookFeatureSpec
     {
-        private WebhookFeature _feature;
+        private WebhookFeature feature;
 
         [SetUp]
         public void InitializeContext()
         {
-            _feature = new WebhookFeature();
+            feature = new WebhookFeature();
         }
 
         [Test, Category("Unit")]

@@ -11,20 +11,20 @@ namespace ServiceStack.Webhooks.UnitTests
         [TestFixture]
         public class GivenACacheClient
         {
-            private Mock<ICacheClient> _cacheClient;
-            private MemoryWebhookSubscriptionStore _store;
+            private Mock<ICacheClient> cacheClient;
+            private MemoryWebhookSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                _cacheClient = new Mock<ICacheClient>();
-                _cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                cacheClient = new Mock<ICacheClient>();
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
                     .Returns(new List<string>());
 
-                _cacheClient.Setup(cc => cc.Add(It.IsAny<string>(), It.IsAny<WebhookSubscription>()));
-                _store = new MemoryWebhookSubscriptionStore
+                cacheClient.Setup(cc => cc.Add(It.IsAny<string>(), It.IsAny<WebhookSubscription>()));
+                store = new MemoryWebhookSubscriptionStore
                 {
-                    CacheClient = _cacheClient.Object
+                    CacheClient = cacheClient.Object
                 };
             }
 
@@ -52,10 +52,10 @@ namespace ServiceStack.Webhooks.UnitTests
                     Event = "aneventname",
                     CreatedById = "auserid"
                 };
-                var result = _store.Add(subscription);
+                var result = store.Add(subscription);
 
                 Assert.That(result.IsGuid(), Is.True);
-                _cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname"), It.Is<WebhookSubscription>(sub
+                cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname"), It.Is<WebhookSubscription>(sub
                     => sub.Id.IsGuid())));
             }
 
@@ -63,34 +63,34 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenGet_ThenReturnsSubscriptions()
             {
                 var subscription = new WebhookSubscription();
-                _cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
                     .Returns(new Dictionary<string, WebhookSubscription>
                     {
                         {"akey", subscription}
                     });
 
-                var result = _store.Get("auserid", "aneventname");
+                var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result, Is.EqualTo(subscription));
-                _cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname") + "*"));
-                _cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname") + "*"));
+                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
             }
 
             [Test, Category("Unit")]
             public void WhenFind_ThenReturnsSubscriptions()
             {
                 var subscription = new WebhookSubscription();
-                _cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
                     .Returns(new Dictionary<string, WebhookSubscription>
                     {
                         {"akey", subscription}
                     });
 
-                var result = _store.Find("auserid");
+                var result = store.Find("auserid");
 
                 Assert.That(result[0], Is.EqualTo(subscription));
-                _cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", null) + "*"));
-                _cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", null) + "*"));
+                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
             }
         }
     }

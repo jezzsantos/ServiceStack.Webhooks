@@ -11,85 +11,85 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceModel
         [TestFixture]
         public class GivenADto
         {
-            private SubscriptionConfig _dto;
-            private SubscriptionConfigValidator _validator;
+            private SubscriptionConfig dto;
+            private SubscriptionConfigValidator validator;
 
             [SetUp]
             public void Initialize()
             {
-                _dto = new SubscriptionConfig
+                dto = new SubscriptionConfig
                 {
                     Url = "http://localhost"
                 };
-                _validator = new SubscriptionConfigValidator();
+                validator = new SubscriptionConfigValidator();
             }
 
             [Test, Category("Unit")]
             public void WhenAllPropertiesValid_ThenSucceeds()
             {
-                _validator.ValidateAndThrow(_dto);
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]
             public void WhenUrlIsNull_ThenThrows()
             {
-                _dto.Url = null;
+                dto.Url = null;
 
-                _validator.Validate(_dto);
+                validator.Validate(dto);
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_InvalidUrl));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_InvalidUrl));
             }
 
             [Test, Category("Unit")]
             public void WhenContentTypeIsNull_ThenSucceeds()
             {
-                _dto.ContentType = null;
+                dto.ContentType = null;
 
-                _validator.ValidateAndThrow(_dto);
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]
             public void WhenContentTypeIsJson_ThenSucceeds()
             {
-                _dto.ContentType = MimeTypes.Json;
+                dto.ContentType = MimeTypes.Json;
 
-                _validator.Validate(_dto);
+                validator.Validate(dto);
 
-                _validator.ValidateAndThrow(_dto);
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]
             public void WhenContentTypeIsNotJson_ThenThrows()
             {
-                _dto.ContentType = "notjson";
+                dto.ContentType = "notjson";
 
-                _validator.Validate(_dto);
+                validator.Validate(dto);
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_UnsupportedContentType));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_UnsupportedContentType));
             }
 
             [Test, Category("Unit")]
             public void WhenSecretIsNull_ThenSucceeds()
             {
-                _dto.Secret = null;
+                dto.Secret = null;
 
-                _validator.ValidateAndThrow(_dto);
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]
             public void WhenSecretIsBase64_ThenSucceeds()
             {
-                _dto.Secret = new string('A', 1000);
+                dto.Secret = new string('A', 1000);
 
-                _validator.ValidateAndThrow(_dto);
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]
             public void WhenSecretIsInvalid_ThenThrows()
             {
-                _dto.Secret = new string('A', 1000 + 1);
+                dto.Secret = new string('A', 1000 + 1);
 
-                Assert.That(() => _validator.ValidateAndThrow(_dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_InvalidSecret));
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_InvalidSecret));
             }
         }
     }

@@ -10,12 +10,12 @@ namespace ServiceStack.Webhooks.IntTests
         [TestFixture]
         public class GivenNoUser
         {
-            private MemoryWebhookSubscriptionStore _store;
+            private MemoryWebhookSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                _store = new MemoryWebhookSubscriptionStore
+                store = new MemoryWebhookSubscriptionStore
                 {
                     CacheClient = new MemoryCacheClient()
                 };
@@ -24,14 +24,14 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenAdd_ThenReturnsId()
             {
-                var id = _store.Add(new WebhookSubscription
+                var id = store.Add(new WebhookSubscription
                 {
                     Event = "aneventname"
                 });
 
                 Assert.That(id.IsGuid());
 
-                var result = _store.Get(null, "aneventname");
+                var result = store.Get(null, "aneventname");
 
                 Assert.That(result.Id, Is.EqualTo(id));
             }
@@ -39,7 +39,7 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenGetAndUnknownSubscription_ThenReturnsNull()
             {
-                var result = _store.Get(null, "aneventname");
+                var result = store.Get(null, "aneventname");
 
                 Assert.That(result, Is.Null);
             }
@@ -47,7 +47,7 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenFind_ThenReturnsNoSubscriptions()
             {
-                var results = _store.Find(null);
+                var results = store.Find(null);
 
                 Assert.That(results.Count, Is.EqualTo(0));
             }
@@ -55,13 +55,13 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenGetAndExistingSubscription_ThenReturnsSubscription()
             {
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = null,
                     Event = "aneventname"
                 });
 
-                var result = _store.Get(null, "aneventname");
+                var result = store.Get(null, "aneventname");
 
                 Assert.That(result.Event, Is.EqualTo("aneventname"));
             }
@@ -69,13 +69,13 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenFindAndExistingSubscription_ThenReturnsSubscription()
             {
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = null,
                     Event = "aneventname"
                 });
 
-                var results = _store.Find(null)
+                var results = store.Find(null)
                     .OrderBy(e => e.Event)
                     .ToList();
 
@@ -86,18 +86,18 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenFindAndExistingSubscriptions_ThenReturnsSubscriptions()
             {
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = null,
                     Event = "aneventname1"
                 });
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = null,
                     Event = "aneventname2"
                 });
 
-                var results = _store.Find(null)
+                var results = store.Find(null)
                     .OrderBy(e => e.Event)
                     .ToList();
 
@@ -110,12 +110,12 @@ namespace ServiceStack.Webhooks.IntTests
         [TestFixture]
         public class GivenAUser
         {
-            private MemoryWebhookSubscriptionStore _store;
+            private MemoryWebhookSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                _store = new MemoryWebhookSubscriptionStore
+                store = new MemoryWebhookSubscriptionStore
                 {
                     CacheClient = new MemoryCacheClient()
                 };
@@ -124,7 +124,7 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenAdd_ThenReturnsId()
             {
-                var id = _store.Add(new WebhookSubscription
+                var id = store.Add(new WebhookSubscription
                 {
                     Event = "aneventname",
                     CreatedById = "auserid"
@@ -132,7 +132,7 @@ namespace ServiceStack.Webhooks.IntTests
 
                 Assert.That(id.IsGuid());
 
-                var result = _store.Get("auserid", "aneventname");
+                var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result.Id, Is.EqualTo(id));
             }
@@ -140,7 +140,7 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenGetAndUnknownSubscription_ThenReturnsNull()
             {
-                var result = _store.Get("auserid", "aneventname");
+                var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result, Is.Null);
             }
@@ -148,7 +148,7 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenFind_ThenReturnsNoSubscriptions()
             {
-                var results = _store.Find("auserid");
+                var results = store.Find("auserid");
 
                 Assert.That(results.Count, Is.EqualTo(0));
             }
@@ -156,13 +156,13 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenGetAndExistingSubscription_ThenReturnsSubscription()
             {
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = "auserid",
                     Event = "aneventname"
                 });
 
-                var result = _store.Get("auserid", "aneventname");
+                var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result.Event, Is.EqualTo("aneventname"));
             }
@@ -170,13 +170,13 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenFindAndExistingSubscription_ThenReturnsSubscription()
             {
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = "auserid",
                     Event = "aneventname"
                 });
 
-                var results = _store.Find("auserid")
+                var results = store.Find("auserid")
                     .OrderBy(e => e.Event)
                     .ToList();
 
@@ -187,18 +187,18 @@ namespace ServiceStack.Webhooks.IntTests
             [Test, Category("Integration")]
             public void WhenFindAndExistingSubscriptions_ThenReturnsSubscriptions()
             {
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = "auserid",
                     Event = "aneventname1"
                 });
-                _store.Add(new WebhookSubscription
+                store.Add(new WebhookSubscription
                 {
                     CreatedById = "auserid",
                     Event = "aneventname2"
                 });
 
-                var results = _store.Find("auserid")
+                var results = store.Find("auserid")
                     .OrderBy(e => e.Event)
                     .ToList();
 

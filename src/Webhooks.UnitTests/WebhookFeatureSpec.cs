@@ -14,7 +14,7 @@ namespace ServiceStack.Webhooks.UnitTests
         public class GivenNoContext
         {
             [Test, Category("Unit")]
-            public void WhenRegister_ThenDependenciesRegistered()
+            public void WhenRegister_ThenSubscriptionServiceDependenciesRegistered()
             {
                 var appHost = new Mock<IAppHost>();
                 var container = new Container();
@@ -52,6 +52,46 @@ namespace ServiceStack.Webhooks.UnitTests
 
                 Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<TestSubscriptionStore>());
             }
+
+            [Test, Category("Unit")]
+            public void WhenRegister_ThenClientDependenciesRegistered()
+            {
+                var appHost = new Mock<IAppHost>();
+                var container = new Container();
+                appHost.As<IHasContainer>().Setup(ah => ah.Container)
+                    .Returns(container);
+
+                new WebhookFeature().Register(appHost.Object);
+
+                Assert.That(container.GetService(typeof(IWebhooks)), Is.TypeOf<WebhooksClient>());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenRegisterAndEventStoreNotRegistered_ThenRegistersMemoryStoreByDefault()
+            {
+                var appHost = new Mock<IAppHost>();
+                var container = new Container();
+                appHost.As<IHasContainer>().Setup(ah => ah.Container)
+                    .Returns(container);
+
+                new WebhookFeature().Register(appHost.Object);
+
+                Assert.That(container.GetService(typeof(IWebhookEventStore)), Is.TypeOf<MemoryWebhookEventStore>());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenRegisterAndEventStoreAlreadyRegistered_ThenDoesNotRegisterMemoryStoreByDefault()
+            {
+                var appHost = new Mock<IAppHost>();
+                var container = new Container();
+                container.Register<IWebhookEventStore>(new TestEventStore());
+                appHost.As<IHasContainer>().Setup(ah => ah.Container)
+                    .Returns(container);
+
+                new WebhookFeature().Register(appHost.Object);
+
+                Assert.That(container.GetService(typeof(IWebhookEventStore)), Is.TypeOf<TestEventStore>());
+            }
         }
 
         public class TestSubscriptionStore : IWebhookSubscriptionStore
@@ -77,6 +117,19 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             public void Delete(string subscriptionId)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class TestEventStore : IWebhookEventStore
+        {
+            public void Create<TDto>(string eventName, TDto data)
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<WebhookEvent> Peek()
             {
                 throw new NotImplementedException();
             }

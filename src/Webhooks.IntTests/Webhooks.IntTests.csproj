@@ -66,6 +66,8 @@
     <Compile Include="MemoryWebhookSubscriptionStoreSpec.cs" />
     <Compile Include="SubscriptionServiceSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestService.cs" />
+    <Compile Include="WebhookClientSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

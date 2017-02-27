@@ -13,6 +13,16 @@ namespace ServiceStack.Webhooks
 
             RegisterSubscriptionStore(container);
             RegisterSubscriptionService(appHost);
+            RegisterClient(container);
+        }
+
+        private static void RegisterClient(Container container)
+        {
+            if (!container.Exists<IWebhookEventStore>())
+            {
+                container.RegisterAutoWiredAs<MemoryWebhookEventStore, IWebhookEventStore>();
+            }
+            container.RegisterAutoWiredAs<WebhooksClient, IWebhooks>();
         }
 
         private static void RegisterSubscriptionStore(Container container)

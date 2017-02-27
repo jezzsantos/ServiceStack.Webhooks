@@ -85,6 +85,14 @@ namespace ServiceStack.Webhooks
         }
 
         /// <summary>
+        ///     Rounds up or down the specified <see cref="DateTime" /> to the nearest millisecond
+        /// </summary>
+        public static DateTime ToNearestMillisecond(this DateTime current)
+        {
+            return current.RoundTo(TimeSpan.FromMilliseconds(1), DateRounding.Nearest);
+        }
+
+        /// <summary>
         ///     Rounds the specified <see cref="DateTime" /> to the nearest second
         /// </summary>
         public static DateTime ToNearestSecond(this DateTime current, DateRounding rounding)

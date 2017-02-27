@@ -14,6 +14,8 @@ namespace ServiceStack.Webhooks
 
         public string Add(WebhookSubscription subscription)
         {
+            Guard.AgainstNull(() => subscription, subscription);
+
             var id = DataFormats.CreateEntityIdentifier();
             subscription.Id = id;
 
@@ -34,6 +36,8 @@ namespace ServiceStack.Webhooks
 
         public WebhookSubscription Get(string userId, string eventName)
         {
+            Guard.AgainstNullOrEmpty(() => eventName, eventName);
+
             var keys = CacheClient.GetKeysStartingWith(FormatCacheKey(userId, eventName));
 
             var subscription = CacheClient.GetAll<WebhookSubscription>(keys)
@@ -41,6 +45,35 @@ namespace ServiceStack.Webhooks
                 .FirstOrDefault();
 
             return subscription;
+        }
+
+        public void Update(string subscriptionId, WebhookSubscription subscription)
+        {
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
+            Guard.AgainstNull(() => subscription, subscription);
+
+            var keys = CacheClient.GetAllKeys();
+            var subscriptions = CacheClient.GetAll<WebhookSubscription>(keys);
+            var persistedSubscription = subscriptions.FirstOrDefault(sub => sub.Value.Id.EqualsIgnoreCase(subscriptionId));
+            if (persistedSubscription.Value != null)
+            {
+                var key = persistedSubscription.Key;
+                CacheClient.Set(key, subscription);
+            }
+        }
+
+        public void Delete(string subscriptionId)
+        {
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
+
+            var keys = CacheClient.GetAllKeys();
+            var subscriptions = CacheClient.GetAll<WebhookSubscription>(keys);
+            var persistedSubscription = subscriptions.FirstOrDefault(sub => sub.Value.Id.EqualsIgnoreCase(subscriptionId));
+            if (persistedSubscription.Value != null)
+            {
+                var key = persistedSubscription.Key;
+                CacheClient.Remove(key);
+            }
         }
 
         internal static string FormatCacheKey(string userId, string eventName)

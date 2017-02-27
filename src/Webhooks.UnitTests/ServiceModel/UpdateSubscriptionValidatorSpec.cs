@@ -4,28 +4,28 @@ using NUnit.Framework;
 using ServiceStack.FluentValidation;
 using ServiceStack.Webhooks.Properties;
 using ServiceStack.Webhooks.ServiceModel;
-using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.UnitTests.ServiceModel
 {
-    public class SubscriptionConfigValidatorSpec
+    public class UpdateSubscriptionValidatorSpec
     {
         [TestFixture]
         public class GivenADto
         {
-            private SubscriptionConfig dto;
-            private SubscriptionConfigValidator validator;
+            private UpdateSubscription dto;
+            private UpdateSubscriptionValidator validator;
 
             [SetUp]
             public void Initialize()
             {
-                dto = new SubscriptionConfig
+                dto = new UpdateSubscription
                 {
+                    Id = DataFormats.CreateEntityIdentifier(),
                     Url = "http://localhost",
                     ContentType = MimeTypes.Json,
                     Secret = Convert.ToBase64String(Encoding.Default.GetBytes("asecret"))
                 };
-                validator = new SubscriptionConfigValidator();
+                validator = new UpdateSubscriptionValidator();
             }
 
             [Test, Category("Unit")]
@@ -35,11 +35,19 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceModel
             }
 
             [Test, Category("Unit")]
-            public void WhenUrlIsNull_ThenThrows()
+            public void WhenIdIsNull_ThenThrows()
+            {
+                dto.Id = null;
+
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.UpdateSubscriptionValidator_InvalidId));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUrlIsNull_ThenSucceeds()
             {
                 dto.Url = null;
 
-                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionConfigValidator_InvalidUrl));
+                validator.ValidateAndThrow(dto);
             }
 
             [Test, Category("Unit")]

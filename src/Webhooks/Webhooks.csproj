@@ -57,6 +57,10 @@
     <Compile Include="ServiceInterface\SubscriptionService.cs" />
     <Compile Include="ServiceModel\CreateSubscription.cs" />
     <Compile Include="ServiceModel\EntityIdValidator.cs" />
+    <Compile Include="ServiceModel\ListSubscriptions.cs" />
+    <Compile Include="ServiceModel\UpdateSubscription.cs" />
+    <Compile Include="ServiceModel\DeleteSubscription.cs" />
+    <Compile Include="ServiceModel\GetSubscription.cs" />
     <Compile Include="ServiceModel\UrlValidator.cs" />
     <Compile Include="ServiceModel\ValidatorExtensions.cs" />
     <Compile Include="WebhookFeature.cs" />

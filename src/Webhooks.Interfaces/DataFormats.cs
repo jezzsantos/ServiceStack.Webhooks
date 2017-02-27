@@ -24,12 +24,10 @@ namespace ServiceStack.Webhooks
                         max), min, max);
         }
 
-        public static DataFormat Base64Text(int min = 1, int max = 1000)
+        public static DataFormat Base64Text()
         {
             return
-                new DataFormat(
-                    @"^(?:[A-Za-z0-9+/]{{4}}){{{0},{1}}}(?:[A-Za-z0-9+/]{{2}}==|[A-Za-z0-9+/]{{3}}=)?$"
-                        .Fmt(min, max), min, max);
+                new DataFormat(@"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$", 0, 0);
         }
 
         public static string CreateEntityIdentifier()
@@ -41,7 +39,7 @@ namespace ServiceStack.Webhooks
         {
             public static DataFormat Name = FreeformText(4, 100);
             public static DataFormat Event = new DataFormat(@"^[\d\w\-_]{4,100}$", 4, 100);
-            public static DataFormat Secret = Base64Text(10, 1000);
+            public static DataFormat Secret = Base64Text();
         }
     }
 

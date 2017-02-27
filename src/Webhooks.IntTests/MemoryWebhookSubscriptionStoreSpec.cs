@@ -105,6 +105,46 @@ namespace ServiceStack.Webhooks.IntTests
                 Assert.That(results[0].Event, Is.EqualTo("aneventname1"));
                 Assert.That(results[1].Event, Is.EqualTo("aneventname2"));
             }
+
+            [Test, Category("Integration")]
+            public void WhenUpdateAndExists_ThenUpdates()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname1"
+                };
+
+                var subscriptionId = store.Add(subscription);
+                subscription.Name = "anewname";
+
+                store.Update(subscriptionId, subscription);
+
+                var result = store.Get(null, "aneventname1");
+
+                Assert.That(result.Id, Is.EqualTo(subscriptionId));
+                Assert.That(result.Event, Is.EqualTo("aneventname1"));
+                Assert.That(result.Name, Is.EqualTo("anewname"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenDeleteAndExists_ThenDeletes()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname1"
+                };
+
+                var subscriptionId = store.Add(subscription);
+                subscription.Name = "anewname";
+
+                store.Delete(subscriptionId);
+
+                var result = store.Get(null, "aneventname1");
+
+                Assert.That(result, Is.Null);
+            }
         }
 
         [TestFixture]
@@ -205,6 +245,47 @@ namespace ServiceStack.Webhooks.IntTests
                 Assert.That(results.Count, Is.EqualTo(2));
                 Assert.That(results[0].Event, Is.EqualTo("aneventname1"));
                 Assert.That(results[1].Event, Is.EqualTo("aneventname2"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenUpdateAndExists_ThenUpdates()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    CreatedById = "auserid",
+                    Event = "aneventname1"
+                };
+
+                var subscriptionId = store.Add(subscription);
+                subscription.Name = "anewname";
+
+                store.Update(subscriptionId, subscription);
+
+                var result = store.Get("auserid", "aneventname1");
+
+                Assert.That(result.Id, Is.EqualTo(subscriptionId));
+                Assert.That(result.Event, Is.EqualTo("aneventname1"));
+                Assert.That(result.Name, Is.EqualTo("anewname"));
+                Assert.That(result.CreatedById, Is.EqualTo("auserid"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenDeleteAndExists_ThenDeletes()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    CreatedById = "auserid",
+                    Event = "aneventname1"
+                };
+
+                var subscriptionId = store.Add(subscription);
+                subscription.Name = "anewname";
+
+                store.Delete(subscriptionId);
+
+                var result = store.Get("auserid", "aneventname1");
+
+                Assert.That(result, Is.Null);
             }
         }
     }

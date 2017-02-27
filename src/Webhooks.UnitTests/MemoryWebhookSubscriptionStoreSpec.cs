@@ -45,6 +45,12 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
+            public void WhenAddWithNullSubscription_ThenThrows()
+            {
+                Assert.That(() => store.Add(null), Throws.ArgumentNullException);
+            }
+
+            [Test, Category("Unit")]
             public void WhenAdd_ThenReturnsId()
             {
                 var subscription = new WebhookSubscription
@@ -57,6 +63,12 @@ namespace ServiceStack.Webhooks.UnitTests
                 Assert.That(result.IsGuid(), Is.True);
                 cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname"), It.Is<WebhookSubscription>(sub
                     => sub.Id.IsGuid())));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenGetWithNullEventName_ThenThrows()
+            {
+                Assert.That(() => store.Get("auserid", null), Throws.ArgumentNullException);
             }
 
             [Test, Category("Unit")]
@@ -91,6 +103,91 @@ namespace ServiceStack.Webhooks.UnitTests
                 Assert.That(result[0], Is.EqualTo(subscription));
                 cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", null) + "*"));
                 cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateWithNullSubscriptionId_ThenThrows()
+            {
+                Assert.That(() => store.Update(null, new WebhookSubscription()), Throws.ArgumentNullException);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateWithNullSubscription_ThenThrows()
+            {
+                Assert.That(() => store.Update("asubscriptionid", null), Throws.ArgumentNullException);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateAndNotExists_ThenDoesNotUpdateSubscription()
+            {
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                    .Returns(new List<string>());
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
+                    .Returns(new Dictionary<string, WebhookSubscription>());
+
+                store.Update("asubscriptionid", new WebhookSubscription());
+
+                cacheClient.Verify(cc => cc.Set(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateAndExists_ThenUpdatesSubscription()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    Id = "asubscriptionid"
+                };
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                    .Returns(new List<string> {"akey"});
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
+                    .Returns(new Dictionary<string, WebhookSubscription>
+                    {
+                        {"akey", subscription}
+                    });
+
+                store.Update("asubscriptionid", subscription);
+
+                cacheClient.Verify(cc => cc.Set("akey", It.Is<WebhookSubscription>(sub
+                    => sub.Id == "asubscriptionid")));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenDeleteWithNullSubscription_ThenThrows()
+            {
+                Assert.That(() => store.Delete("asubscriptionid"), Throws.ArgumentNullException);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenDeleteAndNotExists_ThenDoesNotDeleteSubscription()
+            {
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                    .Returns(new List<string>());
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
+                    .Returns(new Dictionary<string, WebhookSubscription>());
+
+                store.Delete("asubscriptionid");
+
+                cacheClient.Verify(cc => cc.Remove(It.IsAny<string>()), Times.Never);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenDeleteAndExists_ThenDeleteSubscription()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    Id = "asubscriptionid"
+                };
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                    .Returns(new List<string> {"akey"});
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
+                    .Returns(new Dictionary<string, WebhookSubscription>
+                    {
+                        {"akey", subscription}
+                    });
+
+                store.Delete("asubscriptionid");
+
+                cacheClient.Verify(cc => cc.Remove("akey"));
             }
         }
     }

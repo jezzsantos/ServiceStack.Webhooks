@@ -11,4 +11,12 @@ namespace ServiceStack.Webhooks.UnitTesting
             return Throws.InstanceOf<WebServiceException>().With.Property(@"StatusCode").EqualTo((int) status);
         }
     }
+
+    public static class ThrowsHttpError
+    {
+        public static EqualConstraint WithStatusCode(HttpStatusCode status)
+        {
+            return Throws.InstanceOf<HttpError>().With.Property(@"StatusCode").EqualTo(status);
+        }
+    }
 }

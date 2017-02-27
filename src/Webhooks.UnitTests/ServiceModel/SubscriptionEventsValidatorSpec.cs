@@ -32,8 +32,6 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceModel
             {
                 dto = new List<string>();
 
-                validator.Validate(dto);
-
                 Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.SubscriptionEventsValidator_NoName));
             }
 

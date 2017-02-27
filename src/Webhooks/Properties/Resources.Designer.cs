@@ -88,11 +88,29 @@ namespace ServiceStack.Webhooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The subscription Id is invalid.
+        /// </summary>
+        internal static string DeleteSubscriptionValidator_InvalidId {
+            get {
+                return ResourceManager.GetString("DeleteSubscriptionValidator_InvalidId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The ID is not a valid entity identifier.
         /// </summary>
         internal static string EntityIdValidator_ErrorMessage {
             get {
                 return ResourceManager.GetString("EntityIdValidator_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The subscription Id is invalid.
+        /// </summary>
+        internal static string GetSubscriptionValidator_InvalidId {
+            get {
+                return ResourceManager.GetString("GetSubscriptionValidator_InvalidId", resourceCulture);
             }
         }
         
@@ -156,6 +174,15 @@ namespace ServiceStack.Webhooks.Properties {
         internal static string SubscriptionService_DuplicateRegistration {
             get {
                 return ResourceManager.GetString("SubscriptionService_DuplicateRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The subscription Id is invalid.
+        /// </summary>
+        internal static string UpdateSubscriptionValidator_InvalidId {
+            get {
+                return ResourceManager.GetString("UpdateSubscriptionValidator_InvalidId", resourceCulture);
             }
         }
         

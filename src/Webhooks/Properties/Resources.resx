@@ -126,8 +126,14 @@
   <data name="CreateSubscriptionValidator_InvalidName" xml:space="preserve">
     <value>The subscription Name is invalid</value>
   </data>
+  <data name="DeleteSubscriptionValidator_InvalidId" xml:space="preserve">
+    <value>The subscription Id is invalid</value>
+  </data>
   <data name="EntityIdValidator_ErrorMessage" xml:space="preserve">
     <value>The ID is not a valid entity identifier</value>
+  </data>
+  <data name="GetSubscriptionValidator_InvalidId" xml:space="preserve">
+    <value>The subscription Id is invalid</value>
   </data>
   <data name="SubscriptionConfigValidator_InvalidSecret" xml:space="preserve">
     <value>The subscription Secret is invalid</value>
@@ -149,6 +155,9 @@
   </data>
   <data name="SubscriptionService_DuplicateRegistration" xml:space="preserve">
     <value>The subscription for event {0} already exists</value>
+  </data>
+  <data name="UpdateSubscriptionValidator_InvalidId" xml:space="preserve">
+    <value>The subscription Id is invalid</value>
   </data>
   <data name="UrlValidator_ErrorMessage" xml:space="preserve">
     <value>The URL is not valid</value>

@@ -37,6 +37,10 @@
     </Compile>
     <Compile Include="DataFormats.cs" />
     <Compile Include="IWebhookEventStore.cs" />
+    <Compile Include="ServiceModel\DeleteSubscription.cs" />
+    <Compile Include="ServiceModel\UpdateSubscription.cs" />
+    <Compile Include="ServiceModel\ListSubscriptions.cs" />
+    <Compile Include="ServiceModel\GetSubscription.cs" />
     <Compile Include="WebHookInterfaces.cs" />
     <Compile Include="IWebhookPublisher.cs" />
     <Compile Include="IWebhookRelay.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using ServiceStack.Caching;
@@ -12,36 +13,36 @@ namespace ServiceStack.Webhooks.IntTests
     [TestFixture]
     public class SubscriptionServiceSpec
     {
-        private static AppSelfHostBase _appHost;
-        private static JsonServiceClient _client;
+        private static AppSelfHostBase appHost;
+        private static JsonServiceClient client;
         private const string BaseUrl = "http://localhost:8080/";
 
         [OneTimeTearDown]
         public void CleanupContext()
         {
-            _appHost.Dispose();
+            appHost.Dispose();
         }
 
         [OneTimeSetUp]
         public void InitializeContext()
         {
-            _appHost = new AppHostForTesting();
-            _appHost.Init();
-            _appHost.Start(BaseUrl);
+            appHost = new AppHostForTesting();
+            appHost.Init();
+            appHost.Start(BaseUrl);
 
-            _client = new JsonServiceClient(BaseUrl);
+            client = new JsonServiceClient(BaseUrl);
         }
 
         [SetUp]
         public void Initialize()
         {
-            _appHost.Resolve<ICacheClient>().FlushAll();
+            appHost.Resolve<ICacheClient>().FlushAll();
         }
 
         [Test, Category("Integration")]
         public void WhenPostSubscriptionWithNullEvents_ThenThrowsBadRequest()
         {
-            Assert.That(() => _client.Post(new CreateSubscription
+            Assert.That(() => client.Post(new CreateSubscription
             {
                 Name = "aname",
                 Events = null,
@@ -55,7 +56,7 @@ namespace ServiceStack.Webhooks.IntTests
         [Test, Category("Integration")]
         public void WhenPostSubscriptionWithNullConfig_ThenThrowsBadRequest()
         {
-            Assert.That(() => _client.Post(new CreateSubscription
+            Assert.That(() => client.Post(new CreateSubscription
             {
                 Name = "aname",
                 Events = new List<string> {"aneventname"},
@@ -66,7 +67,7 @@ namespace ServiceStack.Webhooks.IntTests
         [Test, Category("Integration")]
         public void WhenPostSubscription_ThenCreatesSubscription()
         {
-            var subscriptions = _client.Post(new CreateSubscription
+            var subscriptions = client.Post(new CreateSubscription
             {
                 Name = "aname",
                 Events = new List<string> {"anevent1", "anevent2"},
@@ -84,7 +85,7 @@ namespace ServiceStack.Webhooks.IntTests
         [Test, Category("Integration")]
         public void WhenPostSubscriptionWithSameEventNameAndUrl_ThenThrowsConflict()
         {
-            _client.Post(new CreateSubscription
+            client.Post(new CreateSubscription
             {
                 Name = "aname",
                 Events = new List<string> {"anevent1", "anevent2"},
@@ -94,7 +95,7 @@ namespace ServiceStack.Webhooks.IntTests
                 }
             });
 
-            Assert.That(() => _client.Post(new CreateSubscription
+            Assert.That(() => client.Post(new CreateSubscription
             {
                 Name = "aname",
                 Events = new List<string> {"anevent3", "anevent2"},
@@ -105,7 +106,125 @@ namespace ServiceStack.Webhooks.IntTests
             }), ThrowsWebServiceException.WithStatusCode(HttpStatusCode.Conflict));
         }
 
-        private void AssertSubscriptionCreated(WebhookSubscription subscription, string eventName, string userId)
+        [Test, Category("Integration")]
+        public void WhenGetSubscriptionWithUnknownId_ThenThrowsNotFound()
+        {
+            Assert.That(() => client.Get(new GetSubscription
+            {
+                Id = DataFormats.CreateEntityIdentifier()
+            }), ThrowsWebServiceException.WithStatusCode(HttpStatusCode.NotFound));
+        }
+
+        [Test, Category("Integration")]
+        public void WhenGetSubscription_ThenReturnsSubscription()
+        {
+            var subscription = client.Post(new CreateSubscription
+                {
+                    Name = "aname",
+                    Events = new List<string> {"anevent1"},
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "http://localhost:3333"
+                    }
+                }).Subscriptions
+                .First();
+
+            var result = client.Get(new GetSubscription
+            {
+                Id = subscription.Id
+            });
+
+            Assert.That(result.Subscription.Id, Is.EqualTo(subscription.Id));
+        }
+
+        [Test, Category("Integration")]
+        public void WhenListSubscriptions_ThenReturnsSubscriptions()
+        {
+            var subscription = client.Post(new CreateSubscription
+                {
+                    Name = "aname",
+                    Events = new List<string> {"anevent1"},
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "http://localhost:3333"
+                    }
+                }).Subscriptions
+                .First();
+
+            var subscriptions = client.Get(new ListSubscriptions()).Subscriptions;
+
+            Assert.That(subscriptions.Count, Is.EqualTo(1));
+            Assert.That(subscriptions[0].Id, Is.EqualTo(subscription.Id));
+        }
+
+        [Test, Category("Integration")]
+        public void WhenDeleteSubscriptionWithUnknownId_ThenThrowsNotFound()
+        {
+            Assert.That(() => client.Delete(new DeleteSubscription
+            {
+                Id = DataFormats.CreateEntityIdentifier()
+            }), ThrowsWebServiceException.WithStatusCode(HttpStatusCode.NotFound));
+        }
+
+        [Test, Category("Integration")]
+        public void WhenDeleteSubscription_ThenDeletesSubscription()
+        {
+            var subscription = client.Post(new CreateSubscription
+                {
+                    Name = "aname",
+                    Events = new List<string> {"anevent1"},
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "http://localhost:3333"
+                    }
+                }).Subscriptions
+                .First();
+
+            client.Delete(new DeleteSubscription
+            {
+                Id = subscription.Id
+            });
+
+            Assert.That(() => client.Get(new GetSubscription
+            {
+                Id = subscription.Id
+            }), ThrowsWebServiceException.WithStatusCode(HttpStatusCode.NotFound));
+        }
+
+        [Test, Category("Integration")]
+        public void WhenUpdateSubscriptionWithUnknownId_ThenThrowsNotFound()
+        {
+            Assert.That(() => client.Put(new UpdateSubscription
+            {
+                Id = DataFormats.CreateEntityIdentifier()
+            }), ThrowsWebServiceException.WithStatusCode(HttpStatusCode.NotFound));
+        }
+
+        [Test, Category("Integration")]
+        public void WhenUpdateSubscription_ThenUpdatesSubscription()
+        {
+            var subscription = client.Post(new CreateSubscription
+                {
+                    Name = "aname",
+                    Events = new List<string> {"anevent1"},
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "http://localhost:3333"
+                    }
+                }).Subscriptions
+                .First();
+
+            var result = client.Put(new UpdateSubscription
+            {
+                Id = subscription.Id,
+                Url = "http://localhost:3333/newurl"
+            }).Subscription;
+
+            Assert.That(result.Id, Is.EqualTo(subscription.Id));
+            Assert.That(result.Config.Url, Is.EqualTo("http://localhost:3333/newurl"));
+        }
+
+        private static void AssertSubscriptionCreated(WebhookSubscription subscription, string eventName, string userId)
         {
             Assert.That(eventName, Is.EqualTo(subscription.Event));
             Assert.That(subscription.CreatedById, Is.EqualTo(userId));

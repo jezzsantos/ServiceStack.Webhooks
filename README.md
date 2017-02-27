@@ -3,6 +3,8 @@
 # ServiceStack.Webhooks
 Add Webhooks to your ServiceStack services
 
+# Overview
+
 This project aims to make it very easy to expose your own Webhooks to your ServiceStack services, and to manage 3rd party subscriptions to those webhooks. 
 
 The project has these aims:
@@ -17,3 +19,44 @@ In another service, you may want to store subscriptions in Ormlite SQL database,
 The choice should be yours.
 
 Want to get involved? Want to add this capability to your services? just send us a message or pull-request!
+
+# Getting Started
+
+[**This project is still in its infancy, and is not yet operational end to end**]
+
+Install from NuGet:
+```
+Install-Package Servicestack.Webhooks
+```
+
+Simply add the `WebhookFeature` in your `AppHost.Configure()` method:
+
+```
+public override void Configure(Container container)
+{
+    Plugins.Add(new WebhookFeature();
+}
+```
+
+By default, the `WebhookFeature` uses a `MemoryWebhookSubscriptionStore` to store all subscriptions, but this will need replacing in production systems with a store that more appropriate to more persistent storage, like an OrmLiteStore or RedisStore, or database of your choice. 
+
+The plugin also installs a subscription management service in your service on these routes:
+* POST /webhooks/subscriptions - creates a new subscription (for the current user)
+* GET /webhooks/subscriptions - lists all subscriptions (for the current user)
+* GET /webhooks/subscriptions/{Id} - gets the details of the subscription
+* PUT /webhooks/subscriptions/{Id} - updates the subscription
+* DELETE /webhooks/subscriptions/{Id} - deletes the subscription
+
+## Customizing
+
+There are various components of the webhook architecture that you can extend with your own pieces to suit your needs:
+
+```
+public override void Configure(Container container)
+{
+    // Register your own subscription store
+    container.Register<IWebhookSubscriptionStore>(new MyDbSubscriptionStore());
+
+    Plugins.Add(new WebhookFeature();
+}
+```

@@ -14,8 +14,8 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         {
             Plugins.Add(new ValidationFeature());
 
-            container.RegisterAutoWiredAs<AzureTableSubscriptionStore, IWebhookSubscriptionStore>();
-            container.RegisterAutoWiredAs<AzureQueueEventStore, IWebhookEventStore>();
+            container.RegisterAutoWiredAs<AzureTableWebhookSubscriptionStore, IWebhookSubscriptionStore>();
+            container.RegisterAutoWiredAs<AzureQueueWebhookEventStore, IWebhookEventStore>();
 
             Plugins.Add(new WebhookFeature());
         }

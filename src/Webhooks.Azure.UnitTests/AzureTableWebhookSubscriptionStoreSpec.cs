@@ -8,19 +8,19 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Azure.UnitTests
 {
-    public class AzureTableSubscriptionStoreSpec
+    public class AzureTableWebhookSubscriptionStoreSpec
     {
         [TestFixture]
         public class GivenAStore
         {
-            private AzureTableSubscriptionStore store;
+            private AzureTableWebhookSubscriptionStore store;
             private Mock<IAzureTableStorage> tableStorage;
 
             [SetUp]
             public void Initialize()
             {
                 tableStorage = new Mock<IAzureTableStorage>();
-                store = new AzureTableSubscriptionStore
+                store = new AzureTableWebhookSubscriptionStore
                 {
                     TableStorage = tableStorage.Object
                 };
@@ -29,22 +29,22 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
             [Test, Category("Unit")]
             public void WhenCtorWithNoSetting_ThenInitializes()
             {
-                store = new AzureTableSubscriptionStore();
+                store = new AzureTableWebhookSubscriptionStore();
 
-                Assert.That(store.TableName, Is.EqualTo(AzureTableSubscriptionStore.DefaultTableName));
-                Assert.That(store.AzureConnectionString, Is.EqualTo(AzureTableSubscriptionStore.DefaultAzureConnectionString));
+                Assert.That(store.TableName, Is.EqualTo(AzureTableWebhookSubscriptionStore.DefaultTableName));
+                Assert.That(store.AzureConnectionString, Is.EqualTo(AzureTableWebhookSubscriptionStore.DefaultAzureConnectionString));
             }
 
             [Test, Category("Unit")]
             public void WhenCtorWithSettings_ThenInitializesFromSettings()
             {
                 var appSettings = new Mock<IAppSettings>();
-                appSettings.Setup(settings => settings.Get(AzureTableSubscriptionStore.AzureConnectionStringSettingName, It.IsAny<string>()))
+                appSettings.Setup(settings => settings.Get(AzureTableWebhookSubscriptionStore.AzureConnectionStringSettingName, It.IsAny<string>()))
                     .Returns("aconnectionstring");
 
-                store = new AzureTableSubscriptionStore(appSettings.Object);
+                store = new AzureTableWebhookSubscriptionStore(appSettings.Object);
 
-                Assert.That(store.TableName, Is.EqualTo(AzureTableSubscriptionStore.DefaultTableName));
+                Assert.That(store.TableName, Is.EqualTo(AzureTableWebhookSubscriptionStore.DefaultTableName));
                 Assert.That(store.AzureConnectionString, Is.EqualTo("aconnectionstring"));
             }
 

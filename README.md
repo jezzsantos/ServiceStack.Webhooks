@@ -27,7 +27,6 @@ Want to get involved? Want to add this capability to your services? just send us
 Install from NuGet:
 ```
 Install-Package Servicestack.Webhooks
-Install-Package Servicestack.Webhooks.Azure
 ```
 
 Simply add the `WebhookFeature` in your `AppHost.Configure()` method:
@@ -87,3 +86,74 @@ public override void Configure(Container container)
     Plugins.Add(new WebhookFeature();
 }
 ```
+
+## Azure Extensions
+
+If you deploy your web service to Azure, you can use Azure Tables and Queues to implement the various stores.
+Subscriptions will be stored in Azure table storage, and events will be queued in an Azure queue.
+
+Install from NuGet:
+```
+Install-Package Servicestack.Webhooks.Azure
+```
+
+Add the `WebhookFeature` in your `AppHost.Configure()` method, and register the Azure components:
+
+```
+public override void Configure(Container container)
+{
+    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore());
+    container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore());
+
+    Plugins.Add(new WebhookFeature();
+}
+```
+
+### Configuring Azure Services
+
+By default, these services will connect to the local Azure Emulator (UseDevelopmentStorage=true) which might be OK for testing, but in your cloud deployments you will want to provide different storage connection strings.
+
+If you use the overload constructors, and pass in the `IAppSettings`, then the `AzureTableWebhookSubscriptionStore` will try to find a setting called: 'AzureTableSubscriptionStore.AzureConnectionString'
+and the `AzureQueueWebhookEventStore` will try to find a setting called: 'AzureQueueEventStore.AzureConnectionString'
+
+These will be loaded from your configuration files, just like all other settings in ServiceStack.
+
+Otherwise you can set those values when you register the services:
+
+```
+public override void Configure(Container container)
+{
+    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore
+        {
+            AzureConnectionString = "connectionstring",
+        });
+    container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore
+        {
+            AzureConnectionString = "connectionstring",
+        });
+
+    Plugins.Add(new WebhookFeature();
+}
+```
+
+By default, the `AzureTableWebhookSubscriptionStore` will create and use a table named: 'webhooksubscriptions', and the `AzureQueueWebhookEventStore` will create and use a queue named: 'webhookevents'
+You can change those values when you register the services.
+
+```
+public override void Configure(Container container)
+{
+    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore
+        {
+            QueueName = "myqueuename",
+        });
+    container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore
+        {
+            TableName = "mytablename",
+        });
+
+    Plugins.Add(new WebhookFeature();
+}
+```
+
+
+

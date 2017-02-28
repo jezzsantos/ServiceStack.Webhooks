@@ -7,19 +7,19 @@ using ServiceStack.Webhooks.Azure.Queue;
 
 namespace ServiceStack.Webhooks.Azure.UnitTests
 {
-    public class AzureQueueEventStoreSpec
+    public class AzureQueueWebhookEventStoreSpec
     {
         [TestFixture]
         public class GivenAStore
         {
             private Mock<IAzureQueueStorage> queueStorage;
-            private AzureQueueEventStore store;
+            private AzureQueueWebhookEventStore store;
 
             [SetUp]
             public void Initialize()
             {
                 queueStorage = new Mock<IAzureQueueStorage>();
-                store = new AzureQueueEventStore
+                store = new AzureQueueWebhookEventStore
                 {
                     QueueStorage = queueStorage.Object
                 };
@@ -28,22 +28,22 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
             [Test, Category("Unit")]
             public void WhenCtorWithNoSetting_ThenInitializes()
             {
-                store = new AzureQueueEventStore();
+                store = new AzureQueueWebhookEventStore();
 
-                Assert.That(store.QueueName, Is.EqualTo(AzureQueueEventStore.DefaultQueueName));
-                Assert.That(store.AzureConnectionString, Is.EqualTo(AzureQueueEventStore.DefaultAzureConnectionString));
+                Assert.That(store.QueueName, Is.EqualTo(AzureQueueWebhookEventStore.DefaultQueueName));
+                Assert.That(store.AzureConnectionString, Is.EqualTo(AzureQueueWebhookEventStore.DefaultAzureConnectionString));
             }
 
             [Test, Category("Unit")]
             public void WhenCtorWithSettings_ThenInitializesFromSettings()
             {
                 var appSettings = new Mock<IAppSettings>();
-                appSettings.Setup(settings => settings.Get(AzureQueueEventStore.AzureConnectionStringSettingName, It.IsAny<string>()))
+                appSettings.Setup(settings => settings.Get(AzureQueueWebhookEventStore.AzureConnectionStringSettingName, It.IsAny<string>()))
                     .Returns("aconnectionstring");
 
-                store = new AzureQueueEventStore(appSettings.Object);
+                store = new AzureQueueWebhookEventStore(appSettings.Object);
 
-                Assert.That(store.QueueName, Is.EqualTo(AzureQueueEventStore.DefaultQueueName));
+                Assert.That(store.QueueName, Is.EqualTo(AzureQueueWebhookEventStore.DefaultQueueName));
                 Assert.That(store.AzureConnectionString, Is.EqualTo("aconnectionstring"));
             }
 

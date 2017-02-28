@@ -34,8 +34,8 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             [SetUp]
             public void Initialize()
             {
-                ((AzureTableSubscriptionStore) subscriptionsStore).Clear();
-                ((AzureQueueEventStore) eventStore).Clear();
+                ((AzureTableWebhookSubscriptionStore) subscriptionsStore).Clear();
+                ((AzureQueueWebhookEventStore) eventStore).Clear();
             }
 
             [Test, Category("Integration")]

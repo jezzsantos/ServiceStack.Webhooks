@@ -8,12 +8,12 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         [TestFixture]
         public class GivenAQueue : AzureIntegrationTestBase
         {
-            private AzureQueueEventStore store;
+            private AzureQueueWebhookEventStore store;
 
             [SetUp]
             public void Initialize()
             {
-                store = new AzureQueueEventStore();
+                store = new AzureQueueWebhookEventStore();
                 store.Clear();
             }
 

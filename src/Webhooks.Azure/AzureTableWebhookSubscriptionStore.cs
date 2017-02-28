@@ -6,21 +6,21 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Azure
 {
-    public class AzureTableSubscriptionStore : IWebhookSubscriptionStore
+    public class AzureTableWebhookSubscriptionStore : IWebhookSubscriptionStore
     {
         internal const string DefaultTableName = "webhooksubscriptions";
         internal const string AzureConnectionStringSettingName = "AzureTableSubscriptionStore.AzureConnectionString";
         internal const string DefaultAzureConnectionString = @"UseDevelopmentStorage=true";
         private IAzureTableStorage tableStorage;
 
-        public AzureTableSubscriptionStore()
+        public AzureTableWebhookSubscriptionStore()
         {
             TableName = DefaultTableName;
 
             AzureConnectionString = DefaultAzureConnectionString;
         }
 
-        public AzureTableSubscriptionStore(IAppSettings settings) : this()
+        public AzureTableWebhookSubscriptionStore(IAppSettings settings) : this()
         {
             Guard.AgainstNull(() => settings, settings);
 
@@ -44,12 +44,12 @@ namespace ServiceStack.Webhooks.Azure
         {
             Guard.AgainstNull(() => subscription, subscription);
 
-            var identity = DataFormats.CreateEntityIdentifier();
-            subscription.Id = identity;
+            var id = DataFormats.CreateEntityIdentifier();
+            subscription.Id = id;
 
             TableStorage.Add(subscription.ToEntity());
 
-            return identity;
+            return id;
         }
 
         public List<WebhookSubscription> Find(string userId)

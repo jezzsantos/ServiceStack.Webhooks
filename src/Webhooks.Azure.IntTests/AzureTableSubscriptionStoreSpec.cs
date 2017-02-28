@@ -4,17 +4,17 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Azure.IntTests
 {
-    public class MemoryWebhookSubscriptionStoreSpec
+    public class AzureTableSubscriptionStoreSpec
     {
         [TestFixture]
         public class GivenATableAndNoUser : AzureIntegrationTestBase
         {
-            private AzureTableSubscriptionStore store;
+            private AzureTableWebhookSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                store = new AzureTableSubscriptionStore();
+                store = new AzureTableWebhookSubscriptionStore();
                 store.Clear();
             }
 
@@ -147,12 +147,12 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         [TestFixture]
         public class GivenATableAndAUser : AzureIntegrationTestBase
         {
-            private AzureTableSubscriptionStore store;
+            private AzureTableWebhookSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                store = new AzureTableSubscriptionStore();
+                store = new AzureTableWebhookSubscriptionStore();
                 store.Clear();
             }
 

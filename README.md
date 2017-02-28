@@ -13,16 +13,18 @@ The project has these aims:
 2. Make it simple to configure the Webhooks in your service (i.e. in your `AppHost` just add the `WebhookFeature` plugin, and configure it  with your chosen technology components).
 3. Make it each component extensible, allowing you to use your favorite data repositories (for subsciption management), and to integrate the pub/sub mechanics with your favorite technologies in your host architecture. (i.e. buses, queues, functions, etc)
 
-For example: In your serivce, you may want to store the Webhook subscriptions in a MongoDB database, and have an Azure worker role relay the events to subscribers from a (reliable) cloud queue.
+For example: In one service, you may want to store the Webhook subscriptions in a MongoDB database, and have an Azure worker role relay the events to subscribers from a (reliable) cloud queue.
 In another service, you may want to store subscriptions in Ormlite SQL database, and relay events to subscribers directly from within the same service on a background thread.
 
-The choice should be yours.
+The choice should be yours. If you cant find the component you want for your architecture, it should be easy to add your own and plug it in.
 
-Want to get involved? Want to add this capability to your services? just send us a message or pull-request!
+# Contribute!
+
+Want to get involved? Want to help add this capability to your services? just send us a message or pull-request!
 
 # Getting Started
 
-[**This project is still in its infancy, and is not yet operational end to end**]
+[**This project is still in its infancy (any version less than 1.0.0) , and is not yet operational end to end**]
 
 Install from NuGet:
 ```

@@ -11,6 +11,19 @@ namespace ServiceStack.Webhooks
     public static class StringExtensions
     {
         /// <summary>
+        ///     Converts the specified value to a <see cref="bool" />
+        /// </summary>
+        public static bool ToBool(this string value, bool defaultValue = false)
+        {
+            var parsed = false;
+            if (bool.TryParse(value, out parsed))
+            {
+                return parsed;
+            }
+            return defaultValue;
+        }
+
+        /// <summary>
         ///     Whether the specified value is string representation of a <see cref="DateTime" />
         /// </summary>
         public static bool IsDateTime(this string value)

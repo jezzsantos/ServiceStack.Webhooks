@@ -70,4 +70,12 @@ namespace ServiceStack.Webhooks
         /// </summary>
         public int MinLength { get; private set; }
     }
+
+    public static class DataFormatExtensions
+    {
+        public static bool IsEntityId(this string id)
+        {
+            return id.IsGuid();
+        }
+    }
 }

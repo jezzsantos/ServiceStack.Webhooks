@@ -1,24 +1,21 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using ServiceStack.Caching;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.Webhooks.IntTests
+namespace ServiceStack.Webhooks.Azure.IntTests
 {
     public class MemoryWebhookSubscriptionStoreSpec
     {
         [TestFixture]
-        public class GivenNoUser
+        public class GivenNoUser : AzureIntegrationTestBase
         {
-            private MemoryWebhookSubscriptionStore store;
+            private AzureTableSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                store = new MemoryWebhookSubscriptionStore
-                {
-                    CacheClient = new MemoryCacheClient()
-                };
+                store = new AzureTableSubscriptionStore();
+                store.Clear();
             }
 
             [Test, Category("Integration")]
@@ -148,17 +145,15 @@ namespace ServiceStack.Webhooks.IntTests
         }
 
         [TestFixture]
-        public class GivenAUser
+        public class GivenAUser : AzureIntegrationTestBase
         {
-            private MemoryWebhookSubscriptionStore store;
+            private AzureTableSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
             {
-                store = new MemoryWebhookSubscriptionStore
-                {
-                    CacheClient = new MemoryCacheClient()
-                };
+                store = new AzureTableSubscriptionStore();
+                store.Clear();
             }
 
             [Test, Category("Integration")]

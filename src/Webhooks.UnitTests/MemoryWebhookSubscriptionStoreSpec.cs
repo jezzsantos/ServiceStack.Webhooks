@@ -60,9 +60,9 @@ namespace ServiceStack.Webhooks.UnitTests
                 };
                 var result = store.Add(subscription);
 
-                Assert.That(result.IsGuid(), Is.True);
+                Assert.That(result.IsEntityId(), Is.True);
                 cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname"), It.Is<WebhookSubscription>(sub
-                    => sub.Id.IsGuid())));
+                    => sub.Id.IsEntityId())));
             }
 
             [Test, Category("Unit")]

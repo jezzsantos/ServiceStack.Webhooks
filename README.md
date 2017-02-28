@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/j2a8skqibee6d7vt/branch/master?svg=true)](https://ci.appveyor.com/project/JezzSantos/servicestack-webhooks/branch/master) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg)](https://www.nuget.org/packages/ServiceStack.Webhooks) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.Azure.svg)](https://www.nuget.org/packages/ServiceStack.Webhooks.Azure) 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)[![Build status](https://ci.appveyor.com/api/projects/status/j2a8skqibee6d7vt/branch/master?svg=true)](https://ci.appveyor.com/project/JezzSantos/servicestack-webhooks/branch/master) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg)](https://www.nuget.org/packages/ServiceStack.Webhooks) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.Azure.svg)](https://www.nuget.org/packages/ServiceStack.Webhooks.Azure) 
 
 # ServiceStack.Webhooks
 Add Webhooks to your ServiceStack services
@@ -24,7 +24,7 @@ Want to get involved? Want to help add this capability to your services? just se
 
 # Getting Started
 
-[**This project is still in its infancy (any version less than 1.0.0) , and is not yet operational end to end**]
+[**This project is still in its infancy and is not yet operational end to end (any version less than 1.0.0)**]
 
 Install from NuGet:
 ```

@@ -11,7 +11,7 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
     public class AzureTableSubscriptionStoreSpec
     {
         [TestFixture]
-        public class GivenAContext
+        public class GivenAStore
         {
             private AzureTableSubscriptionStore store;
             private Mock<IAzureTableStorage> tableStorage;
@@ -196,6 +196,14 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
                 tableStorage.Verify(ts => ts.Get("asubscriptionid"));
                 tableStorage.Verify(ts => ts.Delete(It.Is<WebhookSubscriptionEntity>(wse =>
                         wse.Id == "asubscriptionid")));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenClear_ThenEmptiesStore()
+            {
+                store.Clear();
+
+                tableStorage.Verify(qs => qs.Empty());
             }
         }
     }

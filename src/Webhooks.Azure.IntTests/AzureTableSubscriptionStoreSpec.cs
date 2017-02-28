@@ -7,7 +7,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
     public class MemoryWebhookSubscriptionStoreSpec
     {
         [TestFixture]
-        public class GivenNoUser : AzureIntegrationTestBase
+        public class GivenATableAndNoUser : AzureIntegrationTestBase
         {
             private AzureTableSubscriptionStore store;
 
@@ -145,7 +145,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         }
 
         [TestFixture]
-        public class GivenAUser : AzureIntegrationTestBase
+        public class GivenATableAndAUser : AzureIntegrationTestBase
         {
             private AzureTableSubscriptionStore store;
 

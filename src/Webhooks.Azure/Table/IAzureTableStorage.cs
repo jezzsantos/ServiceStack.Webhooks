@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using ServiceStack.Webhooks.Azure.Table;
 
-namespace ServiceStack.Webhooks.Azure
+namespace ServiceStack.Webhooks.Azure.Table
 {
     internal interface IAzureTableStorage
     {

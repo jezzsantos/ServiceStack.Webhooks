@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ServiceStack.Logging;
 using ServiceStack.Webhooks.Properties;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
@@ -8,6 +9,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
 {
     internal class SubscriptionService : Service
     {
+        private readonly ILog logger = LogManager.GetLogger(typeof(SubscriptionService));
+
         public IWebhookSubscriptionStore Store { get; set; }
 
         public ICurrentCaller Caller
@@ -38,6 +41,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
                 var id = Store.Add(sub);
                 sub.Id = id;
+
+                logger.InfoFormat(@"Created subscription {0} to event {1} by user {2}", sub.Id, sub.Event, Caller.UserId);
             });
 
             return new CreateSubscriptionResponse
@@ -55,6 +60,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 throw HttpError.NotFound(null);
             }
 
+            logger.InfoFormat(@"Retrieved subscription {0} by user {1}", subscription.Id, Caller.UserId);
+
             return new GetSubscriptionResponse
             {
                 Subscription = subscription
@@ -64,6 +71,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
         public ListSubscriptionsResponse Get(ListSubscriptions request)
         {
             var subscriptions = Store.Find(Caller.UserId);
+
+            logger.InfoFormat(@"Listed subscription for user {0}", Caller.UserId);
 
             return new ListSubscriptionsResponse
             {
@@ -105,6 +114,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
             Store.Update(request.Id, subscription);
 
+            logger.InfoFormat(@"Updated subscription {0} by user {1}", subscription.Id, Caller.UserId);
+
             return new UpdateSubscriptionResponse
             {
                 Subscription = subscription
@@ -121,6 +132,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
             }
 
             Store.Delete(subscription.Id);
+
+            logger.InfoFormat(@"Deleted subscription {0} by user {1}", subscription.Id, Caller.UserId);
 
             return new DeleteSubscriptionResponse();
         }

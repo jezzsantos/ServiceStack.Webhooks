@@ -39,17 +39,56 @@ public override void Configure(Container container)
     Plugins.Add(new WebhookFeature();
 }
 ```
+## Subscription Service
 
-By default, the `WebhookFeature` uses a `MemoryWebhookSubscriptionStore` to store all subscriptions and a `MemoryWebhookEventStore` to store raised events from your service, but these will need replacing in production systems with stores that are more appropriate to more persistent storage, like an OrmLiteStore or RedisStore, or a stores using a database of your choice. 
-
-The plugin automatically installs a subscription management service in your service on these routes:
+The `WebhookFeature` plugin automatically installs a secure subscription management API in your service on the following routes:
 * POST /webhooks/subscriptions - creates a new subscription (for the current user)
 * GET /webhooks/subscriptions - lists all subscriptions (for the current user)
 * GET /webhooks/subscriptions/{Id} - gets the details of the subscription
 * PUT /webhooks/subscriptions/{Id} - updates the subscription
 * DELETE /webhooks/subscriptions/{Id} - deletes the subscription
 
-This allows any users of your web service to create web hook registrations (subscribers to webhook events). Webhooks are associated with the ID of the user using this service.
+This allows any users of your web service to create webhook registrations (subscribers to webhook events) for the events youraise in your service. 
+Note: Webhook subscriptions will be associated to the UserId (`ISession.UserId`) of the user using your service.
+
+## Components
+
+By default, the `WebhookFeature` uses a `MemoryWebhookSubscriptionStore` to store all subscriptions and a `AppHostWebhookEventSink` to relay raised events directly from your service to subscribers. 
+In production systems these components will need to be replaced, by customizing you configuration of the `WebhookFeature`: 
+
+* Configure a `IWebhookSubscriptionStore` with one that is more appropriate to more persistent storage, like an OrmLiteStore or RedisStore, or a stores subscriptions using a database of your choice. 
+* (Optional) Consider configuring a `IWebhookEventSink` with one that introduces some buffering between raising events and POSTing them to registered subscribers, like an Trigger, Queue, Bus-based implementation of your choice. 
+
+## Raising Events
+
+To raise events from your own services, add the `IWebhooks` dependency to your service, and call: `IWebhooks.Publish<TDto>(string eventName, TDto data)`. Simple as that.
+
+```
+internal class HelloService : Service
+{
+    public IWebhooks Webhooks { get; set; }
+
+    public HelloResponse Any(Hello request)
+    {
+        Webhooks.Publish("hello", new HelloEvent());
+    }
+}
+```
+
+## How It Works
+
+When you register the `WebhookFeature` in your AppHost, it installs the subscriptions API, and the basic components to support raising events.
+
+By default, the `AppHostWebhooksEventSink` is used as the event sink.
+
+When events are raised to it, the sink queries the `SubscriptionsService.Search(eventName)` (in-proc) to fetch all the subscriptions to POST events to. It caches those subscriptions for a TTL (say 60s), to reduce the number of times the query for the same event is made (to avoid chatter as events are raised in your services). Then is dispatches the notification of that event to all registered subscribers (over HTTP).
+
+![](https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/docs/images/AppHostWebhookEventSink.png)
+
+The `AppHostWebhooksEventSink` can work well in testing, but it is going to slow down your service request times, as it has to notify each of the subscribers, and that network latency is added to the call time of your API (since it is done in-proc and in the request pipeline of your service).
+
+* We recommend only using the `AppHostWebhooksEventSink` in testing and non-production systems.
+* We recommend, configuring a `IWebhookEventSink` that scales better with your architecture, and decouples the raising of events from the notifying of subscribers.
 
 ## Customizing
 
@@ -57,9 +96,9 @@ There are various components of the webhook architecture that you can extend wit
 
 ### Subscription Store
 
-Subscriptons for webhooks need to be stored (`IWebhookSubscriptionStore`), once a user of your service registers a webhook (using the registration API: POST /webhooks/subscriptions)
+Subscriptons for webhooks need to be stored (`IWebhookSubscriptionStore`), once a user of your service registers a webhook (using the registration API: `POST /webhooks/subscriptions`)
 
-You specify your store by registering it in the container.
+You specify your store by registering it in the IOC container.
 If you specify no store, the default `MemoryWebhookSubscriptionStore` will be used, but beware that your subscriptions will be lost whenever your service is restarted.
 
 ```
@@ -72,18 +111,18 @@ public override void Configure(Container container)
 }
 ```
 
-### Events Store
+### Events Sink
 
-When events are raised they are stored (temporarily, until relayed to all registered subscribers) in an event store (`IwebhookEventStore`).
+When events are raised they are passed to sink (temporarily, until relayed to all registered subscribers) in the event sink (`IWebhookEventSink`).
 
-You specify your store by registering it in the container.
-If you specify no store, the default `MemoryWebhookEventStore` will be used, but beware that your events will be lost whenever your service is restarted.
+You specify your sink by registering it in the container.
+If you specify no sink, the default `AppHostWebhookEventSink` will be used, but beware that your events will be lost whenever your service is restarted, and this sink is not optimized for scale in production systems.
 
 ```
 public override void Configure(Container container)
 {
     // Register your own event store
-    container.Register<IWebhookEventStore>(new MyDbEventStore());
+    container.Register<IWebhookEventSink>(new MyDbEventSink());
 
     Plugins.Add(new WebhookFeature();
 }
@@ -95,6 +134,8 @@ If you deploy your web service to Microsoft Azure, you can use Azure storage Tab
 
 Subscriptions can be stored in Azure table storage, and events can be queued and relayed from an Azure queue.
 
+![](https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/docs/images/AzureQueueEventSink.png)
+
 Install from NuGet:
 ```
 Install-Package Servicestack.Webhooks.Azure
@@ -105,8 +146,8 @@ Add the `WebhookFeature` in your `AppHost.Configure()` method, and register the 
 ```
 public override void Configure(Container container)
 {
-    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore());
     container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore());
+    container.Register<IWebhookEventSink>(new AzureQueueWebhookEventSink());
 
     Plugins.Add(new WebhookFeature();
 }
@@ -121,29 +162,29 @@ If you use the overload constructors, and pass in the `IAppSettings`, like this:
 ```
 public override void Configure(Container container)
 {
-    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore(appSettings));
     container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore(appSettings));
+    container.Register<IWebhookEventSink>(new AzureQueueWebhookEventSink(appSettings));
 
     Plugins.Add(new WebhookFeature();
 }
 ```
 then:
 
-* `AzureTableWebhookSubscriptionStore` will try to find a setting called: 'AzureTableSubscriptionStore.AzureConnectionString'
-* `AzureQueueWebhookEventStore` will try to find a setting called: 'AzureQueueEventStore.AzureConnectionString'
+* `AzureTableWebhookSubscriptionStore` will try to use a setting called: 'AzureTableWebhookSubscriptionStore.ConnectionString' for its storage connection
+* `AzureQueueWebhookEventSink` will try to use a setting called: 'AzureQueueWebhookEventSink.ConnectionString' for its storage connection
 
-Otherwise you can set those values directly in code when you register the services:
+Otherwise, you can set those values directly in code when you register the services:
 
 ```
 public override void Configure(Container container)
 {
-    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore
-        {
-            AzureConnectionString = "connectionstring",
-        });
     container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore
         {
-            AzureConnectionString = "connectionstring",
+            ConnectionString = "connectionstring",
+        });
+    container.Register<IWebhookEventSink>(new AzureQueueWebhookEventSink
+        {
+            ConnectionString = "connectionstring",
         });
 
     Plugins.Add(new WebhookFeature();
@@ -155,20 +196,20 @@ public override void Configure(Container container)
 By default, 
 
 * `AzureTableWebhookSubscriptionStore` will create and use a table named: 'webhooksubscriptions'
-* `AzureQueueWebhookEventStore` will create and use a queue named: 'webhookevents'
+* `AzureQueueWebhookEventSink` will create and use a queue named: 'webhookevents'
 
 You can change those values when you register the services.
 
 ```
 public override void Configure(Container container)
 {
-    container.Register<IWebhookEventStore>(new AzureQueueWebhookEventStore
-        {
-            QueueName = "myqueuename",
-        });
     container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore
         {
             TableName = "mytablename",
+        });
+    container.Register<IWebhookEventSink>(new AzureQueueWebhookEventSink
+        {
+            QueueName = "myqueuename",
         });
 
     Plugins.Add(new WebhookFeature();

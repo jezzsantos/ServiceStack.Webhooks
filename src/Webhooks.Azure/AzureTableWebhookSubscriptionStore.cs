@@ -9,7 +9,7 @@ namespace ServiceStack.Webhooks.Azure
     public class AzureTableWebhookSubscriptionStore : IWebhookSubscriptionStore
     {
         internal const string DefaultTableName = "webhooksubscriptions";
-        internal const string AzureConnectionStringSettingName = "AzureTableSubscriptionStore.AzureConnectionString";
+        internal const string AzureConnectionStringSettingName = "AzureTableWebhookSubscriptionStore.ConnectionString";
         internal const string DefaultAzureConnectionString = @"UseDevelopmentStorage=true";
         private IAzureTableStorage tableStorage;
 
@@ -17,14 +17,14 @@ namespace ServiceStack.Webhooks.Azure
         {
             TableName = DefaultTableName;
 
-            AzureConnectionString = DefaultAzureConnectionString;
+            ConnectionString = DefaultAzureConnectionString;
         }
 
         public AzureTableWebhookSubscriptionStore(IAppSettings settings) : this()
         {
             Guard.AgainstNull(() => settings, settings);
 
-            AzureConnectionString = settings.Get(AzureConnectionStringSettingName, DefaultAzureConnectionString);
+            ConnectionString = settings.Get(AzureConnectionStringSettingName, DefaultAzureConnectionString);
         }
 
         /// <summary>
@@ -32,11 +32,11 @@ namespace ServiceStack.Webhooks.Azure
         /// </summary>
         internal IAzureTableStorage TableStorage
         {
-            get { return tableStorage ?? (tableStorage = new AzureTableStorage(AzureConnectionString, TableName)); }
+            get { return tableStorage ?? (tableStorage = new AzureTableStorage(ConnectionString, TableName)); }
             set { tableStorage = value; }
         }
 
-        public string AzureConnectionString { get; set; }
+        public string ConnectionString { get; set; }
 
         public string TableName { get; set; }
 

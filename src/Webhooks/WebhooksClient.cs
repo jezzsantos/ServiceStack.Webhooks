@@ -6,10 +6,10 @@ namespace ServiceStack.Webhooks
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(WebhooksClient));
 
-        public IWebhookEventStore EventStore { get; set; }
+        public IWebhookEventSink EventSink { get; set; }
 
         /// <summary>
-        ///     Publishes webhook events to the <see cref="IWebhookEventStore" />
+        ///     Publishes webhook events to the <see cref="IWebhookEventSink" />
         /// </summary>
         public void Publish<TDto>(string eventName, TDto data)
         {
@@ -17,7 +17,7 @@ namespace ServiceStack.Webhooks
 
             logger.InfoFormat(@"Publishing webhook event {0}, with data {1}", eventName, data.ToJson());
 
-            EventStore.Create(eventName, data);
+            EventSink.Create(eventName, data);
         }
     }
 }

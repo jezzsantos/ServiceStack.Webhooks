@@ -93,8 +93,8 @@
     </Compile>
     <Compile Include="AppHostForAzureTesting.cs" />
     <Compile Include="AzureIntegrationTestBase.cs" />
-    <Compile Include="AzureQueueEventStoreSpec.cs" />
-    <Compile Include="AzureTableSubscriptionStoreSpec.cs" />
+    <Compile Include="AzureQueueWebhookEventSinkSpec.cs" />
+    <Compile Include="AzureTableWebhookSubscriptionStoreSpec.cs" />
     <Compile Include="WebhookClientSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestService.cs" />

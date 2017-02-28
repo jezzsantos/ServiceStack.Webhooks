@@ -67,7 +67,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenRegisterAndEventStoreNotRegistered_ThenRegistersMemoryStoreByDefault()
+            public void WhenRegisterAndEventSinkNotRegistered_ThenRegistersAppHostSinkByDefault()
             {
                 var appHost = new Mock<IAppHost>();
                 var container = new Container();
@@ -76,21 +76,21 @@ namespace ServiceStack.Webhooks.UnitTests
 
                 new WebhookFeature().Register(appHost.Object);
 
-                Assert.That(container.GetService(typeof(IWebhookEventStore)), Is.TypeOf<MemoryWebhookEventStore>());
+                Assert.That(container.GetService(typeof(IWebhookEventSink)), Is.TypeOf<AppHostWebhookEventSink>());
             }
 
             [Test, Category("Unit")]
-            public void WhenRegisterAndEventStoreAlreadyRegistered_ThenDoesNotRegisterMemoryStoreByDefault()
+            public void WhenRegisterAndEventSinkAlreadyRegistered_ThenDoesNotRegisterAppHostSinkByDefault()
             {
                 var appHost = new Mock<IAppHost>();
                 var container = new Container();
-                container.Register<IWebhookEventStore>(new TestEventStore());
+                container.Register<IWebhookEventSink>(new TestEventSink());
                 appHost.As<IHasContainer>().Setup(ah => ah.Container)
                     .Returns(container);
 
                 new WebhookFeature().Register(appHost.Object);
 
-                Assert.That(container.GetService(typeof(IWebhookEventStore)), Is.TypeOf<TestEventStore>());
+                Assert.That(container.GetService(typeof(IWebhookEventSink)), Is.TypeOf<TestEventSink>());
             }
         }
 
@@ -122,7 +122,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
         }
 
-        public class TestEventStore : IWebhookEventStore
+        public class TestEventSink : IWebhookEventSink
         {
             public void Create<TDto>(string eventName, TDto data)
             {

@@ -8,13 +8,13 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.UnitTests
 {
-    public class MemoryWebhookEventStoreSpec
+    public class AppHostWebhookEventSinkSpec
     {
         [TestFixture]
         public class GivenACacheClient
         {
             private Mock<ICacheClient> cacheClient;
-            private MemoryWebhookEventStore store;
+            private AppHostWebhookEventSink sink;
 
             [SetUp]
             public void Initialize()
@@ -24,7 +24,7 @@ namespace ServiceStack.Webhooks.UnitTests
                     .Returns(new List<string>());
 
                 cacheClient.Setup(cc => cc.Add(It.IsAny<string>(), It.IsAny<WebhookSubscription>()));
-                store = new MemoryWebhookEventStore
+                sink = new AppHostWebhookEventSink
                 {
                     CacheClient = cacheClient.Object
                 };
@@ -33,9 +33,9 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenFormatCacheKey_ThenReturnsEventKey()
             {
-                var result = MemoryWebhookEventStore.FormatCacheKey("aneventname");
+                var result = AppHostWebhookEventSink.FormatCacheKey("aneventname");
 
-                var keyPrefix = RemoveDateSuffix(MemoryWebhookEventStore.FormatCacheKey("aneventname"));
+                var keyPrefix = RemoveDateSuffix(AppHostWebhookEventSink.FormatCacheKey("aneventname"));
                 var now = DateTime.UtcNow.ToNearestMillisecond().Subtract(TimeSpan.FromSeconds(1));
                 var keys = Enumerable.Range(0, 2000)
                     .Select(ms => "{0}:{1}".Fmt(keyPrefix, now.AddMilliseconds(ms).ToIso8601()));
@@ -46,15 +46,15 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenCreateWithNullEventName_ThenThrows()
             {
-                Assert.That(() => store.Create(null, "adata"), Throws.ArgumentNullException);
+                Assert.That(() => sink.Create(null, "adata"), Throws.ArgumentNullException);
             }
 
             [Test, Category("Unit")]
             public void WhenCreateWithNullData_ThenAddsEvent()
             {
-                store.Create("aneventname", (string) null);
+                sink.Create("aneventname", (string) null);
 
-                cacheClient.Verify(cc => cc.Add(It.Is<string>(s => s.StartsWith(RemoveDateSuffix(MemoryWebhookEventStore.FormatCacheKey("aneventname")))), It.Is<WebhookEvent>(whe =>
+                cacheClient.Verify(cc => cc.Add(It.Is<string>(s => s.StartsWith(RemoveDateSuffix(AppHostWebhookEventSink.FormatCacheKey("aneventname")))), It.Is<WebhookEvent>(whe =>
                     whe.CreatedDateUtc.IsNear(DateTime.UtcNow)
                     && (whe.EventName == "aneventname")
                     && (whe.Data == null))));
@@ -63,9 +63,9 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenCreate_ThenAddsEvent()
             {
-                store.Create("aneventname", "adata");
+                sink.Create("aneventname", "adata");
 
-                cacheClient.Verify(cc => cc.Add(It.Is<string>(s => s.StartsWith(RemoveDateSuffix(MemoryWebhookEventStore.FormatCacheKey("aneventname")))), It.Is<WebhookEvent>(whe =>
+                cacheClient.Verify(cc => cc.Add(It.Is<string>(s => s.StartsWith(RemoveDateSuffix(AppHostWebhookEventSink.FormatCacheKey("aneventname")))), It.Is<WebhookEvent>(whe =>
                     whe.CreatedDateUtc.IsNear(DateTime.UtcNow)
                     && (whe.EventName == "aneventname")
                     && ((string) whe.Data == "adata"))));
@@ -79,7 +79,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 cacheClient.Setup(cc => cc.GetAll<WebhookEvent>(It.IsAny<List<string>>()))
                     .Returns(new Dictionary<string, WebhookEvent>());
 
-                var results = store.Peek();
+                var results = sink.Peek();
 
                 cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(It.IsAny<string>()));
                 cacheClient.Verify(cc => cc.GetAll<WebhookEvent>(It.IsAny<List<string>>()));
@@ -110,7 +110,7 @@ namespace ServiceStack.Webhooks.UnitTests
                         }
                     });
 
-                var results = store.Peek();
+                var results = sink.Peek();
 
                 Assert.That(results.Count, Is.EqualTo(2));
                 Assert.That(results[0].EventName, Is.EqualTo("anevent2"));

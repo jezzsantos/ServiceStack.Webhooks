@@ -5,7 +5,7 @@ using ServiceStack.Caching;
 
 namespace ServiceStack.Webhooks
 {
-    internal class MemoryWebhookEventStore : IWebhookEventStore
+    internal class AppHostWebhookEventSink : IWebhookEventSink
     {
         internal const string CachekeyFormat = @"events:{0}:{1}";
 

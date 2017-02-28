@@ -9,16 +9,16 @@ namespace ServiceStack.Webhooks.UnitTests
         [TestFixture]
         public class GivenAContext
         {
-            private Mock<IWebhookEventStore> eventStore;
+            private Mock<IWebhookEventSink> eventSink;
             private WebhooksClient webhooks;
 
             [SetUp]
             public void Initialize()
             {
-                eventStore = new Mock<IWebhookEventStore>();
+                eventSink = new Mock<IWebhookEventSink>();
                 webhooks = new WebhooksClient
                 {
-                    EventStore = eventStore.Object
+                    EventSink = eventSink.Object
                 };
             }
 
@@ -33,7 +33,7 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 webhooks.Publish("aneventname", "adata");
 
-                eventStore.Verify(es => es.Create("aneventname", "adata"));
+                eventSink.Verify(es => es.Create("aneventname", "adata"));
             }
         }
     }

@@ -5,26 +5,26 @@ using ServiceStack.Webhooks.Azure.Queue;
 
 namespace ServiceStack.Webhooks.Azure
 {
-    public class AzureQueueWebhookEventStore : IWebhookEventStore
+    public class AzureQueueWebhookEventSink : IWebhookEventSink
     {
         internal const string DefaultQueueName = "webhookevents";
-        internal const string AzureConnectionStringSettingName = "AzureQueueEventStore.AzureConnectionString";
+        internal const string AzureConnectionStringSettingName = "AzureQueueWebhookEventSink.ConnectionString";
         internal const string DefaultAzureConnectionString = @"UseDevelopmentStorage=true";
         private IAzureQueueStorage queueStorage;
 
-        public AzureQueueWebhookEventStore()
+        public AzureQueueWebhookEventSink()
         {
             QueueName = DefaultQueueName;
 
-            AzureConnectionString = DefaultAzureConnectionString;
+            ConnectionString = DefaultAzureConnectionString;
         }
 
-        public AzureQueueWebhookEventStore(IAppSettings settings)
+        public AzureQueueWebhookEventSink(IAppSettings settings)
             : this()
         {
             Guard.AgainstNull(() => settings, settings);
 
-            AzureConnectionString = settings.Get(AzureConnectionStringSettingName, DefaultAzureConnectionString);
+            ConnectionString = settings.Get(AzureConnectionStringSettingName, DefaultAzureConnectionString);
         }
 
         /// <summary>
@@ -32,11 +32,11 @@ namespace ServiceStack.Webhooks.Azure
         /// </summary>
         internal IAzureQueueStorage QueueStorage
         {
-            get { return queueStorage ?? (queueStorage = new AzureQueueStorage(AzureConnectionString, QueueName)); }
+            get { return queueStorage ?? (queueStorage = new AzureQueueStorage(ConnectionString, QueueName)); }
             set { queueStorage = value; }
         }
 
-        public string AzureConnectionString { get; set; }
+        public string ConnectionString { get; set; }
 
         public string QueueName { get; set; }
 

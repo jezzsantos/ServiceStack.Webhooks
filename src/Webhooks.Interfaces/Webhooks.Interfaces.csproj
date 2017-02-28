@@ -36,7 +36,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DataFormats.cs" />
-    <Compile Include="IWebhookEventStore.cs" />
+    <Compile Include="IWebhookEventSink.cs" />
     <Compile Include="ServiceModel\DeleteSubscription.cs" />
     <Compile Include="ServiceModel\UpdateSubscription.cs" />
     <Compile Include="ServiceModel\ListSubscriptions.cs" />

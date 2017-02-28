@@ -1,28 +1,28 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 
 namespace ServiceStack.Webhooks.Azure.IntTests
 {
-    public class AzureQueueEventStoreSpec
+    public class AzureQueueWebhookEventSinkSpec
     {
         [TestFixture]
         public class GivenAQueue : AzureIntegrationTestBase
         {
-            private AzureQueueWebhookEventStore store;
+            private AzureQueueWebhookEventSink sink;
 
             [SetUp]
             public void Initialize()
             {
-                store = new AzureQueueWebhookEventStore();
-                store.Clear();
+                sink = new AzureQueueWebhookEventSink();
+                sink.Clear();
             }
 
             [Test, Category("Integration")]
             public void WhenCreate_ThenQueuesEvent()
             {
-                store.Create("aneventname", "adata");
+                sink.Create("aneventname", "adata");
 
-                var result = store.Peek();
+                var result = sink.Peek();
 
                 Assert.That(result.Count, Is.EqualTo(1));
                 Assert.That(result[0].CreatedDateUtc, Is.EqualTo(DateTime.UtcNow).Within(1).Seconds);

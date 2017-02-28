@@ -4,7 +4,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Azure.IntTests
 {
-    public class AzureTableSubscriptionStoreSpec
+    public class AzureTableWebhookSubscriptionStoreSpec
     {
         [TestFixture]
         public class GivenATableAndNoUser : AzureIntegrationTestBase

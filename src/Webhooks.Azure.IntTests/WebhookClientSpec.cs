@@ -11,7 +11,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             private static JsonServiceClient client;
             private const string BaseUrl = "http://localhost:8080/";
             private static IWebhookSubscriptionStore subscriptionsStore;
-            private static IWebhookEventStore eventStore;
+            private static IWebhookEventSink eventSink;
 
             [OneTimeTearDown]
             public void CleanupContext()
@@ -28,25 +28,25 @@ namespace ServiceStack.Webhooks.Azure.IntTests
 
                 client = new JsonServiceClient(BaseUrl);
                 subscriptionsStore = appHost.Resolve<IWebhookSubscriptionStore>();
-                eventStore = appHost.Resolve<IWebhookEventStore>();
+                eventSink = appHost.Resolve<IWebhookEventSink>();
             }
 
             [SetUp]
             public void Initialize()
             {
                 ((AzureTableWebhookSubscriptionStore) subscriptionsStore).Clear();
-                ((AzureQueueWebhookEventStore) eventStore).Clear();
+                ((AzureQueueWebhookEventSink) eventSink).Clear();
             }
 
             [Test, Category("Integration")]
-            public void WhenRaiseEvent_ThenEventStored()
+            public void WhenRaiseEvent_ThenEventSunk()
             {
                 client.Get(new RaiseEvent
                 {
                     EventName = "aneventname"
                 });
 
-                var events = eventStore.Peek();
+                var events = eventSink.Peek();
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));

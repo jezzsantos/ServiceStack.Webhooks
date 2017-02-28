@@ -64,7 +64,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AzureQueueWebhookEventStore.cs" />
+    <Compile Include="AzureQueueWebhookEventSink.cs" />
     <Compile Include="Queue\AzureQueueStorage.cs" />
     <Compile Include="Queue\IAzureQueueStorage.cs" />
     <Compile Include="Table\AzureTableStorage.cs" />

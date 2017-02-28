@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ServiceStack.Webhooks
 {
-    public interface IWebhookEventStore
+    public interface IWebhookEventSink
     {
         /// <summary>
         ///     Creates a new event with data

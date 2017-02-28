@@ -18,9 +18,9 @@ namespace ServiceStack.Webhooks
 
         private static void RegisterClient(Container container)
         {
-            if (!container.Exists<IWebhookEventStore>())
+            if (!container.Exists<IWebhookEventSink>())
             {
-                container.RegisterAutoWiredAs<MemoryWebhookEventStore, IWebhookEventStore>();
+                container.RegisterAutoWiredAs<AppHostWebhookEventSink, IWebhookEventSink>();
             }
             container.RegisterAutoWiredAs<WebhooksClient, IWebhooks>();
         }

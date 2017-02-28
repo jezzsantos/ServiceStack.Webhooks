@@ -11,7 +11,7 @@ namespace ServiceStack.Webhooks.IntTests
             private static AppSelfHostBase appHost;
             private static JsonServiceClient client;
             private const string BaseUrl = "http://localhost:8080/";
-            private static IWebhookEventStore eventStore;
+            private static IWebhookEventSink eventSink;
 
             [OneTimeTearDown]
             public void CleanupContext()
@@ -27,7 +27,7 @@ namespace ServiceStack.Webhooks.IntTests
                 appHost.Start(BaseUrl);
 
                 client = new JsonServiceClient(BaseUrl);
-                eventStore = appHost.Resolve<IWebhookEventStore>();
+                eventSink = appHost.Resolve<IWebhookEventSink>();
             }
 
             [SetUp]
@@ -37,14 +37,14 @@ namespace ServiceStack.Webhooks.IntTests
             }
 
             [Test, Category("Integration")]
-            public void WhenRaiseEvent_ThenEventStored()
+            public void WhenRaiseEvent_ThenEventSunk()
             {
                 client.Get(new RaiseEvent
                 {
                     EventName = "aneventname"
                 });
 
-                var events = eventStore.Peek();
+                var events = eventSink.Peek();
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));

@@ -55,6 +55,19 @@ namespace ServiceStack.Webhooks.Azure.UnitTests.Table
             }
 
             [Test, Category("Unit")]
+            public void WhenToEntityWithMinDates_ThenReturnsEntity()
+            {
+                var result = new WebhookSubscription
+                {
+                    CreatedDateUtc = DateTime.MinValue,
+                    LastModifiedDateUtc = DateTime.MinValue
+                }.ToEntity();
+
+                Assert.That(result.CreatedDateUtc, Is.EqualTo(Azure.Table.DateTimeExtensions.MinAzureDateTime));
+                Assert.That(result.LastModifiedDateUtc, Is.EqualTo(Azure.Table.DateTimeExtensions.MinAzureDateTime));
+            }
+
+            [Test, Category("Unit")]
             public void WhenFromEntityWithNullDto_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() => ((WebhookSubscriptionEntity) null).FromEntity());

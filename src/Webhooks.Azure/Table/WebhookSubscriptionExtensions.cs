@@ -16,7 +16,8 @@ namespace ServiceStack.Webhooks.Azure.Table
             sub.RowKey = sub.Id;
             sub.IsActive = subscription.IsActive.ToString().ToLowerInvariant();
             sub.Config = subscription.Config.ToJson();
-
+            sub.CreatedDateUtc = subscription.CreatedDateUtc.ToSafeAzureDateTime();
+            sub.LastModifiedDateUtc = subscription.LastModifiedDateUtc.ToSafeAzureDateTime();
             return sub;
         }
 

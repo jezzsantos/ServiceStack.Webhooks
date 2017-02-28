@@ -83,7 +83,7 @@ By default, the `AppHostWebhooksEventSink` is used as the event sink.
 
 When events are raised to it, the sink queries the `SubscriptionsService.Search(eventName)` (in-proc) to fetch all the subscriptions to POST events to. It caches those subscriptions for a TTL (say 60s), to reduce the number of times the query for the same event is made (to avoid chatter as events are raised in your services). Then is dispatches the notification of that event to all registered subscribers (over HTTP).
 
-![](https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/docs/images/AppHostWebhookEventSink.png)
+![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/AppHostWebhookEventSink.PNG)
 
 The `AppHostWebhooksEventSink` can work well in testing, but it is going to slow down your service request times, as it has to notify each of the subscribers, and that network latency is added to the call time of your API (since it is done in-proc and in the request pipeline of your service).
 
@@ -134,7 +134,7 @@ If you deploy your web service to Microsoft Azure, you can use Azure storage Tab
 
 Subscriptions can be stored in Azure table storage, and events can be queued and relayed from an Azure queue.
 
-![](https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/docs/images/AzureQueueEventSink.png)
+![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/AzureQueueEventSink.PNG)
 
 Install from NuGet:
 ```

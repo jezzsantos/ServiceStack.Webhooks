@@ -13,7 +13,8 @@ namespace ServiceStack.Webhooks
     /// </summary>
     internal class CacheClientEventSubscriptionCache : IWebhookEventSubscriptionCache
     {
-        internal const string CachekeyFormat = @"subscribers:{0}";
+        internal const string CachekeyPrefix = @"subscribers";
+        internal const string CachekeyFormat = CachekeyPrefix + @":{0}";
         internal const int DefaultCacheExpirySeconds = 60;
 
         public CacheClientEventSubscriptionCache()

@@ -19,14 +19,14 @@ namespace ServiceStack.Webhooks.ServiceInterface
             get { return Request.ToCaller(); }
         }
 
-        public List<SubscriptionConfig> Search(string eventName)
+        List<SubscriptionConfig> ISubscriptionService.Search(string eventName)
         {
             return Store.Search(eventName);
         }
 
-        public SearchSubscriptionsResponse Search(SearchSubscriptions request)
+        public SearchSubscriptionsResponse Get(SearchSubscriptions request)
         {
-            var subscribers = Search(request.EventName);
+            var subscribers = Store.Search(request.EventName);
 
             logger.InfoFormat(@"Retrieved subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ServiceStack.Webhooks.IntTests
+namespace ServiceStack.Webhooks.IntTests.Services
 {
     internal class StubSubscriberService : Service
     {

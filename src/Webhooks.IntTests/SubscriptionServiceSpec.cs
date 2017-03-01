@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using ServiceStack.Caching;
+using ServiceStack.Webhooks.IntTests.Services;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
 using ServiceStack.Webhooks.UnitTesting;
@@ -15,7 +16,7 @@ namespace ServiceStack.Webhooks.IntTests
         [TestFixture]
         public class GivenTheRegistrationService
         {
-            private static AppSelfHostBase appHost;
+            private static AppHostForTesting appHost;
             private static JsonServiceClient client;
             private const string BaseUrl = "http://localhost:8080/";
 
@@ -39,6 +40,7 @@ namespace ServiceStack.Webhooks.IntTests
             public void Initialize()
             {
                 appHost.Resolve<ICacheClient>().FlushAll();
+                appHost.LoginUser(client);
             }
 
             [Test, Category("Integration")]
@@ -80,8 +82,8 @@ namespace ServiceStack.Webhooks.IntTests
                 }).Subscriptions;
 
                 Assert.That(2, Is.EqualTo(subscriptions.Count));
-                AssertSubscriptionCreated(subscriptions[0], "anevent1", null);
-                AssertSubscriptionCreated(subscriptions[1], "anevent2", null);
+                AssertSubscriptionCreated(subscriptions[0], "anevent1", "1");
+                AssertSubscriptionCreated(subscriptions[1], "anevent2", "1");
             }
 
             [Test, Category("Integration")]

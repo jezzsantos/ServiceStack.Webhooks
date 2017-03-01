@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using ServiceStack.Webhooks.IntTests.Services;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
@@ -10,7 +11,7 @@ namespace ServiceStack.Webhooks.IntTests
         [TestFixture]
         public class GivenASubscriber
         {
-            private static AppSelfHostBase appHost;
+            private static AppHostForTesting appHost;
             private static JsonServiceClient client;
             private const string BaseUrl = "http://localhost:8080/";
             private static IWebhookEventSink eventSink;
@@ -39,6 +40,7 @@ namespace ServiceStack.Webhooks.IntTests
             {
                 var subscriberUrl = BaseUrl.WithoutTrailingSlash() + new ConsumeEvent().ToPostUrl();
 
+                appHost.LoginUser(client);
                 client.Post(new CreateSubscription
                 {
                     Name = "test",

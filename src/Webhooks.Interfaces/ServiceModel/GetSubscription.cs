@@ -2,7 +2,7 @@
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
-    [Route("/webhooks/subscriptions/{Id}", "GET")]
+    [Route(Subscription.RootPath + "/subscriptions/{Id}", "GET")]
     public class GetSubscription : IReturn<GetSubscriptionResponse>
     {
         public string Id { get; set; }

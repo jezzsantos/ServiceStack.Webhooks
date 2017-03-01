@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using ServiceStack.Logging;
 using ServiceStack.Webhooks.ServiceModel.Types;
@@ -110,7 +110,8 @@ namespace ServiceStack.Webhooks.Clients
 
         /// <summary>
         ///     Returns the computed HMAC hex digest of the body (RFC3174), using the secret as the key.
-        ///     See https://developer.github.com/v3/repos/hooks/#example, and https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html#authednotify
+        ///     See https://developer.github.com/v3/repos/hooks/#example, and
+        ///     https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html#authednotify
         /// </summary>
         private static string CreateContentHmacSignature(HttpWebRequest request, string secret)
         {

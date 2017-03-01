@@ -123,7 +123,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = store.Search("aneventname");
 
                 Assert.That(result[0], Is.EqualTo(config));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern("*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
                 cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
             }
 

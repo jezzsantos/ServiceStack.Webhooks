@@ -7,7 +7,8 @@ namespace ServiceStack.Webhooks
 {
     internal class MemoryWebhookSubscriptionStore : IWebhookSubscriptionStore
     {
-        internal const string CachekeyFormat = @"subscriptions:{0}:{1}";
+        internal const string CachekeyPrefix = @"subscriptions";
+        internal const string CachekeyFormat = CachekeyPrefix+ @":{0}:{1}";
         internal const string CacheKeyForAnonymousUser = @"everyone";
 
         public ICacheClient CacheClient { get; set; }
@@ -36,7 +37,7 @@ namespace ServiceStack.Webhooks
 
         public List<SubscriptionConfig> Search(string eventName)
         {
-            var keys = CacheClient.GetAllKeys();
+            var keys = CacheClient.GetKeysStartingWith(CachekeyPrefix);
 
             return CacheClient.GetAll<WebhookSubscription>(keys)
                 .Where(pair => pair.Value.Event.EqualsIgnoreCase(eventName))
@@ -62,7 +63,7 @@ namespace ServiceStack.Webhooks
             Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
             Guard.AgainstNull(() => subscription, subscription);
 
-            var keys = CacheClient.GetAllKeys();
+            var keys = CacheClient.GetKeysStartingWith(CachekeyPrefix);
             var subscriptions = CacheClient.GetAll<WebhookSubscription>(keys);
             var persistedSubscription = subscriptions.FirstOrDefault(sub => sub.Value.Id.EqualsIgnoreCase(subscriptionId));
             if (persistedSubscription.Value != null)
@@ -76,7 +77,7 @@ namespace ServiceStack.Webhooks
         {
             Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
 
-            var keys = CacheClient.GetAllKeys();
+            var keys = CacheClient.GetKeysStartingWith(CachekeyPrefix);
             var subscriptions = CacheClient.GetAll<WebhookSubscription>(keys);
             var persistedSubscription = subscriptions.FirstOrDefault(sub => sub.Value.Id.EqualsIgnoreCase(subscriptionId));
             if (persistedSubscription.Value != null)

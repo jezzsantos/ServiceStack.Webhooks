@@ -258,7 +258,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                         config
                     });
 
-                var result = service.Search(new SearchSubscriptions
+                var result = service.Get(new SearchSubscriptions
                 {
                     EventName = "aneventname"
                 });

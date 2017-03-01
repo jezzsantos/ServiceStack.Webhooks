@@ -1,4 +1,4 @@
-﻿namespace ServiceStack.Webhooks.IntTests
+namespace ServiceStack.Webhooks.IntTests.Services
 {
     internal class TestService : Service
     {

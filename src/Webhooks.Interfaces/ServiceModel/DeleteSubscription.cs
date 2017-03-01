@@ -1,6 +1,6 @@
 ﻿namespace ServiceStack.Webhooks.ServiceModel
 {
-    [Route("/webhooks/subscriptions/{Id}", "DELETE")]
+    [Route(Subscription.RootPath + "/subscriptions/{Id}", "DELETE")]
     public class DeleteSubscription : IReturn<DeleteSubscriptionResponse>
     {
         public string Id { get; set; }

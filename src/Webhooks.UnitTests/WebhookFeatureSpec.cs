@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Funq;
-using Moq;
 using NUnit.Framework;
+using ServiceStack.Testing;
 using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.ServiceInterface;
+using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
+using ServiceStack.Webhooks.UnitTesting;
 
 namespace ServiceStack.Webhooks.UnitTests
 {
@@ -14,29 +17,66 @@ namespace ServiceStack.Webhooks.UnitTests
         [TestFixture]
         public class GivenNoContext
         {
-            [Test, Category("Unit")]
-            public void WhenRegister_ThenSubscriptionServiceDependenciesRegistered()
+            private static ServiceStackHost appHost;
+            private Container container;
+
+            [TearDown]
+            public void CleanupAllContexts()
             {
-                var appHost = new Mock<IAppHost>();
-                var container = new Container();
-                appHost.As<IHasContainer>().Setup(ah => ah.Container)
-                    .Returns(container);
+                appHost.Dispose();
+            }
 
-                new WebhookFeature().Register(appHost.Object);
+            [SetUp]
+            public void InitializeContext()
+            {
+                appHost = new BasicAppHost();
+                appHost.Init();
 
-                Assert.That(container.GetService(typeof(ISubscriptionService)), Is.TypeOf<SubscriptionService>());
+                container = appHost.Container;
+            }
+
+            [Test, Category("Unit")]
+            public void WhenCtor_ThenDefaultProperties()
+            {
+                var result = new WebhookFeature();
+
+                Assert.That(result.IncludeSubscriptionService, Is.True);
+                Assert.That(result.SubscriptionAccessRoles, Is.EqualTo(WebhookFeature.DefaultAccessRoles));
+                Assert.That(result.SubscriptionSearchRoles, Is.EqualTo(WebhookFeature.DefaultSearchRoles));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenRegisterAndIncludeSubscriptionService_ThenSubscriptionServiceDependenciesRegistered()
+            {
+                new WebhookFeature().Register(appHost);
+
                 Assert.That(container.GetService(typeof(ICurrentCaller)), Is.TypeOf<AuthSessionCurrentCaller>());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthenticationFilterAdded()
+            {
+                appHost.Plugins.Add(new AuthFeature(() => null, null));
+
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+
+                Assert.That(appHost.GlobalRequestFilters.Exists(action => action == feature.AuthenticationFilter), Is.True);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthenticationFilterNotAdded()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+
+                Assert.That(appHost.GlobalRequestFilters.Exists(action => action == feature.AuthenticationFilter), Is.False);
             }
 
             [Test, Category("Unit")]
             public void WhenRegisterAndSubscriptionStoreNotRegistered_ThenRegistersMemoryStoreByDefault()
             {
-                var appHost = new Mock<IAppHost>();
-                var container = new Container();
-                appHost.As<IHasContainer>().Setup(ah => ah.Container)
-                    .Returns(container);
-
-                new WebhookFeature().Register(appHost.Object);
+                new WebhookFeature().Register(appHost);
 
                 Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<MemoryWebhookSubscriptionStore>());
             }
@@ -44,13 +84,9 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenRegisterAndSubscriptionStoreAlreadyRegistered_ThenDoesNotRegisterMemoryStoreByDefault()
             {
-                var appHost = new Mock<IAppHost>();
-                var container = new Container();
                 container.Register<IWebhookSubscriptionStore>(new TestSubscriptionStore());
-                appHost.As<IHasContainer>().Setup(ah => ah.Container)
-                    .Returns(container);
 
-                new WebhookFeature().Register(appHost.Object);
+                new WebhookFeature().Register(appHost);
 
                 Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<TestSubscriptionStore>());
             }
@@ -58,12 +94,7 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenRegister_ThenClientDependenciesRegistered()
             {
-                var appHost = new Mock<IAppHost>();
-                var container = new Container();
-                appHost.As<IHasContainer>().Setup(ah => ah.Container)
-                    .Returns(container);
-
-                new WebhookFeature().Register(appHost.Object);
+                new WebhookFeature().Register(appHost);
 
                 Assert.That(container.GetService(typeof(IWebhooks)), Is.TypeOf<WebhooksClient>());
                 Assert.That(container.GetService(typeof(IWebhookEventSubscriptionCache)), Is.TypeOf<CacheClientEventSubscriptionCache>());
@@ -74,29 +105,118 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenRegisterAndEventSinkNotRegistered_ThenRegistersAppHostSinkByDefault()
             {
-                var appHost = new Mock<IAppHost>();
-                var container = new Container();
-                appHost.As<IHasContainer>().Setup(ah => ah.Container)
-                    .Returns(container);
-
-                new WebhookFeature().Register(appHost.Object);
+                new WebhookFeature().Register(appHost);
 
                 Assert.That(container.GetService(typeof(IWebhookEventSink)), Is.TypeOf<AppHostWebhookEventSink>());
+                Assert.That(container.GetService(typeof(ISubscriptionService)), Is.TypeOf<SubscriptionService>());
             }
 
             [Test, Category("Unit")]
             public void WhenRegisterAndEventSinkAlreadyRegistered_ThenDoesNotRegisterAppHostSinkByDefault()
             {
-                var appHost = new Mock<IAppHost>();
-                var container = new Container();
                 container.Register<IWebhookEventSink>(new TestEventSink());
-                appHost.As<IHasContainer>().Setup(ah => ah.Container)
-                    .Returns(container);
 
-                new WebhookFeature().Register(appHost.Object);
+                new WebhookFeature().Register(appHost);
 
                 Assert.That(container.GetService(typeof(IWebhookEventSink)), Is.TypeOf<TestEventSink>());
+                Assert.That(container.GetService(typeof(ISubscriptionService)), Is.Null);
             }
+
+            [Test, Category("Unit")]
+            public void WhenAuthenticationFilterAndNotForSubscriptionService_ThenDoesNotAuthenticate()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest();
+                request.PathInfo = "/aresource";
+
+                feature.AuthenticationFilter(request, null, new TestDto());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthenticationFilterAndForSubscriptionServiceAndUnauthenticated_ThenThrowsUnauthorized()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new GetSubscription
+                    {
+                        Id = "asubscriptionid"
+                    }.ToGetUrl()
+                };
+                var response = new MockHttpResponse(request);
+
+                Assert.That(() => feature.AuthenticationFilter(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Unauthorized));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthenticationFilterAndForSubscriptionServiceAndAuthenticatedInWrongRole_ThenThrowsForbidden()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new GetSubscription
+                    {
+                        Id = "asubscriptionid"
+                    }.ToGetUrl()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true
+                });
+                var response = new MockHttpResponse(request);
+
+                Assert.That(() => feature.AuthenticationFilter(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Forbidden));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthenticationFilterAndForSubscriptionServiceAndAuthenticatedInAccessRole_DoesNotThrow()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new GetSubscription
+                    {
+                        Id = "asubscriptionid"
+                    }.ToGetUrl()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true,
+                    UserAuthId = "auserid",
+                    Roles = new List<string>(feature.SubscriptionAccessRoles.SafeSplit(","))
+                });
+                var response = new MockHttpResponse(request);
+
+                feature.AuthenticationFilter(request, response, new TestDto());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthenticationFilterAndForSubscriptionServiceAndAuthenticatedInSearchRole_DoesNotThrow()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new SearchSubscriptions().ToGetUrl()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true,
+                    UserAuthId = "auserid",
+                    Roles = new List<string>(feature.SubscriptionSearchRoles.SafeSplit(","))
+                });
+                var response = new MockHttpResponse(request);
+
+                feature.AuthenticationFilter(request, response, new TestDto());
+            }
+        }
+
+        public class TestDto
+        {
         }
 
         public class TestSubscriptionStore : IWebhookSubscriptionStore

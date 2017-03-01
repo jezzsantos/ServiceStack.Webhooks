@@ -14,7 +14,6 @@ namespace ServiceStack.Webhooks.IntTests.Services
 
         public override void Configure(Container container)
         {
-            Licensing.LicenseServiceStackRuntime();
             LogManager.LogFactory = new ConsoleLogFactory();
             RegisterAuthentication(container);
             Plugins.Add(new ValidationFeature());

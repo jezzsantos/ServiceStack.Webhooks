@@ -13,7 +13,6 @@ namespace ServiceStack.Webhooks.Azure.IntTests
 
         public override void Configure(Container container)
         {
-            Licensing.LicenseServiceStackRuntime();
             LogManager.LogFactory = new ConsoleLogFactory();
             Plugins.Add(new ValidationFeature());
 

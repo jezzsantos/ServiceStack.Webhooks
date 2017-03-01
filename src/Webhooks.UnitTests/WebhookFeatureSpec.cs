@@ -67,8 +67,8 @@ namespace ServiceStack.Webhooks.UnitTests
 
                 Assert.That(container.GetService(typeof(IWebhooks)), Is.TypeOf<WebhooksClient>());
                 Assert.That(container.GetService(typeof(IWebhookEventSubscriptionCache)), Is.TypeOf<CacheClientEventSubscriptionCache>());
-                Assert.That(container.GetService(typeof(IWebhookEventServiceClientFactory)), Is.TypeOf<WebhookEventServiceClientFactory>());
-                Assert.That(container.GetService(typeof(IWebhookEventServiceClient)), Is.TypeOf<WebhookEventServiceClient>());
+                Assert.That(container.GetService(typeof(IEventServiceClientFactory)), Is.TypeOf<EventServiceClientFactory>());
+                Assert.That(container.GetService(typeof(IWebhookEventServiceClient)), Is.TypeOf<EventServiceClient>());
             }
 
             [Test, Category("Unit")]

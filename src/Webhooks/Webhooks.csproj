@@ -49,9 +49,9 @@
     </Compile>
     <Compile Include="CacheClientEventSubscriptionCache.cs" />
     <Compile Include="Clients\IServiceClient.cs" />
-    <Compile Include="Clients\IWebhookEventServiceClientFactory.cs" />
+    <Compile Include="Clients\IEventServiceClientFactory.cs" />
     <Compile Include="Clients\ServiceClient.cs" />
-    <Compile Include="Clients\WebhookEventServiceClientFactory.cs" />
+    <Compile Include="Clients\EventServiceClientFactory.cs" />
     <Compile Include="IWebhooks.cs" />
     <Compile Include="AppHostWebhookEventSink.cs" />
     <Compile Include="MemoryWebhookSubscriptionStore.cs" />
@@ -72,7 +72,7 @@
     <Compile Include="ServiceModel\GetSubscription.cs" />
     <Compile Include="ServiceModel\UrlValidator.cs" />
     <Compile Include="ServiceModel\ValidatorExtensions.cs" />
-    <Compile Include="Clients\WebhookEventServiceClient.cs" />
+    <Compile Include="Clients\EventServiceClient.cs" />
     <Compile Include="WebhookFeature.cs" />
     <Compile Include="WebhooksClient.cs" />
   </ItemGroup>

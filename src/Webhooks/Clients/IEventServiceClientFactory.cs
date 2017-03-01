@@ -1,6 +1,6 @@
 ﻿namespace ServiceStack.Webhooks.Clients
 {
-    public interface IWebhookEventServiceClientFactory
+    public interface IEventServiceClientFactory
     {
         IServiceClient Create(string url);
     }

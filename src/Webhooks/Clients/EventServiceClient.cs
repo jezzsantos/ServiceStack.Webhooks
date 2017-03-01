@@ -5,19 +5,19 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Clients
 {
-    public class WebhookEventServiceClient : IWebhookEventServiceClient
+    public class EventServiceClient : IWebhookEventServiceClient
     {
         internal const int DefaultRetries = 3;
         internal const int DefaultTimeout = 60;
-        private readonly ILog logger = LogManager.GetLogger(typeof(WebhookEventServiceClient));
+        private readonly ILog logger = LogManager.GetLogger(typeof(EventServiceClient));
 
-        public WebhookEventServiceClient()
+        public EventServiceClient()
         {
             Retries = DefaultRetries;
             Timeout = TimeSpan.FromSeconds(DefaultTimeout);
         }
 
-        public IWebhookEventServiceClientFactory ServiceClientFactory { get; set; }
+        public IEventServiceClientFactory ServiceClientFactory { get; set; }
 
         public TimeSpan? Timeout { get; set; }
 
@@ -30,11 +30,11 @@ namespace ServiceStack.Webhooks.Clients
 
             var serviceClient = CreateServiceClient(subscription, eventName, Timeout);
 
-            var attempts = Retries;
+            var attempts = 0;
 
-            while (attempts > 0)
+            while (attempts <= Retries)
             {
-                attempts--;
+                attempts++;
 
                 try
                 {
@@ -43,38 +43,27 @@ namespace ServiceStack.Webhooks.Clients
                 }
                 catch (WebServiceException ex)
                 {
-                    if ((attempts == 0)
-                        || (ex.StatusCode == (int) HttpStatusCode.BadRequest)
-                        || (ex.StatusCode == (int) HttpStatusCode.Unauthorized))
+                    if (HasNoMoreRetries(attempts) || ex.IsAny400())
                     {
-                        logger.Error("Failed to notify subscriber {0} (after {1} attempts)".Fmt(subscription.Url, Retries - attempts), ex);
-                        return;
-                    }
-
-                    logger.Warn("Failed to notify subscriber {0}".Fmt(subscription.Url), ex);
-                }
-                catch (WebException ex)
-                {
-                    logger.Warn("Failed to notify subscriber {0}".Fmt(subscription.Url), ex);
-
-                    // Timeout?
-                    if (attempts == 0)
-                    {
-                        logger.Error("Failed to notify subscriber {0} (after {1} attempts)".Fmt(subscription.Url, Retries), ex);
+                        logger.Warn("Failed to notify subscriber at {0} (after {1} attempts)".Fmt(subscription.Url, attempts), ex);
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn("Failed to notify subscriber {0}".Fmt(subscription.Url), ex);
-                    // Other problem
-                    if (attempts == 0)
+                    // Timeout (WebException) or other Exception
+                    if (HasNoMoreRetries(attempts))
                     {
-                        logger.Error("Failed to notify subscriber {0} (after {1} attempts)".Fmt(subscription.Url, Retries), ex);
+                        logger.Warn("Failed to notify subscriber at {0} (after {1} attempts)".Fmt(subscription.Url, attempts), ex);
                         return;
                     }
                 }
             }
+        }
+
+        private bool HasNoMoreRetries(int attempts)
+        {
+            return attempts == Retries;
         }
 
         /// <summary>
@@ -90,7 +79,7 @@ namespace ServiceStack.Webhooks.Clients
                 client.RequestFilter = request =>
                 {
                     request.ContentType = MimeTypes.Json;
-                    request.Headers.Remove(WebhookEventConstants.SecretHeaderName);
+                    request.Headers.Remove(WebhookEventConstants.SecretSignatureHeaderName);
                     request.Headers.Remove(WebhookEventConstants.RequestIdHeaderName);
                     request.Headers.Remove(WebhookEventConstants.EventNameHeaderName);
 
@@ -100,7 +89,7 @@ namespace ServiceStack.Webhooks.Clients
                     }
                     if (config.Secret.HasValue())
                     {
-                        request.Headers.Add(WebhookEventConstants.SecretHeaderName, CreateContentHmacSignature(request, config.Secret));
+                        request.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, CreateContentHmacSignature(request, config.Secret));
                     }
                     request.Headers.Add(WebhookEventConstants.RequestIdHeaderName, CreateRequestIdentifier());
                     request.Headers.Add(WebhookEventConstants.EventNameHeaderName, eventName);
@@ -120,12 +109,12 @@ namespace ServiceStack.Webhooks.Clients
         }
 
         /// <summary>
-        ///     Returns the computed HMAC hex digest of the body, using the secret as the key.
-        ///     See https://developer.github.com/v3/repos/hooks/#example
+        ///     Returns the computed HMAC hex digest of the body (RFC3174), using the secret as the key.
+        ///     See https://developer.github.com/v3/repos/hooks/#example, and https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html#authednotify
         /// </summary>
         private static string CreateContentHmacSignature(HttpWebRequest request, string secret)
         {
-            //TODO: calculate the digest
+            //TODO: calculate the HMAC SHA1 digest
 
             return string.Empty;
         }

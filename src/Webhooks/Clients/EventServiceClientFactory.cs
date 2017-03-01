@@ -3,9 +3,9 @@ using ServiceStack.Logging;
 
 namespace ServiceStack.Webhooks.Clients
 {
-    internal class WebhookEventServiceClientFactory : IWebhookEventServiceClientFactory
+    internal class EventServiceClientFactory : IEventServiceClientFactory
     {
-        private readonly ILog logger = LogManager.GetLogger(typeof(WebhookEventServiceClientFactory));
+        private readonly ILog logger = LogManager.GetLogger(typeof(EventServiceClientFactory));
 
         public IServiceClient Create(string url)
         {

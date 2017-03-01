@@ -12,18 +12,18 @@ namespace ServiceStack.Webhooks.UnitTests.Clients
         [TestFixture]
         public class GivenAContext
         {
-            private WebhookEventServiceClient client;
+            private EventServiceClient client;
             private Mock<Webhooks.Clients.IServiceClient> serviceClient;
-            private Mock<IWebhookEventServiceClientFactory> serviceClientFactory;
+            private Mock<IEventServiceClientFactory> serviceClientFactory;
 
             [SetUp]
             public void Initialize()
             {
-                serviceClientFactory = new Mock<IWebhookEventServiceClientFactory>();
+                serviceClientFactory = new Mock<IEventServiceClientFactory>();
                 serviceClient = new Mock<Webhooks.Clients.IServiceClient>();
                 serviceClientFactory.Setup(scf => scf.Create(It.IsAny<string>()))
                     .Returns(serviceClient.Object);
-                client = new WebhookEventServiceClient
+                client = new EventServiceClient
                 {
                     ServiceClientFactory = serviceClientFactory.Object
                 };
@@ -61,7 +61,7 @@ namespace ServiceStack.Webhooks.UnitTests.Clients
                 request.VerifySet(req => req.ContentType = MimeTypes.Json);
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
                 Assert.That(request.Object.Headers[WebhookEventConstants.EventNameHeaderName], Is.EqualTo("aneventname"));
-                Assert.That(request.Object.Headers[WebhookEventConstants.SecretHeaderName], Is.Null);
+                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.Null);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
@@ -83,7 +83,7 @@ namespace ServiceStack.Webhooks.UnitTests.Clients
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
                 Assert.That(request.Object.Headers[WebhookEventConstants.EventNameHeaderName], Is.EqualTo("aneventname"));
-                Assert.That(request.Object.Headers[WebhookEventConstants.SecretHeaderName], Is.EqualTo(string.Empty));
+                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.EqualTo(string.Empty));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
@@ -107,7 +107,7 @@ namespace ServiceStack.Webhooks.UnitTests.Clients
                 request.VerifySet(req => req.ContentType = "acontenttype");
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
                 Assert.That(request.Object.Headers[WebhookEventConstants.EventNameHeaderName], Is.EqualTo("aneventname"));
-                Assert.That(request.Object.Headers[WebhookEventConstants.SecretHeaderName], Is.EqualTo(string.Empty));
+                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.EqualTo(string.Empty));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
@@ -210,6 +210,21 @@ namespace ServiceStack.Webhooks.UnitTests.Clients
                 }, "aneventname", "adata");
 
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(2));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenPostAndRetriesIsZeroAndServiceClientFailsFirstTime_ThenDoesNotRetry()
+            {
+                client.Retries = 0;
+                serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
+                    .Callback(() => { throw new Exception(); });
+
+                client.Post(new SubscriptionConfig
+                {
+                    Url = "aurl"
+                }, "aneventname", "adata");
+
+                serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
             }
         }
     }

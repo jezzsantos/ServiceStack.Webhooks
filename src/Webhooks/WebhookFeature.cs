@@ -22,8 +22,8 @@ namespace ServiceStack.Webhooks
             if (!container.Exists<IWebhookEventSink>())
             {
                 container.RegisterAutoWiredAs<CacheClientEventSubscriptionCache, IWebhookEventSubscriptionCache>();
-                container.RegisterAutoWiredAs<WebhookEventServiceClientFactory, IWebhookEventServiceClientFactory>();
-                container.RegisterAutoWiredAs<WebhookEventServiceClient, IWebhookEventServiceClient>();
+                container.RegisterAutoWiredAs<EventServiceClientFactory, IEventServiceClientFactory>();
+                container.RegisterAutoWiredAs<EventServiceClient, IWebhookEventServiceClient>();
                 container.RegisterAutoWiredAs<AppHostWebhookEventSink, IWebhookEventSink>();
             }
             container.RegisterAutoWiredAs<WebhooksClient, IWebhooks>();

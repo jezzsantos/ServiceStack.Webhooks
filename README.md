@@ -38,12 +38,17 @@ Simply add the `WebhookFeature` in your `AppHost.Configure()` method:
 ```
 public override void Configure(Container container)
 {
-    Plugins.Add(new WebhookFeature();
+    Plugins.Add(new WebhookFeature());
 }
 ```
+
+Note: You must add the `WebhookFeature` after you use either of these features:
+* `Plugins.Add(new ValidationFeature();`
+* `Plugins.Add(new AuthFeature());`
+
 ## Subscription Service
 
-The `WebhookFeature` plugin automatically installs a built-in and secure subscription management API in your service on the following routes:
+The `WebhookFeature` plugin automatically installs a built-in (and secure) subscription management API in your service on the following routes:
 
 * POST /webhooks/subscriptions - creates a new subscription (for the current user)
 * GET /webhooks/subscriptions - lists all subscriptions (for the current user)
@@ -98,6 +103,52 @@ WARNING: The `AppHostWebhookEventSink` can work well in testing, but it is going
 ## Customizing
 
 There are various components of the webhook architecture that you can extend with your own pieces to suit your needs:
+
+### Subscription Service
+
+The subscription service is automatically built-in to your service when you add the `WebhookFeature`.
+If you prefer to roll your own subscription service, you can turn off the built-in one like this:
+
+```
+public override void Configure(Container container)
+{
+   // Add other plugins first
+
+    Plugins.Add(new WebhookFeature
+    {
+        IncludeSubscriptionService = false
+    });
+}
+```
+
+By default, the subscription service is secured by role-based access if you already have the `AuthFeature` plugin in your AppHost.
+If you don't use the `AuthFeature` then the subscription service is not secured, and can be used by anyone using your API.
+
+If you use the `AuthFeature`, rememmber to add the `WebhookFeature` plugin after you add the `AuthFeature` plugin.
+
+When the subscription service is secured, by default, the following roles are protecting the following operations:
+* POST /webhooks/subscriptions - "user"
+* GET /webhooks/subscriptions - "user"
+* GET /webhooks/subscriptions/{Id} - "user"
+* PUT /webhooks/subscriptions/{Id} - "user"
+* DELETE /webhooks/subscriptions/{Id} - "user"
+* GET /webhooks/subscriptions/search - "service"
+
+These roles are configurable by setting the following properties of the `WebhookFeature` when you register it:
+```
+public override void Configure(Container container)
+{
+    // Add the AuthFeature plugin first
+    Plugins.Add(new AuthFeature(......);
+
+    Plugins.Add(new WebhookFeature
+    {
+        SubscriptionAccessRoles = "accessrole1",
+        SubscriptionSearchRoles = "searchrole1;searchrole2"
+    });
+
+}
+```
 
 ### Subscription Store
 

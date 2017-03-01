@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Funq;
 using Moq;
 using NUnit.Framework;
+using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
@@ -23,6 +24,7 @@ namespace ServiceStack.Webhooks.UnitTests
 
                 new WebhookFeature().Register(appHost.Object);
 
+                Assert.That(container.GetService(typeof(ISubscriptionService)), Is.TypeOf<SubscriptionService>());
                 Assert.That(container.GetService(typeof(ICurrentCaller)), Is.TypeOf<AuthSessionCurrentCaller>());
             }
 
@@ -64,6 +66,9 @@ namespace ServiceStack.Webhooks.UnitTests
                 new WebhookFeature().Register(appHost.Object);
 
                 Assert.That(container.GetService(typeof(IWebhooks)), Is.TypeOf<WebhooksClient>());
+                Assert.That(container.GetService(typeof(IWebhookEventSubscriptionCache)), Is.TypeOf<CacheClientEventSubscriptionCache>());
+                Assert.That(container.GetService(typeof(IWebhookEventServiceClientFactory)), Is.TypeOf<WebhookEventServiceClientFactory>());
+                Assert.That(container.GetService(typeof(IWebhookEventServiceClient)), Is.TypeOf<WebhookEventServiceClient>());
             }
 
             [Test, Category("Unit")]
@@ -120,11 +125,16 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 throw new NotImplementedException();
             }
+
+            public List<SubscriptionConfig> Search(string eventName)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class TestEventSink : IWebhookEventSink
         {
-            public void Create<TDto>(string eventName, TDto data)
+            public void Write<TDto>(string eventName, TDto data)
             {
                 throw new NotImplementedException();
             }

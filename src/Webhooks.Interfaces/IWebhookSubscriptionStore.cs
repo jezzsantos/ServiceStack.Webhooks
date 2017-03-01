@@ -29,5 +29,10 @@ namespace ServiceStack.Webhooks
         ///     Deletes the subscription
         /// </summary>
         void Delete(string subscriptionId);
+
+        /// <summary>
+        ///     Returns all subscription configurations for all users for the specified event
+        /// </summary>
+        List<SubscriptionConfig> Search(string eventName);
     }
 }

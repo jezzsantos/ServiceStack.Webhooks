@@ -33,7 +33,7 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 webhooks.Publish("aneventname", "adata");
 
-                eventSink.Verify(es => es.Create("aneventname", "adata"));
+                eventSink.Verify(es => es.Write("aneventname", "adata"));
             }
         }
     }

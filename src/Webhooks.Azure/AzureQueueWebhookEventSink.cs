@@ -40,7 +40,7 @@ namespace ServiceStack.Webhooks.Azure
 
         public string QueueName { get; set; }
 
-        public void Create<TDto>(string eventName, TDto data)
+        public void Write<TDto>(string eventName, TDto data)
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
 

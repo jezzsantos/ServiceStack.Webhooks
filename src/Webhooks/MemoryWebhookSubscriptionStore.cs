@@ -34,6 +34,16 @@ namespace ServiceStack.Webhooks
                 .ToList();
         }
 
+        public List<SubscriptionConfig> Search(string eventName)
+        {
+            var keys = CacheClient.GetAllKeys();
+
+            return CacheClient.GetAll<WebhookSubscription>(keys)
+                .Where(pair => pair.Value.Event.EqualsIgnoreCase(eventName))
+                .Select(pair => pair.Value.Config)
+                .ToList();
+        }
+
         public WebhookSubscription Get(string userId, string eventName)
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);

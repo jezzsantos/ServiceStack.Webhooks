@@ -1,4 +1,5 @@
 ﻿using Funq;
+using ServiceStack.Logging;
 using ServiceStack.Validation;
 
 namespace ServiceStack.Webhooks.Azure.IntTests
@@ -12,6 +13,8 @@ namespace ServiceStack.Webhooks.Azure.IntTests
 
         public override void Configure(Container container)
         {
+            Licensing.LicenseServiceStackRuntime();
+            LogManager.LogFactory = new ConsoleLogFactory();
             Plugins.Add(new ValidationFeature());
 
             container.RegisterAutoWiredAs<AzureTableWebhookSubscriptionStore, IWebhookSubscriptionStore>();

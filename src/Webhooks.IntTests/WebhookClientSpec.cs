@@ -1,12 +1,14 @@
-﻿using NUnit.Framework;
-using ServiceStack.Caching;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
+using ServiceStack.Webhooks.ServiceModel;
+using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.IntTests
 {
     public class WebhookClientSpec
     {
         [TestFixture]
-        public class GivenDefaultFeature
+        public class GivenASubscriber
         {
             private static AppSelfHostBase appHost;
             private static JsonServiceClient client;
@@ -28,26 +30,47 @@ namespace ServiceStack.Webhooks.IntTests
 
                 client = new JsonServiceClient(BaseUrl);
                 eventSink = appHost.Resolve<IWebhookEventSink>();
+
+                client.Put(new ResetConsumedEvents());
             }
 
             [SetUp]
             public void Initialize()
             {
-                appHost.Resolve<ICacheClient>().FlushAll();
+                var subscriberUrl = BaseUrl.WithoutTrailingSlash() + new ConsumeEvent().ToPostUrl();
+
+                client.Post(new CreateSubscription
+                {
+                    Name = "test",
+                    Events = new List<string> {"aneventname"},
+                    Config = new SubscriptionConfig
+                    {
+                        Url = subscriberUrl
+                    }
+                });
             }
 
             [Test, Category("Integration")]
             public void WhenRaiseEvent_ThenEventSunk()
             {
-                client.Get(new RaiseEvent
+                client.Put(new RaiseEvent
                 {
-                    EventName = "aneventname"
+                    EventName = "aneventname",
+                    Data = new TestEvent
+                    {
+                        A = 1,
+                        B = 2,
+                        C = 3
+                    }
                 });
 
-                var events = eventSink.Peek();
+                var events = client.Get(new GetConsumedEvents()).Events;
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));
+                Assert.That(events[0].Data.A, Is.EqualTo("1"));
+                Assert.That(events[0].Data.B, Is.EqualTo("2"));
+                Assert.That(events[0].Data.C, Is.EqualTo("3"));
             }
         }
     }

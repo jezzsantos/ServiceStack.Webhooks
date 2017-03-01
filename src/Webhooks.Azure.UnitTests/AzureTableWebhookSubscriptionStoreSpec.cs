@@ -92,6 +92,33 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
             }
 
             [Test, Category("Unit")]
+            public void WhenSearchWithEventName_ThenReturnsAll()
+            {
+                tableStorage.Setup(ts => ts.Find(It.IsAny<TableStorageQuery>()))
+                    .Returns(new List<WebhookSubscriptionEntity>
+                    {
+                        new WebhookSubscriptionEntity
+                        {
+                            Id = "asubscriptionentityid",
+                            Config = new SubscriptionConfig
+                            {
+                                Url = "aurl"
+                            }.ToJson()
+                        }
+                    });
+
+                var result = store.Search("aneventname");
+
+                Assert.That(result.Count, Is.EqualTo(1));
+                Assert.That(result[0].Url, Is.EqualTo("aurl"));
+                tableStorage.Verify(ts => ts.Find(It.Is<TableStorageQuery>(tsq =>
+                    (tsq.Parts.Count == 1)
+                    && (tsq.Parts[0].PropertyName == "Event")
+                    && (tsq.Parts[0].Operation == QueryOperator.EQ)
+                    && (tsq.Parts[0].Value.ToString() == "aneventname"))));
+            }
+
+            [Test, Category("Unit")]
             public void WhenGetWithNullEventName_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() => store.Get(null, null));

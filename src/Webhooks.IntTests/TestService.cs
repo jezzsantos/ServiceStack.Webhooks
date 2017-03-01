@@ -6,7 +6,7 @@
 
         public void Any(RaiseEvent request)
         {
-            Webhooks.Publish(request.EventName, new TestEvent());
+            Webhooks.Publish(request.EventName, request.Data);
         }
     }
 
@@ -14,9 +14,16 @@
     public class RaiseEvent : IReturnVoid
     {
         public string EventName { get; set; }
+
+        public TestEvent Data { get; set; }
     }
 
     public class TestEvent
     {
+        public object A { get; set; }
+
+        public object B { get; set; }
+
+        public object C { get; set; }
     }
 }

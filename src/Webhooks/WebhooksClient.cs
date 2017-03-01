@@ -17,7 +17,7 @@ namespace ServiceStack.Webhooks
 
             logger.InfoFormat(@"Publishing webhook event {0}, with data {1}", eventName, data.ToJson());
 
-            EventSink.Create(eventName, data);
+            EventSink.Write(eventName, data);
         }
     }
 }

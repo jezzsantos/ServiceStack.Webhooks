@@ -50,7 +50,7 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
             [Test, Category("Unit")]
             public void WhenCreate_ThenCreatesEvent()
             {
-                sink.Create("aneventname", "adata");
+                sink.Write("aneventname", "adata");
 
                 queueStorage.Verify(qs => qs.Enqueue(It.Is<WebhookEvent>(whe =>
                         (whe.EventName == "aneventname")

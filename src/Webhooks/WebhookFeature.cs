@@ -1,5 +1,6 @@
 ﻿using Funq;
 using ServiceStack.Validation;
+using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel;
 
@@ -20,6 +21,9 @@ namespace ServiceStack.Webhooks
         {
             if (!container.Exists<IWebhookEventSink>())
             {
+                container.RegisterAutoWiredAs<CacheClientEventSubscriptionCache, IWebhookEventSubscriptionCache>();
+                container.RegisterAutoWiredAs<WebhookEventServiceClientFactory, IWebhookEventServiceClientFactory>();
+                container.RegisterAutoWiredAs<WebhookEventServiceClient, IWebhookEventServiceClient>();
                 container.RegisterAutoWiredAs<AppHostWebhookEventSink, IWebhookEventSink>();
             }
             container.RegisterAutoWiredAs<WebhooksClient, IWebhooks>();
@@ -38,6 +42,7 @@ namespace ServiceStack.Webhooks
             var container = appHost.GetContainer();
             appHost.RegisterService(typeof(SubscriptionService));
 
+            container.RegisterAutoWiredAs<SubscriptionService, ISubscriptionService>();
             container.RegisterValidators(typeof(WebHookInterfaces).Assembly, typeof(SubscriptionService).Assembly);
             container.RegisterAutoWiredAs<SubscriptionEventsValidator, ISubscriptionEventsValidator>();
             container.RegisterAutoWiredAs<SubscriptionConfigValidator, ISubscriptionConfigValidator>();

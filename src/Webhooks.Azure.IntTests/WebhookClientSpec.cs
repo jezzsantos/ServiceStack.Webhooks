@@ -46,7 +46,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
                     EventName = "aneventname"
                 });
 
-                var events = eventSink.Peek();
+                var events = ((AzureQueueWebhookEventSink) eventSink).Peek();
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));

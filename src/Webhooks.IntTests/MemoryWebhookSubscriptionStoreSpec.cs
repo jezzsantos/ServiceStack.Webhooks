@@ -45,14 +45,6 @@ namespace ServiceStack.Webhooks.IntTests
             }
 
             [Test, Category("Integration")]
-            public void WhenFind_ThenReturnsNoSubscriptions()
-            {
-                var results = store.Find(null);
-
-                Assert.That(results.Count, Is.EqualTo(0));
-            }
-
-            [Test, Category("Integration")]
             public void WhenGetAndExistingSubscription_ThenReturnsSubscription()
             {
                 store.Add(new WebhookSubscription
@@ -64,6 +56,14 @@ namespace ServiceStack.Webhooks.IntTests
                 var result = store.Get(null, "aneventname");
 
                 Assert.That(result.Event, Is.EqualTo("aneventname"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenFind_ThenReturnsNoSubscriptions()
+            {
+                var results = store.Find(null);
+
+                Assert.That(results.Count, Is.EqualTo(0));
             }
 
             [Test, Category("Integration")]
@@ -104,6 +104,63 @@ namespace ServiceStack.Webhooks.IntTests
                 Assert.That(results.Count, Is.EqualTo(2));
                 Assert.That(results[0].Event, Is.EqualTo("aneventname1"));
                 Assert.That(results[1].Event, Is.EqualTo("aneventname2"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenSearch_ThenReturnsNoSubscriptions()
+            {
+                var results = store.Search("aneventname");
+
+                Assert.That(results.Count, Is.EqualTo(0));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenSearchAndExistingSubscription_ThenReturnsSubscription()
+            {
+                store.Add(new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
+                });
+
+                var results = store.Search("aneventname")
+                    .ToList();
+
+                Assert.That(results.Count, Is.EqualTo(1));
+                Assert.That(results[0].Url, Is.EqualTo("aurl"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenSearchAndExistingSubscriptions_ThenReturnsSubscriptions()
+            {
+                store.Add(new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname1",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl1"
+                    }
+                });
+                store.Add(new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname2",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl2"
+                    }
+                });
+
+                var results = store.Search("aneventname1")
+                    .ToList();
+
+                Assert.That(results.Count, Is.EqualTo(1));
+                Assert.That(results[0].Url, Is.EqualTo("aurl1"));
             }
 
             [Test, Category("Integration")]
@@ -186,14 +243,6 @@ namespace ServiceStack.Webhooks.IntTests
             }
 
             [Test, Category("Integration")]
-            public void WhenFind_ThenReturnsNoSubscriptions()
-            {
-                var results = store.Find("auserid");
-
-                Assert.That(results.Count, Is.EqualTo(0));
-            }
-
-            [Test, Category("Integration")]
             public void WhenGetAndExistingSubscription_ThenReturnsSubscription()
             {
                 store.Add(new WebhookSubscription
@@ -205,6 +254,14 @@ namespace ServiceStack.Webhooks.IntTests
                 var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result.Event, Is.EqualTo("aneventname"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenFind_ThenReturnsNoSubscriptions()
+            {
+                var results = store.Find("auserid");
+
+                Assert.That(results.Count, Is.EqualTo(0));
             }
 
             [Test, Category("Integration")]
@@ -245,6 +302,64 @@ namespace ServiceStack.Webhooks.IntTests
                 Assert.That(results.Count, Is.EqualTo(2));
                 Assert.That(results[0].Event, Is.EqualTo("aneventname1"));
                 Assert.That(results[1].Event, Is.EqualTo("aneventname2"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenSearch_ThenReturnsNoSubscriptions()
+            {
+                var results = store.Search("aneventname");
+
+                Assert.That(results.Count, Is.EqualTo(0));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenSearchAndExistingSubscription_ThenReturnsSubscription()
+            {
+                store.Add(new WebhookSubscription
+                {
+                    CreatedById = "auserid1",
+                    Event = "aneventname",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
+                });
+
+                var results = store.Search("aneventname")
+                    .ToList();
+
+                Assert.That(results.Count, Is.EqualTo(1));
+                Assert.That(results[0].Url, Is.EqualTo("aurl"));
+            }
+
+            [Test, Category("Integration")]
+            public void WhenSearchAndExistingSubscriptions_ThenReturnsSubscriptions()
+            {
+                store.Add(new WebhookSubscription
+                {
+                    CreatedById = "auserid1",
+                    Event = "aneventname",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl1"
+                    }
+                });
+                store.Add(new WebhookSubscription
+                {
+                    CreatedById = "auserid2",
+                    Event = "aneventname",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl2"
+                    }
+                });
+
+                var results = store.Search("aneventname")
+                    .ToList();
+
+                Assert.That(results.Count, Is.EqualTo(2));
+                Assert.That(results[0].Url, Is.EqualTo("aurl1"));
+                Assert.That(results[1].Url, Is.EqualTo("aurl2"));
             }
 
             [Test, Category("Integration")]

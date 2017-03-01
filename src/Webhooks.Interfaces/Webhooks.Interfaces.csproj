@@ -36,11 +36,15 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DataFormats.cs" />
+    <Compile Include="Clients\IWebhookEventServiceClient.cs" />
     <Compile Include="IWebhookEventSink.cs" />
+    <Compile Include="IWebhookEventSubscriptionCache.cs" />
     <Compile Include="ServiceModel\DeleteSubscription.cs" />
+    <Compile Include="ServiceModel\SearchSubscriptions.cs" />
     <Compile Include="ServiceModel\UpdateSubscription.cs" />
     <Compile Include="ServiceModel\ListSubscriptions.cs" />
     <Compile Include="ServiceModel\GetSubscription.cs" />
+    <Compile Include="WebhookEventConstants.cs" />
     <Compile Include="WebHookInterfaces.cs" />
     <Compile Include="IWebhookPublisher.cs" />
     <Compile Include="IWebhookRelay.cs" />

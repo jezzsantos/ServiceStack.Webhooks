@@ -20,7 +20,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             [Test, Category("Integration")]
             public void WhenCreate_ThenQueuesEvent()
             {
-                sink.Create("aneventname", "adata");
+                sink.Write("aneventname", "adata");
 
                 var result = sink.Peek();
 

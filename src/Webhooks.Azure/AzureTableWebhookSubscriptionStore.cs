@@ -58,6 +58,14 @@ namespace ServiceStack.Webhooks.Azure
                 .ConvertAll(x => x.FromEntity());
         }
 
+        public List<SubscriptionConfig> Search(string eventName)
+        {
+            return TableStorage.Find(new TableStorageQuery(@"Event", QueryOperator.EQ, eventName))
+                .ConvertAll(x => x.FromEntity())
+                .Select(x => x.Config)
+                .ToList();
+        }
+
         public WebhookSubscription Get(string userId, string eventName)
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);

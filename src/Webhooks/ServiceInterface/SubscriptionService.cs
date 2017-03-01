@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ServiceStack.Logging;
 using ServiceStack.Webhooks.Properties;
@@ -7,7 +8,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.ServiceInterface
 {
-    internal class SubscriptionService : Service
+    internal class SubscriptionService : Service, ISubscriptionService
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(SubscriptionService));
 
@@ -16,6 +17,23 @@ namespace ServiceStack.Webhooks.ServiceInterface
         public ICurrentCaller Caller
         {
             get { return Request.ToCaller(); }
+        }
+
+        public List<SubscriptionConfig> Search(string eventName)
+        {
+            return Store.Search(eventName);
+        }
+
+        public SearchSubscriptionsResponse Search(SearchSubscriptions request)
+        {
+            var subscribers = Search(request.EventName);
+
+            logger.InfoFormat(@"Retrieved subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
+
+            return new SearchSubscriptionsResponse
+            {
+                Subscribers = subscribers
+            };
         }
 
         public CreateSubscriptionResponse Post(CreateSubscription request)

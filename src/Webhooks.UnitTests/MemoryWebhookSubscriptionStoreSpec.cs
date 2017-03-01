@@ -106,6 +106,28 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
+            public void WhenSearch_ThenReturnsSubscriptions()
+            {
+                var config = new SubscriptionConfig();
+                var subscription = new WebhookSubscription
+                {
+                    Event = "aneventname",
+                    Config = config
+                };
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
+                    .Returns(new Dictionary<string, WebhookSubscription>
+                    {
+                        {"akey", subscription}
+                    });
+
+                var result = store.Search("aneventname");
+
+                Assert.That(result[0], Is.EqualTo(config));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern("*"));
+                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+            }
+
+            [Test, Category("Unit")]
             public void WhenUpdateWithNullSubscriptionId_ThenThrows()
             {
                 Assert.That(() => store.Update(null, new WebhookSubscription()), Throws.ArgumentNullException);

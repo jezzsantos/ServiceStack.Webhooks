@@ -108,6 +108,10 @@
       <Project>{D32BA10F-0BC5-439D-AFE6-F6AFA0EC99CF}</Project>
       <Name>Webhooks.Azure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Webhooks.Common\Webhooks.Common.csproj">
+      <Project>{9607b2fc-6b77-41a1-910c-257cb786bd9c}</Project>
+      <Name>Webhooks.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Webhooks.Interfaces\Webhooks.Interfaces.csproj">
       <Project>{61c93a39-41bf-4aca-80b4-cb1d50a8858a}</Project>
       <Name>Webhooks.Interfaces</Name>

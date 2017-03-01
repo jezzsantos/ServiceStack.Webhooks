@@ -115,6 +115,15 @@ namespace ServiceStack.Webhooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The EventName is invalid.
+        /// </summary>
+        internal static string SearchSubscriptionsValidator_InvalidEventName {
+            get {
+                return ResourceManager.GetString("SearchSubscriptionsValidator_InvalidEventName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The subscription Secret is invalid.
         /// </summary>
         internal static string SubscriptionConfigValidator_InvalidSecret {

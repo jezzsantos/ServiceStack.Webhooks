@@ -244,6 +244,29 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 store.Verify(s => s.Find("auserid"));
                 store.Verify(s => s.Delete("asubscriptionid"));
             }
+
+            [Test, Category("Unit")]
+            public void WhenSearch_ThenReturnsSubscriptions()
+            {
+                var config = new SubscriptionConfig
+                {
+                    Url = "aurl"
+                };
+                store.Setup(s => s.Search("aneventname"))
+                    .Returns(new List<SubscriptionConfig>
+                    {
+                        config
+                    });
+
+                var result = service.Search(new SearchSubscriptions
+                {
+                    EventName = "aneventname"
+                });
+
+                Assert.That(result.Subscribers.Count, Is.EqualTo(1));
+                Assert.That(result.Subscribers[0], Is.EqualTo(config));
+                store.Verify(s => s.Search("aneventname"));
+            }
         }
     }
 }

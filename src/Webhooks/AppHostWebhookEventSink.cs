@@ -1,43 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ServiceStack.Caching;
+using ServiceStack.Webhooks.Clients;
+using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
 {
     internal class AppHostWebhookEventSink : IWebhookEventSink
     {
-        internal const string CachekeyFormat = @"events:{0}:{1}";
+        public AppHostWebhookEventSink()
+        {
+            Retries = 3;
+            TimeoutSecs = 60;
+        }
 
-        public ICacheClient CacheClient { get; set; }
+        public IWebhookEventSubscriptionCache SubscriptionCache { get; set; }
 
-        public void Create<TDto>(string eventName, TDto data)
+        public IWebhookEventServiceClient ServiceClient { get; set; }
+
+        public int Retries { get; set; }
+
+        public int TimeoutSecs { get; set; }
+
+        public void Write<TDto>(string eventName, TDto data)
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
-            CacheClient.Add(FormatCacheKey(eventName), new WebhookEvent
-            {
-                CreatedDateUtc = DateTime.UtcNow.ToNearestMillisecond(),
-                EventName = eventName,
-                Data = data
-            });
+            var subscriptions = SubscriptionCache.GetAll(eventName);
+            subscriptions.ForEach(sub =>
+                    NotifySubscription(sub, eventName, data));
         }
 
-        public List<WebhookEvent> Peek()
+        private void NotifySubscription<TDto>(SubscriptionConfig subscription, string eventName, TDto data)
         {
-            var keys = CacheClient.GetAllKeys();
-            var events = CacheClient.GetAll<WebhookEvent>(keys)
-                .OrderByDescending(whe => whe.Value.CreatedDateUtc);
-
-            return events.Select(pair => pair.Value)
-                .ToList();
-        }
-
-        internal static string FormatCacheKey(string eventName)
-        {
-            var time = DateTime.UtcNow.ToNearestMillisecond().ToIso8601();
-
-            return CachekeyFormat.Fmt(eventName, time);
+            ServiceClient.Retries = Retries;
+            ServiceClient.Timeout = TimeSpan.FromSeconds(TimeoutSecs);
+            ServiceClient.Post(subscription, eventName, data);
         }
     }
 }

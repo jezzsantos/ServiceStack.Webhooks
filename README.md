@@ -57,7 +57,9 @@ The `WebhookFeature` plugin automatically installs a built-in (and secure) subsc
 * DELETE /webhooks/subscriptions/{Id} - deletes the subscription
 
 This allows any users of your web service to create webhook registrations (subscribers to webhook events) for the events you raise in your service.
+
 Note: Webhook subscriptions will be associated to the UserId (`ISession.UserId`) of the user using your service.
+
 Note: This service uses role-based authorization to restrict who can call what, you can customize those roles. (see later)
 
 ## Components

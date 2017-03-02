@@ -26,8 +26,6 @@ Want to get involved? Want to help add this capability to your services? just se
 
 # Getting Started
 
-[**This project is still in its infancy and is not yet operational end to end (that is, any version less than 1.0.0)**]
-
 Install from NuGet:
 ```
 Install-Package ServiceStack.Webhooks

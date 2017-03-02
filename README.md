@@ -16,7 +16,9 @@ The project has these aims:
 For example: In one service, you may want to store the Webhook subscriptions in a MongoDB database, and have an Azure worker role relay the events to subscribers from a (reliable) cloud queue.
 In another service, you may want to store subscriptions in Ormlite SQL database, and relay events to subscribers directly from within the same service on a background thread.
 
-The choice should be yours. 
+The choice should be yours.
+
+![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 
 If you cant find the component you want for your architecture, it should be easy for you to build add your own and just plug it in.
 
@@ -96,7 +98,7 @@ By default, the `AppHostWebhookEventSink` is used as the event sink.
 
 When events are raised to it, the sink queries the `ISubscriptionsService.Search(eventName)` (in-proc) to fetch all the subscriptions to POST events to. It caches those subscriptions for a TTL (say 60s), to reduce the number of times the query for the same event is made (to avoid chatter as events are raised in your services). Then is dispatches the notification of that event to all registered subscribers (over HTTP). It will retry 3 times before giving up (`EventServiceClient.Post`).
 
-![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/AppHostEventSink.PNG)
+![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Default.PNG)
 
 WARNING: The `AppHostWebhookEventSink` can work well in testing, but it is going to slow down your service request times, as it has to notify each of the subscribers, and that network latency is added to the call time of your API (since it is done in-proc and on the same thread as that of the web request that raised the event).
 
@@ -193,7 +195,7 @@ If you deploy your web service to Microsoft Azure, you can use Azure storage Tab
 
 Subscriptions can be stored in Azure table storage, and events can be queued and relayed by a WorkerRole from an Azure queue.
 
-![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/AzureQueueEventSink.PNG)
+![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Azure.PNG)
 
 Install from NuGet:
 ```

@@ -36,6 +36,8 @@ Simply add the `WebhookFeature` in your `AppHost.Configure()` method:
 ```
 public override void Configure(Container container)
 {
+    // Add ValidationFeature and AuthFeature plugins first
+
     Plugins.Add(new WebhookFeature());
 }
 ```
@@ -53,6 +55,7 @@ The `WebhookFeature` plugin automatically installs a built-in (and secure) subsc
 * GET /webhooks/subscriptions/{Id} - gets the details of the subscription
 * PUT /webhooks/subscriptions/{Id} - updates the subscription
 * DELETE /webhooks/subscriptions/{Id} - deletes the subscription
+* GET /webhooks/subscriptions/search - gets the subscribers for a specific event
 
 This allows any users of your web service to create webhook registrations (subscribers to webhook events) for the events you raise in your service.
 

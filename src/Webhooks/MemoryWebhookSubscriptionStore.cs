@@ -8,7 +8,7 @@ namespace ServiceStack.Webhooks
     internal class MemoryWebhookSubscriptionStore : IWebhookSubscriptionStore
     {
         internal const string CachekeyPrefix = @"subscriptions";
-        internal const string CachekeyFormat = CachekeyPrefix+ @":{0}:{1}";
+        internal const string CachekeyFormat = CachekeyPrefix + @":{0}:{1}";
         internal const string CacheKeyForAnonymousUser = @"everyone";
 
         public ICacheClient CacheClient { get; set; }

@@ -2,21 +2,25 @@
 
 namespace ServiceStack.Webhooks.Azure.Queue
 {
-    internal interface IAzureQueueStorage
+    internal interface IAzureQueueStorage<TEntity>
     {
+        string QueueName { get; }
+
         /// <summary>
         ///     Queues the specified entity to storage
         /// </summary>
-        void Enqueue(WebhookEvent @event);
+        void Enqueue(TEntity @event);
 
         /// <summary>
         ///     Gets all the events from storage
         /// </summary>
-        List<WebhookEvent> Peek();
+        List<TEntity> Peek();
 
         /// <summary>
         ///     Empties all event from storage
         /// </summary>
         void Empty();
+
+        List<TEntity> RemoveMessages(int count);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ServiceStack.Logging;
 using ServiceStack.Webhooks.Properties;
+using ServiceStack.Webhooks.Relays;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
 

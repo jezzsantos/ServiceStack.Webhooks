@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace ServiceStack.Webhooks.Clients
+namespace ServiceStack.Webhooks.Relays.Clients
 {
     internal class ServiceClient : IServiceClient
     {
@@ -27,6 +27,11 @@ namespace ServiceStack.Webhooks.Clients
         public void Post<TRequest>(string url, TRequest request)
         {
             jsonClient.Post<TRequest>(url, request);
+        }
+
+        public TResponse Get<TResponse>(IReturn<TResponse> request)
+        {
+            return jsonClient.Get(request);
         }
     }
 }

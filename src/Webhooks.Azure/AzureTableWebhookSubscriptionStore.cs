@@ -10,21 +10,20 @@ namespace ServiceStack.Webhooks.Azure
     {
         internal const string DefaultTableName = "webhooksubscriptions";
         internal const string AzureConnectionStringSettingName = "AzureTableWebhookSubscriptionStore.ConnectionString";
-        internal const string DefaultAzureConnectionString = @"UseDevelopmentStorage=true";
         private IAzureTableStorage tableStorage;
 
         public AzureTableWebhookSubscriptionStore()
         {
             TableName = DefaultTableName;
 
-            ConnectionString = DefaultAzureConnectionString;
+            ConnectionString = AzureStorage.AzureEmulatorConnectionString;
         }
 
         public AzureTableWebhookSubscriptionStore(IAppSettings settings) : this()
         {
             Guard.AgainstNull(() => settings, settings);
 
-            ConnectionString = settings.Get(AzureConnectionStringSettingName, DefaultAzureConnectionString);
+            ConnectionString = settings.Get(AzureConnectionStringSettingName, AzureStorage.AzureEmulatorConnectionString);
         }
 
         /// <summary>

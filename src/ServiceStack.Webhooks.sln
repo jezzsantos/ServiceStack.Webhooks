@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting.Common", "UnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Common", "Webhooks.Common\Webhooks.Common.csproj", "{9607B2FC-6B77-41A1-910C-257CB786BD9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Relays", "Webhooks.Relays\Webhooks.Relays.csproj", "{1F406B4F-E891-49D9-8435-64E2FDC343C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Relays.UnitTests", "Webhooks.Relays.UnitTests\Webhooks.Relays.UnitTests.csproj", "{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +104,18 @@ Global
 		{9607B2FC-6B77-41A1-910C-257CB786BD9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9607B2FC-6B77-41A1-910C-257CB786BD9C}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
 		{9607B2FC-6B77-41A1-910C-257CB786BD9C}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
+		{1F406B4F-E891-49D9-8435-64E2FDC343C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F406B4F-E891-49D9-8435-64E2FDC343C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F406B4F-E891-49D9-8435-64E2FDC343C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F406B4F-E891-49D9-8435-64E2FDC343C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F406B4F-E891-49D9-8435-64E2FDC343C8}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
+		{1F406B4F-E891-49D9-8435-64E2FDC343C8}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,5 +127,6 @@ Global
 		{6D27D512-5CF4-41EE-A05B-69EF18DCE05D} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 		{3D158CE6-1370-4957-A78B-D3EFB730D411} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 		{6468D272-EBA8-46BB-8D57-19E9EC3AB100} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
+		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 	EndGlobalSection
 EndGlobal

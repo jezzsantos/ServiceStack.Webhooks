@@ -6,7 +6,7 @@ using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace ServiceStack.Webhooks.Azure.Queue
 {
-    internal class AzureQueueStorage : IAzureQueueStorage
+    internal class AzureQueueStorage<TEntity> : IAzureQueueStorage<TEntity>
     {
         private const int CreationTimeoutSecs = 60;
         private const int MaxPeekableMessages = 32;
@@ -27,7 +27,12 @@ namespace ServiceStack.Webhooks.Azure.Queue
 
         protected CloudQueue Queue { get; private set; }
 
-        public void Enqueue(WebhookEvent @event)
+        public string QueueName
+        {
+            get { return queueName; }
+        }
+
+        public void Enqueue(TEntity @event)
         {
             EnsureQueue();
 
@@ -36,7 +41,7 @@ namespace ServiceStack.Webhooks.Azure.Queue
             ResetLastCreationCheckTime();
         }
 
-        public List<WebhookEvent> Peek()
+        public List<TEntity> Peek()
         {
             EnsureQueue();
 
@@ -46,12 +51,12 @@ namespace ServiceStack.Webhooks.Azure.Queue
                 var peekableCount = Math.Min(count, MaxPeekableMessages);
 
                 var messages = Queue.PeekMessages(peekableCount)
-                    .Select(msg => msg.AsString.FromJson<WebhookEvent>());
+                    .Select(msg => msg.AsString.FromJson<TEntity>());
                 ResetLastCreationCheckTime();
                 return messages.ToList();
             }
 
-            return new List<WebhookEvent>();
+            return new List<TEntity>();
         }
 
         public void Empty()
@@ -60,6 +65,35 @@ namespace ServiceStack.Webhooks.Azure.Queue
 
             Queue.Clear();
             ResetLastCreationCheckTime();
+        }
+
+        public List<TEntity> RemoveMessages(int maxCount)
+        {
+            EnsureQueue();
+
+            var entities = new List<TEntity>();
+            try
+            {
+                var messages = Queue.GetMessages(Math.Min(maxCount, MaxPeekableMessages));
+                if (messages != null)
+                {
+                    messages.ToList().ForEach(message =>
+                    {
+                        Queue.DeleteMessage(message);
+                        ResetLastCreationCheckTime();
+
+                        entities.Add(message.AsString.FromJson<TEntity>());
+                    });
+
+                    return entities;
+                }
+
+                return entities;
+            }
+            catch (StorageException)
+            {
+                return entities;
+            }
         }
 
         protected void EnsureQueue()

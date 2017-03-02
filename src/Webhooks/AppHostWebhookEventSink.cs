@@ -6,10 +6,13 @@ namespace ServiceStack.Webhooks
 {
     internal class AppHostWebhookEventSink : IWebhookEventSink
     {
+        internal const int DefaultServiceClientRetries = 3;
+        internal const int DefaultServiceClientTimeoutSeconds = 60;
+
         public AppHostWebhookEventSink()
         {
-            Retries = 3;
-            TimeoutSecs = 60;
+            Retries = DefaultServiceClientRetries;
+            TimeoutSecs = DefaultServiceClientTimeoutSeconds;
         }
 
         public IWebhookEventSubscriptionCache SubscriptionCache { get; set; }

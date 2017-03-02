@@ -1,9 +1,10 @@
 using System;
 using System.Net;
 using ServiceStack.Logging;
+using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.Webhooks.Clients
+namespace ServiceStack.Webhooks.Relays.Clients
 {
     public class EventServiceClient : IWebhookEventServiceClient
     {

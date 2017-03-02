@@ -9,14 +9,13 @@ namespace ServiceStack.Webhooks.Azure
     {
         internal const string DefaultQueueName = "webhookevents";
         internal const string AzureConnectionStringSettingName = "AzureQueueWebhookEventSink.ConnectionString";
-        internal const string DefaultAzureConnectionString = @"UseDevelopmentStorage=true";
-        private IAzureQueueStorage queueStorage;
+        private IAzureQueueStorage<WebhookEvent> queueStorage;
 
         public AzureQueueWebhookEventSink()
         {
             QueueName = DefaultQueueName;
 
-            ConnectionString = DefaultAzureConnectionString;
+            ConnectionString = AzureStorage.AzureEmulatorConnectionString;
         }
 
         public AzureQueueWebhookEventSink(IAppSettings settings)
@@ -24,15 +23,15 @@ namespace ServiceStack.Webhooks.Azure
         {
             Guard.AgainstNull(() => settings, settings);
 
-            ConnectionString = settings.Get(AzureConnectionStringSettingName, DefaultAzureConnectionString);
+            ConnectionString = settings.Get(AzureConnectionStringSettingName, AzureStorage.AzureEmulatorConnectionString);
         }
 
         /// <summary>
         ///     For testing only
         /// </summary>
-        internal IAzureQueueStorage QueueStorage
+        internal IAzureQueueStorage<WebhookEvent> QueueStorage
         {
-            get { return queueStorage ?? (queueStorage = new AzureQueueStorage(ConnectionString, QueueName)); }
+            get { return queueStorage ?? (queueStorage = new AzureQueueStorage<WebhookEvent>(ConnectionString, QueueName)); }
             set { queueStorage = value; }
         }
 
@@ -46,6 +45,7 @@ namespace ServiceStack.Webhooks.Azure
 
             QueueStorage.Enqueue(new WebhookEvent
             {
+                Id = DataFormats.CreateEntityIdentifier(),
                 EventName = eventName,
                 Data = data,
                 CreatedDateUtc = DateTime.UtcNow.ToNearestMillisecond()

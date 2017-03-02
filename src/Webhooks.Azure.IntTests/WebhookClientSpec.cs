@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using ServiceStack.Webhooks.Azure.IntTests.Services;
 
 namespace ServiceStack.Webhooks.Azure.IntTests
 {

@@ -6,3 +6,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Webhooks for Azure ServiceStack services")]
 [assembly: Guid("d3918712-67ed-43d1-97cb-7abb963ecaed")]
 [assembly: InternalsVisibleTo("ServiceStack.Webhooks.Azure.UnitTests")]
+[assembly: InternalsVisibleTo("ServiceStack.Webhooks.Azure.IntTests")]

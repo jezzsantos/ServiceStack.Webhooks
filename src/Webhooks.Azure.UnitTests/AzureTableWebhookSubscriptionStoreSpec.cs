@@ -32,7 +32,7 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
                 store = new AzureTableWebhookSubscriptionStore();
 
                 Assert.That(store.TableName, Is.EqualTo(AzureTableWebhookSubscriptionStore.DefaultTableName));
-                Assert.That(store.ConnectionString, Is.EqualTo(AzureTableWebhookSubscriptionStore.DefaultAzureConnectionString));
+                Assert.That(store.ConnectionString, Is.EqualTo(AzureStorage.AzureEmulatorConnectionString));
             }
 
             [Test, Category("Unit")]

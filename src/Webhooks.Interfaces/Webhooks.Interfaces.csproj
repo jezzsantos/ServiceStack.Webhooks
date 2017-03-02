@@ -45,6 +45,7 @@
     <Compile Include="ServiceModel\UpdateSubscription.cs" />
     <Compile Include="ServiceModel\ListSubscriptions.cs" />
     <Compile Include="ServiceModel\GetSubscription.cs" />
+    <Compile Include="WebhookEvent.cs" />
     <Compile Include="WebhookEventConstants.cs" />
     <Compile Include="WebHookInterfaces.cs" />
     <Compile Include="IWebhookPublisher.cs" />

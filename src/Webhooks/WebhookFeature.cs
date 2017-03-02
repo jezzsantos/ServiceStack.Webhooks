@@ -2,6 +2,8 @@
 using ServiceStack.Validation;
 using ServiceStack.Web;
 using ServiceStack.Webhooks.Clients;
+using ServiceStack.Webhooks.Relays;
+using ServiceStack.Webhooks.Relays.Clients;
 using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel;
 

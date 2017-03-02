@@ -1,9 +1,9 @@
 ﻿using System;
 using ServiceStack.Logging;
 
-namespace ServiceStack.Webhooks.Clients
+namespace ServiceStack.Webhooks.Relays.Clients
 {
-    internal class EventServiceClientFactory : IEventServiceClientFactory
+    public class EventServiceClientFactory : IEventServiceClientFactory
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(EventServiceClientFactory));
 

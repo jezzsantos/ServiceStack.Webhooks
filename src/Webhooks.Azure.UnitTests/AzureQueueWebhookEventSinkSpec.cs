@@ -12,13 +12,13 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
         [TestFixture]
         public class GivenAStore
         {
-            private Mock<IAzureQueueStorage> queueStorage;
+            private Mock<IAzureQueueStorage<WebhookEvent>> queueStorage;
             private AzureQueueWebhookEventSink sink;
 
             [SetUp]
             public void Initialize()
             {
-                queueStorage = new Mock<IAzureQueueStorage>();
+                queueStorage = new Mock<IAzureQueueStorage<WebhookEvent>>();
                 sink = new AzureQueueWebhookEventSink
                 {
                     QueueStorage = queueStorage.Object
@@ -31,7 +31,7 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
                 sink = new AzureQueueWebhookEventSink();
 
                 Assert.That(sink.QueueName, Is.EqualTo(AzureQueueWebhookEventSink.DefaultQueueName));
-                Assert.That(sink.ConnectionString, Is.EqualTo(AzureQueueWebhookEventSink.DefaultAzureConnectionString));
+                Assert.That(sink.ConnectionString, Is.EqualTo(AzureStorage.AzureEmulatorConnectionString));
             }
 
             [Test, Category("Unit")]
@@ -56,6 +56,7 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
                         (whe.EventName == "aneventname")
                         && (whe.Data.ToString() == "adata")
                         && whe.CreatedDateUtc.IsNear(DateTime.UtcNow)
+                        && whe.Id.IsEntityId()
                 )));
             }
 

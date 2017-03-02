@@ -2,7 +2,7 @@
 using ServiceStack.Logging;
 using ServiceStack.Validation;
 
-namespace ServiceStack.Webhooks.Azure.IntTests
+namespace ServiceStack.Webhooks.Azure.IntTests.Services
 {
     public class AppHostForAzureTesting : AppSelfHostBase
     {

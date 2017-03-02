@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.Webhooks.ServiceInterface
+namespace ServiceStack.Webhooks.Relays
 {
     public interface ISubscriptionService
     {

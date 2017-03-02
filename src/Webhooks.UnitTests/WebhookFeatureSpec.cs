@@ -5,6 +5,8 @@ using Funq;
 using NUnit.Framework;
 using ServiceStack.Testing;
 using ServiceStack.Webhooks.Clients;
+using ServiceStack.Webhooks.Relays;
+using ServiceStack.Webhooks.Relays.Clients;
 using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
@@ -255,11 +257,6 @@ namespace ServiceStack.Webhooks.UnitTests
         public class TestEventSink : IWebhookEventSink
         {
             public void Write<TDto>(string eventName, TDto data)
-            {
-                throw new NotImplementedException();
-            }
-
-            public List<WebhookEvent> Peek()
             {
                 throw new NotImplementedException();
             }

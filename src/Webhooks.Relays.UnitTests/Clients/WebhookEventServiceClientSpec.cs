@@ -2,10 +2,10 @@
 using System.Net;
 using Moq;
 using NUnit.Framework;
-using ServiceStack.Webhooks.Clients;
+using ServiceStack.Webhooks.Relays.Clients;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.Webhooks.UnitTests.Clients
+namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
 {
     public class WebhookEventServiceClientSpec
     {
@@ -13,14 +13,14 @@ namespace ServiceStack.Webhooks.UnitTests.Clients
         public class GivenAContext
         {
             private EventServiceClient client;
-            private Mock<Webhooks.Clients.IServiceClient> serviceClient;
+            private Mock<Relays.Clients.IServiceClient> serviceClient;
             private Mock<IEventServiceClientFactory> serviceClientFactory;
 
             [SetUp]
             public void Initialize()
             {
                 serviceClientFactory = new Mock<IEventServiceClientFactory>();
-                serviceClient = new Mock<Webhooks.Clients.IServiceClient>();
+                serviceClient = new Mock<Relays.Clients.IServiceClient>();
                 serviceClientFactory.Setup(scf => scf.Create(It.IsAny<string>()))
                     .Returns(serviceClient.Object);
                 client = new EventServiceClient

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using ServiceStack.Caching;
-using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.Webhooks.UnitTests
+namespace ServiceStack.Webhooks.Relays.UnitTests
 {
     public class CacheClientEventSubscriptionCacheSpec
     {

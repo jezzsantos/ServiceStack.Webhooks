@@ -10,7 +10,7 @@ namespace ServiceStack.Webhooks.UnitTests
     public class AppHostWebhookEventSinkSpec
     {
         [TestFixture]
-        public class GivenACacheClient
+        public class GivenACacheAndServiceClient
         {
             private Mock<IWebhookEventServiceClient> serviceClient;
             private AppHostWebhookEventSink sink;
@@ -59,8 +59,8 @@ namespace ServiceStack.Webhooks.UnitTests
                 sink.Write("aneventname", "adata");
 
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
-                serviceClient.VerifySet(sc => sc.Retries = 3);
-                serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(60));
+                serviceClient.VerifySet(sc => sc.Retries = AppHostWebhookEventSink.DefaultServiceClientRetries);
+                serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(AppHostWebhookEventSink.DefaultServiceClientTimeoutSeconds));
                 serviceClient.Verify(sc => sc.Post(config, "aneventname", "adata"));
             }
         }

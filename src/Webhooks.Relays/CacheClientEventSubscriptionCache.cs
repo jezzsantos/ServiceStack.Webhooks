@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using ServiceStack.Caching;
-using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.Webhooks
+namespace ServiceStack.Webhooks.Relays
 {
     /// <summary>
     ///     This cache stores subscriptions (by eventname) for some TTL before fetching them again from
-    ///     <see cref="SubscriptionService" />.
+    ///     <see cref="ISubscriptionService" />.
     /// </summary>
-    internal class CacheClientEventSubscriptionCache : IWebhookEventSubscriptionCache
+    public class CacheClientEventSubscriptionCache : IWebhookEventSubscriptionCache
     {
         internal const string CachekeyPrefix = @"subscribers";
         internal const string CachekeyFormat = CachekeyPrefix + @":{0}";

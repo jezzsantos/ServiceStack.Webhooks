@@ -1,4 +1,4 @@
-﻿namespace ServiceStack.Webhooks.Azure.IntTests
+﻿namespace ServiceStack.Webhooks.Azure.IntTests.Services
 {
     internal class TestService : Service
     {
@@ -18,5 +18,10 @@
 
     public class TestEvent
     {
+        public object A { get; set; }
+
+        public object B { get; set; }
+
+        public object C { get; set; }
     }
 }

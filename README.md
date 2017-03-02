@@ -5,18 +5,14 @@ Add Webhooks to your ServiceStack services
 
 # Overview
 
-This project aims to make it very easy to expose your own Webhooks to your ServiceStack services, and to manage 3rd party subscriptions to those webhooks. 
+This project make it very easy to expose your own Webhooks to your ServiceStack services, and to manage 3rd party subscriptions to those webhooks. 
 
-The project has these aims:
-
-1. To deliver this capability in a small set of nuget packages. For example: The `ServiceStack.Webhooks` package would deliver the `AppHost` plugin (`WebhookFeature`) and the ability to manage subscriptions (built-in services, operations etc.), and the components to raise custom events from within your service (i.e. `IWebhooks.Publish(string eventName, TDto data)`). Then other packages like `ServiceStack.Webhooks.Azure` or `ServiceStack.Webhooks.Redis` etc. would deliver various technologiess with components responsible for relaying/delivering events to registered subscribers (over HTTP).
-2. Make it simple to configure the Webhooks in your service (i.e. in your `AppHost` just add the `WebhookFeature` plugin, and then register your chosen technology components for it).
-3. Make it each component extensible and customizable to work with your services. i.e. allowing you to use your favorite data repositories (for subsciption management), and to integrate the pub/sub mechanics with your favorite technologies in your host architecture. (i.e. buses, queues, functions, etc.)
+By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to manage webhooks raised by your services. We know that most services are built for scalability and to be hosted in the cloud, so we know you are going to want to use your own database, and fit in with your own architecture, and so you can with the `WebhookFeature`.
 
 For example: In one service, you may want to store the Webhook subscriptions in a MongoDB database, and have an Azure worker role relay the events to subscribers from a (reliable) cloud queue.
 In another service, you may want to store subscriptions in Ormlite SQL database, and relay events to subscribers directly from within the same service on a background thread.
 
-The choice should be yours.
+The choice is yours.
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 

@@ -16,7 +16,7 @@ In another service, you may want to store subscriptions in _Ormlite SQL database
 
 The choice is entirely yours.
 
-_Oh, don't worry, we haven't left it entirely up to you, just to get started. We got your back with a built-in store and built-in event sink that will get you going seeing how it works. But eventually you'll want to swap those out for your own pieces._
+_Oh, don't worry, we haven't left it entirely up to you, just to get started. We got your back with a built-in subscription store and built-in event sink that will get you going seeing how it works. But eventually you'll want to swap those out for your own pieces, which is easy._
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 

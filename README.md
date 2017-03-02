@@ -286,10 +286,57 @@ public override void Configure(Container container)
 
 ### Configuring an Azure WorkerRole Relay
 
-Now you will deploy an Azure WorkerRole that will query the events queue and relay the events to all subscribers.
+Now you can deploy an Azure WorkerRole that can query the events 'queue' and relay those events to all subscribers.
+Since you are deploying this component to Azure, the configuration for it will exist in your Azure configuration files: `ServiceConfiguration.cscfg`
 
-(details coming soon)
+Create a new 'Azure Cloud Service' project in your solution, and add a 'WorkerRole' to it. (in this example we will name it "WebhookEventRelay")
 
+In the new 'WebhookEventRelay' project, install the nuget package:
+
+```
+Install-Package Servicestack.Webhooks.Azure
+```
+
+In the 'WorkerRole.cs' file that was created for you, replace the 'WorkerRole' class with this code:
+
+```
+public class WorkerRole : AzureWorkerRoleEntryPoint
+    {
+        private List<WorkerEntryPoint> workers;
+
+        protected override IEnumerable<WorkerEntryPoint> Workers
+        {
+            get { return workers; }
+        }
+
+        public override void Configure(Container container)
+        {
+            base.Configure(container);
+
+            container.Register<IAppSettings>(new CloudAppSettings());
+            container.Register(new EventRelayWorker(container));
+
+            workers = new List<WorkerEntryPoint>
+            {
+                container.Resolve<EventRelayWorker>()
+            };
+        }
+    }
+```
+
+In the 'Cloud' project that you created, edit the properties of the 'WebhookEventRelay' role.
+
+Go to the 'Settings' tab and add the following settings:
+
+* (string) SubscriptionServiceClient.SubscriptionService.BaseUrl - The base URL of your webhook subscription service (where the `WebhookFeature` is installed ). For example: http://myserver:80/api
+* (string) EventRelayQueueProcessor.Polling.Interval.Seconds - The interval (in seconds) that the worker role polls the Azure queue for new events. For example: 5
+* (ConnectionString) EventRelayQueueProcessor.ConnectionString - The Azure Storage account connection string. For example: UseDevelopmentStorage=true
+* (string) EventRelayQueueProcessor.TargetQueue.Name - The name of the queue where events will be polled. For example: webhookevents
+* (string) EventRelayQueueProcessor.UnhandledQueue.Name - The name of the queue where failed events are dropped. For example: unhandledwebhookevents
+* (string) EventRelayQueueProcessor.ServiceClient.Retries - The number of retry attempts the relay will make to notify a subscriber before giving up. For example: 3
+* (string) EventRelayQueueProcessor.ServiceClient.Timeout.Seconds - The timeout (in seconds) the relay will wait for the subscriber endpoint before cancelling the notification. For example: 60
+
+Note: the value of the setting `EventRelayQueueProcessor.TargetQueue.Name` must be the same as the `AzureQueueWebhookEventSink.QueueName` that you may have configured in the `WebhookFeature`.
 
 ### Configuring Azure Storage Credentials
 

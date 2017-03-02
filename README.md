@@ -65,11 +65,14 @@ Note: Webhook subscriptions will be associated to the UserId (`ISession.UserId`)
 
 Note: This service uses role-based authorization to restrict who can call what, you can customize those roles. (see later)
 
-## Components
+## Pluggable Components
 
-By default, the `WebhookFeature` uses a `MemoryWebhookSubscriptionStore` to store all registered subscriptions and a `AppHostWebhookEventSink` to relay raised events directly from your service to subscribers.
+By default, the following components are installed by the `WebhookFeature`:
 
-**WARNING:** In production systems these default components will need to be replaced, by customizing your configuration of the `WebhookFeature`: 
+* SubscriptionStore: `MemoryWebhookSubscriptionStore` to store all registered subscriptions
+* Event Sink: `AppHostWebhookEventSink` to relay raised events directly from your service to subscribers.
+
+**WARNING:** In production systems these default components will **need to be replaced**, by customizing your configuration of the `WebhookFeature`: 
 
 * Configure a `IWebhookSubscriptionStore` with one that is more appropriate to more persistent storage, like an OrmLiteStore or RedisStore, or a stores subscriptions using a database of your choice. WARNING: If you don't do this, and you continue to use the built-in `MemoryWebhookSubscriptionStore` your subscriptions will be lost when your host/site is restarted.
 * (Optional) Consider configuring a `IWebhookEventSink` with one that introduces some buffering between raising events and POSTing them to registered subscribers, like an Trigger, Queue, Bus-based implementation of your choice. WARNING: If you don't do this, and you continue to use the built-in `AppHostWebhookEventSink` your subscribers will be notified in the same thread that you raised the event, which can slow down your service significantly. 
@@ -85,8 +88,35 @@ internal class HelloService : Service
 
     public HelloResponse Any(Hello request)
     {
-        Webhooks.Publish("hello", new HelloEvent());
+        Webhooks.Publish("hello", new HelloEvent{ Text = "Hello" });
     }
+}
+```
+
+## Receiving Events
+
+A subscriber that subscribes to your raised events would need to provide a HTTP POST endpoint to receive the webhook event. 
+
+In the case of the "hello" event above, they would need the following service operation to receive this event's unique data structure:
+
+```
+internal class MyService : Service
+{
+    public void Post(Hello request)
+    {
+       // I got a webhook event!
+       
+       // The event name, and other messaging metadata are included in the headers
+       var eventName = Request.Headers["X-Webhook-Event"];
+       var deliveryId = Request.Headers["X-Webhook-Delivery"];
+       var signature = Request.Headers["X-Hub-Signature"];
+    }
+}
+
+[Route("/hello", "POST")]
+public class Hello
+{
+    public string Text { get; set; }
 }
 ```
 

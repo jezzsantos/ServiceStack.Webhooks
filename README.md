@@ -205,6 +205,7 @@ When the subscription service is secured, by default, the following roles are pr
 * GET /webhooks/subscriptions/search - "service"
 
 These roles are configurable by setting the following properties of the `WebhookFeature` when you register it:
+
 ```
 public override void Configure(Container container)
 {
@@ -220,12 +221,14 @@ public override void Configure(Container container)
 }
 ```
 
+Note: You can even set the `SubscriptionAccessRoles` or `SubscriptionSearchRoles` to null if you don't want to use role-based access to secure them.
+
 ### Subscription Store
 
-Subscriptons for webhooks need to be stored (`IWebhookSubscriptionStore`), once a user of your service registers a webhook (using the registration API: `POST /webhooks/subscriptions`)
+Subscriptons for webhooks need to be stored (in `IWebhookSubscriptionStore`), once a user of your service subscribes to a webhook (using the API: `POST /webhooks/subscriptions`)
 
-You specify your store by registering it in the IOC container.
-If you specify no store, the default `MemoryWebhookSubscriptionStore` will be used, but beware that your subscriptions will be lost whenever your service is restarted.
+You specify your own store by registering it in the IOC container.
+If you specify no store, the default `MemoryWebhookSubscriptionStore` will be used, which is fine for testing, but beware that your subscriptions will be lost whenever your service is restarted.
 
 ```
 public override void Configure(Container container)
@@ -239,10 +242,12 @@ public override void Configure(Container container)
 
 ### Events Sink
 
-When events are raised they are passed to sink (typically temporarily, until relayed to all registered subscribers) in the event sink (`IWebhookEventSink`). Ideally, for scalability and performance, that is not done on the same thread nor in the same process.
+When events are raised they are passed to the event sink (`IWebhookEventSink`), typically temporarily, until they are "relayed" to all registered subscribers for that event. 
 
-You specify your sink by registering it in the container.
-If you specify no sink, the default `AppHostWebhookEventSink` will be used, but beware that this sink is not optimized for scale in production systems.
+Ideally, for scalability and performance, you probably would not want to do that on the same thread that riased the event, and probably not even by the same process.
+
+You specify your own sink by registering it in the IOC container.
+If you specify no sink, the default `AppHostWebhookEventSink` will be used, which is fine for testing, but beware that this sink works synchronously on the same thread that raises the event, and so it is not optimal for scale in production systems.
 
 ```
 public override void Configure(Container container)
@@ -254,11 +259,11 @@ public override void Configure(Container container)
 }
 ```
 
-## Azure Extensions
+# Azure Webhook Extensions
 
-If you deploy your web service to Microsoft Azure, you can use Azure storage Tables and Queues to implement the various components of the webhooks.
+If you deploy your web service to Microsoft Azure, you may want to use Azure storage Tables and Queues etc. to implement the various components of the webhooks.
 
-Subscriptions can be stored in Azure table storage, and events can be queued and relayed by a WorkerRole from an Azure queue.
+Subscriptions can simply be stored in Azure table storage, and Events can be queued in a Azure Queue, and then relayed by a WorkerRole to subscribers.
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Azure.PNG)
 
@@ -267,7 +272,7 @@ Install from NuGet:
 Install-Package Servicestack.Webhooks.Azure
 ```
 
-Add the `WebhookFeature` in your `AppHost.Configure()` method, and register the Azure components:
+Add the `WebhookFeature` in your `AppHost.Configure()` method as usual, and register the Azure components:
 
 ```
 public override void Configure(Container container)
@@ -279,22 +284,31 @@ public override void Configure(Container container)
 }
 ```
 
-By default, these services will connect to the local Azure Emulator (UseDevelopmentStorage=true) which might be fine for testing you service, but after you have deployed to your cloud, you will want to provide different storage connection strings.
+### Configuring an Azure WorkerRole Relay
+
+Now you will deploy an Azure WorkerRole that will query the events queue and relay the events to all subscribers.
+
+(details coming soon)
+
 
 ### Configuring Azure Storage Credentials
 
-If you use the overload constructors, and pass in the `IAppSettings`, like this:
+By default, these services will connect to the local Azure Emulator (UseDevelopmentStorage=true) which might be fine for testing your service, but after you have deployed to your cloud, you will want to provide different storage connection strings.
+
+If you use the overload constructors, and pass in the `IAppSettings`, like this, you can load settings from your Azure cloud configuration:
 
 ```
 public override void Configure(Container container)
 {
+    container.Register<IAppSettings>(new CloudAppSettings());
+
     container.Register<IWebhookSubscriptionStore>(new AzureTableWebhookSubscriptionStore(appSettings));
     container.Register<IWebhookEventSink>(new AzureQueueWebhookEventSink(appSettings));
 
     Plugins.Add(new WebhookFeature();
 }
 ```
-then:
+then from your current ServiceConfiguration.<Configuration>.cscfg file:
 
 * `AzureTableWebhookSubscriptionStore` will try to use a setting called: 'AzureTableWebhookSubscriptionStore.ConnectionString' for its storage connection
 * `AzureQueueWebhookEventSink` will try to use a setting called: 'AzureQueueWebhookEventSink.ConnectionString' for its storage connection
@@ -317,7 +331,7 @@ public override void Configure(Container container)
 }
 ```
 
-### Configuring Azure Resources
+### Configuring Azure Storage Resources
 
 By default, 
 

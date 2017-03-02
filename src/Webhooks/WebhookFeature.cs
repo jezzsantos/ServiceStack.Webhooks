@@ -73,28 +73,37 @@ namespace ServiceStack.Webhooks
 
                 if (appHost.Plugins.Exists(plugin => plugin is AuthFeature))
                 {
-                    appHost.GlobalRequestFilters.Add(AuthenticationFilter);
+                    appHost.GlobalRequestFilters.Add(AuthorizeSubscriptionServiceRequests);
                 }
             }
         }
 
-        internal void AuthenticationFilter(IRequest request, IResponse response, object dto)
+        internal void AuthorizeSubscriptionServiceRequests(IRequest request, IResponse response, object dto)
         {
             if (IsSubscriptionService(request.PathInfo))
             {
                 new AuthenticateAttribute().Execute(request, response, dto);
 
-                var requiredRoles = (request.PathInfo.EqualsIgnoreCase(new SearchSubscriptions().ToGetUrl())
-                        ? SubscriptionSearchRoles
-                        : SubscriptionAccessRoles)
-                    .SafeSplit(RoleDelimiters);
-                RequiresAnyRoleAttribute.AssertRequiredRoles(request, requiredRoles);
+                var requiredRoles = GetRequiredRoles(request.PathInfo);
+                if (requiredRoles.Length > 0)
+                {
+                    RequiresAnyRoleAttribute.AssertRequiredRoles(request, requiredRoles);
+                }
             }
         }
 
         private static bool IsSubscriptionService(string pathInfo)
         {
             return pathInfo.StartsWith(Subscription.RootPath);
+        }
+
+        private string[] GetRequiredRoles(string pathInfo)
+        {
+            var searchRequestPath = new SearchSubscriptions().ToGetUrl();
+            return (pathInfo.EqualsIgnoreCase(searchRequestPath)
+                    ? SubscriptionSearchRoles
+                    : SubscriptionAccessRoles)
+                .SafeSplit(RoleDelimiters);
         }
     }
 }

@@ -56,23 +56,23 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthenticationFilterAdded()
+            public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthorizeSubscriptionServiceRequestsAdded()
             {
                 appHost.Plugins.Add(new AuthFeature(() => null, null));
 
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
 
-                Assert.That(appHost.GlobalRequestFilters.Exists(action => action == feature.AuthenticationFilter), Is.True);
+                Assert.That(appHost.GlobalRequestFilters.Exists(action => action == feature.AuthorizeSubscriptionServiceRequests), Is.True);
             }
 
             [Test, Category("Unit")]
-            public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthenticationFilterNotAdded()
+            public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthorizeSubscriptionServiceRequestsNotAdded()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
 
-                Assert.That(appHost.GlobalRequestFilters.Exists(action => action == feature.AuthenticationFilter), Is.False);
+                Assert.That(appHost.GlobalRequestFilters.Exists(action => action == feature.AuthorizeSubscriptionServiceRequests), Is.False);
             }
 
             [Test, Category("Unit")]
@@ -125,18 +125,18 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthenticationFilterAndNotForSubscriptionService_ThenDoesNotAuthenticate()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndNotForSubscriptionService_ThenDoesNotAuthenticate()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
                 var request = new MockHttpRequest();
                 request.PathInfo = "/aresource";
 
-                feature.AuthenticationFilter(request, null, new TestDto());
+                feature.AuthorizeSubscriptionServiceRequests(request, null, new TestDto());
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthenticationFilterAndForSubscriptionServiceAndUnauthenticated_ThenThrowsUnauthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndUnauthenticated_ThenThrowsUnauthorized()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -149,11 +149,11 @@ namespace ServiceStack.Webhooks.UnitTests
                 };
                 var response = new MockHttpResponse(request);
 
-                Assert.That(() => feature.AuthenticationFilter(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Unauthorized));
+                Assert.That(() => feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Unauthorized));
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthenticationFilterAndForSubscriptionServiceAndAuthenticatedInWrongRole_ThenThrowsForbidden()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedInWrongRole_ThenThrowsForbidden()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -170,11 +170,53 @@ namespace ServiceStack.Webhooks.UnitTests
                 });
                 var response = new MockHttpResponse(request);
 
-                Assert.That(() => feature.AuthenticationFilter(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Forbidden));
+                Assert.That(() => feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Forbidden));
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthenticationFilterAndForSubscriptionServiceAndAuthenticatedInAccessRole_DoesNotThrow()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedAndNoAccessRoles_ThenAuthorized()
+            {
+                var feature = new WebhookFeature {SubscriptionAccessRoles = null};
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new GetSubscription
+                    {
+                        Id = "asubscriptionid"
+                    }.ToGetUrl()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true
+                });
+                var response = new MockHttpResponse(request);
+
+                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedAndNoSearchRoles_ThenAuthorized()
+            {
+                var feature = new WebhookFeature { SubscriptionAccessRoles = null };
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new GetSubscription
+                    {
+                        Id = "asubscriptionid"
+                    }.ToGetUrl()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true
+                });
+                var response = new MockHttpResponse(request);
+
+                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedInAccessRole_ThenAuthorized()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -193,11 +235,11 @@ namespace ServiceStack.Webhooks.UnitTests
                 });
                 var response = new MockHttpResponse(request);
 
-                feature.AuthenticationFilter(request, response, new TestDto());
+                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthenticationFilterAndForSubscriptionServiceAndAuthenticatedInSearchRole_DoesNotThrow()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedInSearchRole_ThenAuthorized()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -213,7 +255,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 });
                 var response = new MockHttpResponse(request);
 
-                feature.AuthenticationFilter(request, response, new TestDto());
+                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
             }
         }
 

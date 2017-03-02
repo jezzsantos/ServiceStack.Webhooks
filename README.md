@@ -7,18 +7,22 @@ Add Webhooks to your ServiceStack services
 
 This project makes it very easy to expose your own Webhooks to your ServiceStack services, and to manage your user's subscriptions to those webhooks.
 
-By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to raise and manage the events raised by your services. We know that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. Now you can, with the `WebhookFeature`.
+By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to raise and manage the events raised by your services. 
 
-For example: In one service, you may want to store the Webhook subscriptions in a MongoDB database, and have an Azure worker role relay the events to subscribers from a (reliable) cloud queue.
-In another service, you may want to store subscriptions in Ormlite SQL database, and relay events to subscribers directly from within the same service on a background thread, or throw the event to an AWS lambda to process.
+We _know_ that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. Now you can, with the `WebhookFeature`.
 
-The choice is now yours.
+For example: In one service, you may want to store the Webhook subscriptions in a _MongoDB database_, and have an _Azure worker role_ relay the events to subscribers from a (reliable) cloud _queue_.
+In another service, you may want to store subscriptions in _Ormlite SQL database_, and relay events to subscribers directly from within the same service _on a background thread_, or throw the event to an _AWS lambda_ to process.
+
+The choice is entirely yours.
+
+_Oh, don't worry, we haven't left it entirely up to you, just to get started. We got your back with a built-in store and built-in event sink that will get you going seeing how it works. But eventually you'll want to swap those out for your own pieces._
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 
-If you cant find the component you want for your architecture, it should be easy for you to build add your own and just plug it in.
+If you cant find the component you want for your architecture, it should be easy for you to build add your own and _just plug it in_.
 
-# Contribute!
+### Contribute!
 
 Want to get involved in this project? or want to help improve this capability for your services? just send us a message or pull-request!
 

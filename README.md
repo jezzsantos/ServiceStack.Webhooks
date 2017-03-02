@@ -318,7 +318,8 @@ public class WorkerRole : AzureWorkerRoleEntryPoint
 
             workers = new List<WorkerEntryPoint>
             {
-                container.Resolve<EventRelayWorker>()
+                container.Resolve<EventRelayWorker>(),
+                // (Add other types if you want to use this WorkerRole for multiple workloads)
             };
         }
     }
@@ -382,8 +383,8 @@ public override void Configure(Container container)
 
 By default, 
 
-* `AzureTableWebhookSubscriptionStore` will create and use a table named: 'webhooksubscriptions'
-* `AzureQueueWebhookEventSink` will create and use a queue named: 'webhookevents'
+* `AzureTableWebhookSubscriptionStore` will create and use a storage table named: 'webhooksubscriptions'
+* `AzureQueueWebhookEventSink` will create and use a storage queue named: 'webhookevents'
 
 You can change those values when you register the services.
 

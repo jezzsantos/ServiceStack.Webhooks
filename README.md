@@ -5,14 +5,14 @@ Add Webhooks to your ServiceStack services
 
 # Overview
 
-This project make it very easy to expose your own Webhooks to your ServiceStack services, and to manage 3rd party subscriptions to those webhooks. 
+This project makes it very easy to expose your own Webhooks to your ServiceStack services, and to manage your user's subscriptions to those webhooks.
 
-By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to manage webhooks raised by your services. We know that most services are built for scalability and to be hosted in the cloud, so we know you are going to want to use your own database, and fit in with your own architecture, and so you can with the `WebhookFeature`.
+By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to raise and manage the events raised by your services. We know that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. Now you can, with the `WebhookFeature`.
 
 For example: In one service, you may want to store the Webhook subscriptions in a MongoDB database, and have an Azure worker role relay the events to subscribers from a (reliable) cloud queue.
-In another service, you may want to store subscriptions in Ormlite SQL database, and relay events to subscribers directly from within the same service on a background thread.
+In another service, you may want to store subscriptions in Ormlite SQL database, and relay events to subscribers directly from within the same service on a background thread, or throw the event to an AWS lambda to process.
 
-The choice is yours.
+The choice is now yours.
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 
@@ -20,7 +20,7 @@ If you cant find the component you want for your architecture, it should be easy
 
 # Contribute!
 
-Want to get involved? Want to help add this capability to your services? just send us a message or pull-request!
+Want to get involved in this project? or want to help improve this capability for your services? just send us a message or pull-request!
 
 # Getting Started
 

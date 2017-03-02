@@ -12,7 +12,7 @@ namespace ServiceStack.Webhooks.Azure.Worker
     ///     then wait for an interval, then poll again, until cancelled.
     ///     Messages that fail processing are placed on an 'Unhandled' queue.
     /// </summary>
-    internal abstract class BaseQueueProcessor<TMessage> : BasicContinuousProcessor where TMessage : class, IHasStringId
+    public abstract class BaseQueueProcessor<TMessage> : BasicContinuousProcessor where TMessage : class, IHasStringId
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(BaseQueueProcessor<TMessage>));
 

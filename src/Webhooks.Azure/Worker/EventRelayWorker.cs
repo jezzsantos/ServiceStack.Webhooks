@@ -10,7 +10,7 @@ namespace ServiceStack.Webhooks.Azure.Worker
     /// <summary>
     ///     Provides a worker for relaying webhook events from queue to subscribers
     /// </summary>
-    internal class EventRelayWorker : WorkerEntryPoint<EventRelayQueueProcessor>
+    public class EventRelayWorker : WorkerEntryPoint<EventRelayQueueProcessor>
     {
         public EventRelayWorker(Container container)
         {
@@ -21,7 +21,7 @@ namespace ServiceStack.Webhooks.Azure.Worker
             Processor = container.Resolve<EventRelayQueueProcessor>();
         }
 
-        private void RegisterDependencies(Container container)
+        private static void RegisterDependencies(Container container)
         {
             var appSettings = container.Resolve<IAppSettings>();
 

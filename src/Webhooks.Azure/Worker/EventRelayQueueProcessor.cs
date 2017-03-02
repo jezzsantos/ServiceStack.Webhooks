@@ -9,21 +9,21 @@ namespace ServiceStack.Webhooks.Azure.Worker
     /// <summary>
     ///     Provides a queue processor for relaying webhook events from queue to subscribers
     /// </summary>
-    internal class EventRelayQueueProcessor : BaseQueueProcessor<WebhookEvent>
+    public class EventRelayQueueProcessor : BaseQueueProcessor<WebhookEvent>
     {
         internal const int DefaultServiceClientRetries = 3;
         internal const int DefaultServiceClientTimeoutSeconds = 60;
         private const int DefaultPollingIntervalSeconds = 5;
         private const string DefaultTargetQueueName = AzureQueueWebhookEventSink.DefaultQueueName;
         private const string DefaultUnhandledQueueName = "unhandled" + AzureQueueWebhookEventSink.DefaultQueueName;
-        private const string IntervalSettingName = "EventRelayQueueProcessor.Interval.Seconds";
+        private const string PollingIntervalSettingName = "EventRelayQueueProcessor.Polling.Interval.Seconds";
         internal const string AzureConnectionStringSettingName = "EventRelayQueueProcessor.ConnectionString";
         internal const string TargetQueueNameSettingName = "EventRelayQueueProcessor.TargetQueue.Name";
         internal const string UnhandledQueneNameStringSettingName = "EventRelayQueueProcessor.UnhandledQueue.Name";
         internal const string SeviceClientRetriesSettingName = "EventRelayQueueProcessor.ServiceClient.Retries";
         internal const string DefaultSeviceClientTimeoutSettingName = "EventRelayQueueProcessor.ServiceClient.Timeout.Seconds";
 
-        private int interval;
+        private int pollingInterval;
         private IAzureQueueStorage<WebhookEvent> targetQueue;
         private IAzureQueueStorage<IUnhandledMessage> unhandledQueue;
 
@@ -31,7 +31,7 @@ namespace ServiceStack.Webhooks.Azure.Worker
         {
             ServiceClientRetries = DefaultServiceClientRetries;
             SeviceClientTimeoutSeconds = DefaultServiceClientTimeoutSeconds;
-            interval = DefaultPollingIntervalSeconds;
+            pollingInterval = DefaultPollingIntervalSeconds;
             ConnectionString = AzureStorage.AzureEmulatorConnectionString;
         }
 
@@ -41,7 +41,7 @@ namespace ServiceStack.Webhooks.Azure.Worker
 
             ServiceClientRetries = settings.Get(SeviceClientRetriesSettingName, DefaultServiceClientRetries);
             SeviceClientTimeoutSeconds = settings.Get(DefaultSeviceClientTimeoutSettingName, DefaultServiceClientTimeoutSeconds);
-            interval = settings.Get(IntervalSettingName, DefaultPollingIntervalSeconds);
+            pollingInterval = settings.Get(PollingIntervalSettingName, DefaultPollingIntervalSeconds);
             ConnectionString = settings.Get(AzureConnectionStringSettingName, AzureStorage.AzureEmulatorConnectionString);
             TargetQueueName = settings.Get(TargetQueueNameSettingName, DefaultTargetQueueName);
             UnhandledQueueName = settings.Get(UnhandledQueneNameStringSettingName, DefaultUnhandledQueueName);
@@ -71,8 +71,8 @@ namespace ServiceStack.Webhooks.Azure.Worker
 
         public override int IntervalSeconds
         {
-            get { return interval; }
-            set { interval = value; }
+            get { return pollingInterval; }
+            set { pollingInterval = value; }
         }
 
         public string ConnectionString { get; set; }

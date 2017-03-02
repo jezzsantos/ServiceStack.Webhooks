@@ -9,7 +9,7 @@ namespace ServiceStack.Webhooks.Azure.Worker
     ///     Defines a base class for continuous looping processes, which run then wait for an interval, then run again, until
     ///     cancelled
     /// </summary>
-    internal abstract class BasicContinuousProcessor : IProcessor
+    public abstract class BasicContinuousProcessor : IProcessor
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(BasicContinuousProcessor));
 

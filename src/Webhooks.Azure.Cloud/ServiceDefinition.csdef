@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="Webhooks.Azure.Cloud" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
+  <WorkerRole name="Webhooks.Azure.EventRelay" vmsize="Small">
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="SubscriptionServiceClient.SubscriptionService.BaseUrl" />
+      <Setting name="EventRelayQueueProcessor.Polling.Interval.Seconds" />
+      <Setting name="EventRelayQueueProcessor.ConnectionString" />
+      <Setting name="EventRelayQueueProcessor.TargetQueue.Name" />
+      <Setting name="EventRelayQueueProcessor.UnhandledQueue.Name" />
+      <Setting name="EventRelayQueueProcessor.ServiceClient.Retries" />
+      <Setting name="EventRelayQueueProcessor.ServiceClient.Timeout.Seconds" />
+    </ConfigurationSettings>
+  </WorkerRole>
+</ServiceDefinition>

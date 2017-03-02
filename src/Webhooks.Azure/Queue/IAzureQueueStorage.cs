@@ -2,7 +2,7 @@
 
 namespace ServiceStack.Webhooks.Azure.Queue
 {
-    internal interface IAzureQueueStorage<TEntity>
+    public interface IAzureQueueStorage<TEntity>
     {
         string QueueName { get; }
 

@@ -63,7 +63,22 @@ This allows any users of your web service to create webhook registrations (subsc
 
 Note: Webhook subscriptions will be associated to the UserId (`ISession.UserId`) of the user using your service.
 
-Note: This service uses role-based authorization to restrict who can call what, you can customize those roles. (see later)
+Note: This service uses role-based authorization to restrict who can call what, and you can customize those roles. (see later)
+
+A subscriber creates a subscription by POSTing the following data:
+
+```
+POST /webhooks/subscriptions
+{
+    name: "aname",
+    events: ["anevent1", "anevent2"],
+    config: {
+        url: "http://myserver/api/incoming",
+        content-type: "application/json",  (optional)
+        secret: "ASUPERSECRETKEY",  (optional)
+    }
+}
+```
 
 ## Pluggable Components
 
@@ -95,9 +110,29 @@ internal class HelloService : Service
 
 ## Receiving Events
 
-A subscriber that subscribes to your raised events would need to provide a HTTP POST endpoint to receive the webhook event. 
+A subscriber that subscribes to your raised events  would need to provide a HTTP POST endpoint to receive the webhook event. 
 
-In the case of the "hello" event above, they would need the following service operation to receive this event's unique data structure:
+In the case of the "hello" event above, the POSTed request would look something like this:
+
+```
+POST http://myserver/hello HTTP/1.1
+Accept: application/json
+User-Agent: ServiceStack .NET Client 4.56
+Accept-Encoding: gzip,deflate
+X-Webhook-Delivery: 7a6224aad9c8400fb0a70b8a71262400
+X-Webhook-Event: aneventname
+Content-Type: application/json
+Host: myserver
+Content-Length: 25
+Expect: 100-continue
+Proxy-Connection: Keep-Alive
+
+{
+    "Text":"Hello"
+}
+```
+
+In this case the subscriber would need the following [ServiceStack] service operation to receive this particular event's payload:
 
 ```
 internal class MyService : Service

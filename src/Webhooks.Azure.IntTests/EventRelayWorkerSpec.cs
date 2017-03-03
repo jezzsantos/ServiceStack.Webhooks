@@ -17,7 +17,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         {
             private static AppHostForAzureTesting appHost;
             private static JsonServiceClient client;
-            private const string BaseUrl = "http://localhost:8080/";
+            private const string BaseUrl = "http://localhost:5567/";
             private IAzureQueueStorage<WebhookEvent> queue;
 
             [OneTimeSetUp]

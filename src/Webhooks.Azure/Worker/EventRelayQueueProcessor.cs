@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using ServiceStack.Configuration;
 using ServiceStack.Webhooks.Azure.Queue;
 using ServiceStack.Webhooks.Clients;
@@ -88,7 +87,6 @@ namespace ServiceStack.Webhooks.Azure.Worker
 
         public override bool ProcessMessage(WebhookEvent message)
         {
-            Debugger.Launch();
             var subscriptions = SubscriptionCache.GetAll(message.EventName);
             subscriptions.ForEach(sub =>
                     NotifySubscription(sub, message.EventName, message.Data));

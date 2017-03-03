@@ -4,7 +4,7 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="SubscriptionServiceClient.SubscriptionService.BaseUrl" value="http://localhost:8080/" />
+      <Setting name="SubscriptionServiceClient.SubscriptionService.BaseUrl" value="http://localhost:5567/" />
       <Setting name="EventRelayQueueProcessor.Polling.Interval.Seconds" value="5" />
       <Setting name="EventRelayQueueProcessor.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="EventRelayQueueProcessor.TargetQueue.Name" value="webhookevents" />

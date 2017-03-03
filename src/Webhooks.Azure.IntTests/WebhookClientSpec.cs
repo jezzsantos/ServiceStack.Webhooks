@@ -10,7 +10,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         {
             private static AppSelfHostBase appHost;
             private static JsonServiceClient client;
-            private const string BaseUrl = "http://localhost:8080/";
+            private const string BaseUrl = "http://localhost:5567/";
             private static IWebhookSubscriptionStore subscriptionsStore;
             private static IWebhookEventSink eventSink;
 

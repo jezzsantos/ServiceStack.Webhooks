@@ -112,6 +112,8 @@ internal class HelloService : Service
 
 A subscriber that subscribes to your raised events  would need to provide a HTTP POST endpoint to receive the webhook event. 
 
+The URL to that endpoint is the  `Config.Url` of the created subscription.
+
 In the case of the "hello" event above, the POSTed request would look something like this:
 
 ```
@@ -120,7 +122,7 @@ Accept: application/json
 User-Agent: ServiceStack .NET Client 4.56
 Accept-Encoding: gzip,deflate
 X-Webhook-Delivery: 7a6224aad9c8400fb0a70b8a71262400
-X-Webhook-Event: aneventname
+X-Webhook-Event: hello
 Content-Type: application/json
 Host: myserver
 Content-Length: 25

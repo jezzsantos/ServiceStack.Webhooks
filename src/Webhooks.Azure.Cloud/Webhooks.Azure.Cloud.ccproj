@@ -41,6 +41,26 @@
   <PropertyGroup>
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
     <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.9\</CloudExtensionsDir>
+    <PackageForComputeEmulator>true</PackageForComputeEmulator>
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
+  <Target Name="AfterBuild">
+    <!-- Duplicate all Azure Configuration, needed for integration testing (see AfterBuild target from Webhooks.Azure.IntTests.csproj) -->
+    <PropertyGroup>
+      <!-- Build this path manually because Microsoft.WindowsAzure.targets redefines $(TargetDir) 
+      and TFS build server defines $(OutDir) as absolute not project relative -->
+      <ConfigDir Condition="'$(BuildDefinition)' == ''">$(ProjectDir)$(OutDir)</ConfigDir>
+      <ConfigDir Condition="'$(BuildDefinition)' != ''">$(OutDir)</ConfigDir>
+      <!-- We copy the current configuration files (ServiceDefinition.csdef and ServiceConfiguration.cscfg) to a 'def' folder 
+      because they are easier to copy as a unit (folder), rather than individually, by downstream build/test processes -->
+      <ServiceConfigDir>$(ProjectDir)def\</ServiceConfigDir>
+    </PropertyGroup>
+    <Message Importance="High" Text="Copying Azure configuration from: '$(ConfigDir)' to output: '$(ServiceConfigDir)'" />
+    <RemoveDir Directories="$(ServiceConfigDir)" />
+    <MakeDir Directories="$(ServiceConfigDir)" />
+    <ItemGroup>
+      <CloudDefFiles Include="$(ConfigDir)ServiceDefinition.csdef;$(ConfigDir)ServiceConfiguration.cscfg" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CloudDefFiles)" DestinationFiles="@(CloudDefFiles->'$(ServiceConfigDir)%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
 </Project>

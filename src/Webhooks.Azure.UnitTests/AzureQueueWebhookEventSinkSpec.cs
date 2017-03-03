@@ -40,10 +40,12 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
                 var appSettings = new Mock<IAppSettings>();
                 appSettings.Setup(settings => settings.Get(AzureQueueWebhookEventSink.AzureConnectionStringSettingName, It.IsAny<string>()))
                     .Returns("aconnectionstring");
+                appSettings.Setup(settings => settings.Get(AzureQueueWebhookEventSink.QueueNameSettingName, It.IsAny<string>()))
+                    .Returns("aqueuename");
 
                 sink = new AzureQueueWebhookEventSink(appSettings.Object);
 
-                Assert.That(sink.QueueName, Is.EqualTo(AzureQueueWebhookEventSink.DefaultQueueName));
+                Assert.That(sink.QueueName, Is.EqualTo("aqueuename"));
                 Assert.That(sink.ConnectionString, Is.EqualTo("aconnectionstring"));
             }
 

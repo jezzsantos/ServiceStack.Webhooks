@@ -32,11 +32,11 @@ namespace ServiceStack.Webhooks.Azure.Queue
             get { return queueName; }
         }
 
-        public void Enqueue(TEntity @event)
+        public void Enqueue(TEntity entity)
         {
             EnsureQueue();
 
-            var message = new CloudQueueMessage(@event.ToJson());
+            var message = new CloudQueueMessage(entity.ToJson());
             Queue.AddMessage(message);
             ResetLastCreationCheckTime();
         }

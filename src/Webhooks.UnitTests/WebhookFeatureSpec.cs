@@ -197,7 +197,7 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedAndNoSearchRoles_ThenAuthorized()
             {
-                var feature = new WebhookFeature { SubscriptionAccessRoles = null };
+                var feature = new WebhookFeature {SubscriptionAccessRoles = null};
                 feature.Register(appHost);
                 var request = new MockHttpRequest
                 {

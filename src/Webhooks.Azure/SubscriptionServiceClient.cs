@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using ServiceStack.Configuration;
 using ServiceStack.Webhooks.Relays;
 using ServiceStack.Webhooks.Relays.Clients;
@@ -24,6 +25,7 @@ namespace ServiceStack.Webhooks.Azure
 
         public List<SubscriptionConfig> Search(string eventName)
         {
+            Debugger.Launch();
             var serviceClient = ServiceClientFactory.Create(SubscriptionsBaseUrl);
             return serviceClient.Get(new SearchSubscriptions
             {

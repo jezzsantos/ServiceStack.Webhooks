@@ -41,10 +41,12 @@ namespace ServiceStack.Webhooks.Azure.UnitTests
                 var appSettings = new Mock<IAppSettings>();
                 appSettings.Setup(settings => settings.Get(AzureTableWebhookSubscriptionStore.AzureConnectionStringSettingName, It.IsAny<string>()))
                     .Returns("aconnectionstring");
+                appSettings.Setup(settings => settings.Get(AzureTableWebhookSubscriptionStore.TableNameSettingName, It.IsAny<string>()))
+                    .Returns("atablename");
 
                 store = new AzureTableWebhookSubscriptionStore(appSettings.Object);
 
-                Assert.That(store.TableName, Is.EqualTo(AzureTableWebhookSubscriptionStore.DefaultTableName));
+                Assert.That(store.TableName, Is.EqualTo("atablename"));
                 Assert.That(store.ConnectionString, Is.EqualTo("aconnectionstring"));
             }
 

@@ -123,6 +123,9 @@
       <Name>Webhooks</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestContent\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
@@ -150,11 +153,22 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
   <Target Name="AfterBuild">
+    <!-- Copy Azure Emulated Environment Resources to local 'TestContent' folder, needed for integration testing -->
+    <PropertyGroup>
+      <TestContentDir>$(ProjectDir)TestContent\Cloud\bin\</TestContentDir>
+      <CloudProjectPath>$(SolutionDir)Webhooks.Azure.Cloud</CloudProjectPath>
+    </PropertyGroup>
+    <Message Importance="High" Text="Copying Azure emulated resources from: '$(CloudProjectPath)' to output: '$(TestContentDir)'" />
+    <RemoveDir Directories="$(TestContentDir)" ContinueOnError="true" />
+    <MakeDir Directories="$(TestContentDir)" ContinueOnError="true" />
+    <ItemGroup>
+      <CloudDefFiles Include="$(CloudProjectPath)\def\**\*.*" />
+      <CloudCsxFiles Include="$(CloudProjectPath)\csx\$(Configuration)\**\*.*" />
+      <CloudRcfFiles Include="$(CloudProjectPath)\rcf\$(Configuration)\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CloudDefFiles)" DestinationFiles="@(CloudDefFiles->'$(TestContentDir)%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(CloudCsxFiles)" DestinationFiles="@(CloudCsxFiles->'$(TestContentDir)csx\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(CloudRcfFiles)" DestinationFiles="@(CloudRcfFiles->'$(TestContentDir)rcf\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
-  -->
 </Project>

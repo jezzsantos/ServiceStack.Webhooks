@@ -10,6 +10,7 @@ namespace ServiceStack.Webhooks.Azure
     {
         internal const string DefaultTableName = "webhooksubscriptions";
         internal const string AzureConnectionStringSettingName = "AzureTableWebhookSubscriptionStore.ConnectionString";
+        internal const string TableNameSettingName = "AzureTableWebhookSubscriptionStore.Table.Name";
         private IAzureTableStorage tableStorage;
 
         public AzureTableWebhookSubscriptionStore()
@@ -23,6 +24,7 @@ namespace ServiceStack.Webhooks.Azure
         {
             Guard.AgainstNull(() => settings, settings);
 
+            TableName = settings.Get(TableNameSettingName, DefaultTableName);
             ConnectionString = settings.Get(AzureConnectionStringSettingName, AzureStorage.AzureEmulatorConnectionString);
         }
 

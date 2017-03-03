@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using Funq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using ServiceStack.Configuration;
 using ServiceStack.Webhooks.Azure.IntTests.Services;
-using ServiceStack.Webhooks.Azure.Worker;
+using ServiceStack.Webhooks.Azure.Queue;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
@@ -14,15 +13,12 @@ namespace ServiceStack.Webhooks.Azure.IntTests
     public class EventRelayWorkerSpec
     {
         [TestFixture]
-        public class GivenAnEventQueue : AzureIntegrationTestBase
+        public class GivenTheRelayWorkerHostedInAzureRole : AzureIntegrationTestBase
         {
             private static AppHostForAzureTesting appHost;
             private static JsonServiceClient client;
             private const string BaseUrl = "http://localhost:8080/";
-            private CancellationToken cancellation;
-            private CancellationTokenSource cancellationToken;
-            private AzureQueueWebhookEventSink sink;
-            private EventRelayWorker worker;
+            private IAzureQueueStorage<WebhookEvent> queue;
 
             [OneTimeSetUp]
             public void InitializeContext()
@@ -33,14 +29,9 @@ namespace ServiceStack.Webhooks.Azure.IntTests
 
                 client = new JsonServiceClient(BaseUrl);
 
-                cancellationToken = new CancellationTokenSource();
-                cancellation = cancellationToken.Token;
-
-                var container = new Container();
-                container.Register<IAppSettings>(new AppSettings());
-
-                worker = new EventRelayWorker(container);
-                sink = new AzureQueueWebhookEventSink();
+                var settings = appHost.Resolve<IAppSettings>();
+                queue = new AzureQueueStorage<WebhookEvent>(settings.GetString(AzureQueueWebhookEventSink.AzureConnectionStringSettingName), settings.GetString(AzureQueueWebhookEventSink.QueueNameSettingName));
+                SetupSubscription("aneventname");
             }
 
             [OneTimeTearDown]
@@ -53,18 +44,18 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             public void Initialize()
             {
                 client.Put(new ResetConsumedEvents());
+                queue.Empty();
             }
 
             [TearDown]
             public void Cleanup()
             {
-                cancellationToken.Cancel();
             }
 
             [Test, Category("Integration")]
             public void WhenNoEventOnQueue_ThenNoSubscribersNotified()
             {
-                RunWorker(10);
+                WaitFor(10);
 
                 var consumed = client.Get(new GetConsumedEvents()).Events;
 
@@ -74,10 +65,8 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             [Test, Category("Integration")]
             public void WhenEventQueued_ThenSubscriberNotified()
             {
-                SetupSubscription("aneventname");
                 SetupEvent("aneventname");
-
-                RunWorker(10);
+                WaitFor(10);
 
                 var consumed = client.Get(new GetConsumedEvents()).Events;
 
@@ -93,30 +82,22 @@ namespace ServiceStack.Webhooks.Azure.IntTests
                     Events = new List<string> {eventName},
                     Config = new SubscriptionConfig
                     {
-                        Url = BaseUrl.AppendPath(new ConsumeEvent().ToPostUrl())
+                        Url = BaseUrl.WithoutTrailingSlash() + new ConsumeEvent().ToPostUrl()
                     }
                 });
             }
 
-            private void RunWorker(int seconds)
+            private static void SetupEvent(string eventName)
             {
-                cancellationToken.CancelAfter(TimeSpan.FromSeconds(seconds));
-                try
+                client.Post(new RaiseEvent
                 {
-                    worker.Run(cancellation);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-            }
-
-            private void SetupEvent(string eventName)
-            {
-                sink.Write(eventName, new TestEvent
-                {
-                    A = 1,
-                    B = 2,
-                    C = 3
+                    EventName = "aneventname",
+                    Data = new TestEvent
+                    {
+                        A = 1,
+                        B = 2,
+                        C = 3
+                    }
                 });
             }
 
@@ -126,6 +107,11 @@ namespace ServiceStack.Webhooks.Azure.IntTests
                 Assert.That(consumedEvent.Data.A, Is.EqualTo("1"));
                 Assert.That(consumedEvent.Data.B, Is.EqualTo("2"));
                 Assert.That(consumedEvent.Data.C, Is.EqualTo("3"));
+            }
+
+            private static void WaitFor(int seconds)
+            {
+                Task.Delay(TimeSpan.FromSeconds(seconds)).Wait();
             }
         }
     }

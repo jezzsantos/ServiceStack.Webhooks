@@ -20,6 +20,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.IntTests", "Webhooks.IntTests\Webhooks.IntTests.csproj", "{6D27D512-5CF4-41EE-A05B-69EF18DCE05D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Azure.IntTests", "Webhooks.Azure.IntTests\Webhooks.Azure.IntTests.csproj", "{3D158CE6-1370-4957-A78B-D3EFB730D411}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E976BCF9-0B83-4A8F-9481-4501A1CF1933} = {E976BCF9-0B83-4A8F-9481-4501A1CF1933}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2F17059F-751F-4823-ABE0-3E1A8FAF1279}"
 	ProjectSection(SolutionItems) = preProject

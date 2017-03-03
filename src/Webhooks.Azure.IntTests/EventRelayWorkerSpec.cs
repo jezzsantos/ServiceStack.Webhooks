@@ -91,7 +91,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             {
                 client.Post(new RaiseEvent
                 {
-                    EventName = "aneventname",
+                    EventName = eventName,
                     Data = new TestEvent
                     {
                         A = 1,

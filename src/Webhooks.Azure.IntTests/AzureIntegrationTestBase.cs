@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using ServiceStack.Configuration;
@@ -18,6 +19,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
         private const string StorageStopArgumentsSettingName = @"AzureIntegrationTestBase.AzureStorageStopArguments";
         private const string ComputeStartupArgumentsSettingName = @"AzureIntegrationTestBase.AzureComputeStartupArguments";
         private const string ComputeShutdownArgumentsSettingName = @"AzureIntegrationTestBase.AzureComputeShutdownArguments";
+        private const string TestDeploymentConfigurationDir = @"..\..\TestContent\Cloud\bin";
         private static ILog logger;
         private static readonly IAppSettings Settings = new AppSettings();
 
@@ -27,6 +29,7 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             LogManager.LogFactory = new ConsoleLogFactory();
             logger = LogManager.GetLogger(typeof(AzureIntegrationTestBase));
             logger.Debug("Initialization of azure storage environment for testing");
+            VerifyAzureTestEnvironment();
             StartAzureTestEnvironment();
         }
 
@@ -107,6 +110,27 @@ namespace ServiceStack.Webhooks.Azure.IntTests
             var storageArgs = Settings.GetString(StorageStopArgumentsSettingName);
 
             RunCommand(toolPath, storageArgs);
+        }
+
+        private static void VerifyAzureTestEnvironment()
+        {
+            logger.Debug(@"Verifying roles test environment");
+
+            // Ensure we have a packaged Azure application
+            var testDir = TestContext.CurrentContext.TestDirectory;
+            var cloudConfigDir = Path.Combine(testDir, TestDeploymentConfigurationDir);
+            var cloudConfigDirCsx = Path.Combine(cloudConfigDir, @"csx");
+
+            if (!Directory.Exists(cloudConfigDirCsx))
+            {
+                throw new InvalidOperationException(@"The azure test environment is not configured correctly! 
+The 'Webhooks.Azure.Cloud' project needs to have been packaged for the current configuration (Local|Debug), and copied (deployed) for integration testing (by the 'AfterBuild' MSBUILD Target).
+
+Check the following: 
+    (1) That the 'Webhooks.Azure.Cloud' project has been manually 'packaged' in Debug|Local mode, 
+    (2) that the integration test project (Webhooks.Azure.IntTests) has been configured (by the 'AfterBuild' MSBUILD Target) to copy the packaged cloud configuration files (def, csx, rcf directories) into its own project directory (i.e. under TestContent\Cloud\bin) on every build,
+    (3) that the integration test project (Webhooks.Azure.IntTests) has a build dependency (in solution settings) on the cloud project (Webhooks.Azure.Cloud).");
+            }
         }
 
         protected static void RunCommand(string toolPath, string args, bool elevated = true)

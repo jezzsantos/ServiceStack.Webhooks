@@ -31,7 +31,7 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenWriteWithNullEventName_ThenThrows()
             {
-                Assert.That(() => sink.Write(null, "adata"), Throws.ArgumentNullException);
+                Assert.That(() => sink.Write(null, new Dictionary<string, string> {{"akey", "avalue"}}), Throws.ArgumentNullException);
             }
 
             [Test, Category("Unit")]
@@ -40,7 +40,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 subscriptionCache.Setup(sc => sc.GetAll(It.IsAny<string>()))
                     .Returns(new List<SubscriptionConfig>());
 
-                sink.Write("aneventname", "adata");
+                sink.Write("aneventname", new Dictionary<string, string> {{"akey", "avalue"}});
 
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
                 serviceClient.Verify(sc => sc.Post(It.IsAny<SubscriptionConfig>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
@@ -56,12 +56,12 @@ namespace ServiceStack.Webhooks.UnitTests
                         config
                     });
 
-                sink.Write("aneventname", "adata");
+                sink.Write("aneventname", new Dictionary<string, string> {{"akey", "avalue"}});
 
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
                 serviceClient.VerifySet(sc => sc.Retries = AppHostWebhookEventSink.DefaultServiceClientRetries);
                 serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(AppHostWebhookEventSink.DefaultServiceClientTimeoutSeconds));
-                serviceClient.Verify(sc => sc.Post(config, "aneventname", "adata"));
+                serviceClient.Verify(sc => sc.Post(config, "aneventname", It.Is<Dictionary<string, string>>(dic => dic["akey"] == "avalue")));
             }
         }
     }

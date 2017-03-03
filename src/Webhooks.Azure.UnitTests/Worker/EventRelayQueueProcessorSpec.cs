@@ -38,7 +38,7 @@ namespace ServiceStack.Webhooks.Azure.UnitTests.Worker
                 var result = processor.ProcessMessage(new WebhookEvent
                 {
                     EventName = "aneventname",
-                    Data = "adata"
+                    Data = new Dictionary<string, string> {{"akey", "avalue"}}
                 });
 
                 Assert.That(result, Is.True);
@@ -59,14 +59,14 @@ namespace ServiceStack.Webhooks.Azure.UnitTests.Worker
                 var result = processor.ProcessMessage(new WebhookEvent
                 {
                     EventName = "aneventname",
-                    Data = "adata"
+                    Data = new Dictionary<string, string> {{"akey", "avalue"}}
                 });
 
                 Assert.That(result, Is.True);
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
                 serviceClient.VerifySet(sc => sc.Retries = EventRelayQueueProcessor.DefaultServiceClientRetries);
                 serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(EventRelayQueueProcessor.DefaultServiceClientTimeoutSeconds));
-                serviceClient.Verify(sc => sc.Post(config, "aneventname", "adata"));
+                serviceClient.Verify(sc => sc.Post(config, "aneventname", It.Is<Dictionary<string, string>>(dic => dic["akey"] == "avalue")));
             }
         }
     }

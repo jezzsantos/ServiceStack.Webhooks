@@ -8,6 +8,6 @@
         /// <summary>
         ///     Publishes an event to all webhook subscribers
         /// </summary>
-        void Publish<TDto>(string eventName, TDto data);
+        void Publish<TDto>(string eventName, TDto data) where TDto : class, new();
     }
 }

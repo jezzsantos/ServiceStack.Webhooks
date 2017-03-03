@@ -89,7 +89,7 @@
     <Compile Include="ServiceModel\SubscriptionEventsValidatorSpec.cs" />
     <Compile Include="ServiceModel\CreateSubscriptionValidatorSpec.cs" />
     <Compile Include="WebhookFeatureSpec.cs" />
-    <Compile Include="WebhooksSpec.cs" />
+    <Compile Include="WebhooksClientSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

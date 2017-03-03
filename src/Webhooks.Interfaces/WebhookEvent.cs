@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ServiceStack.Model;
 
 namespace ServiceStack.Webhooks
@@ -9,7 +10,7 @@ namespace ServiceStack.Webhooks
 
         public DateTime CreatedDateUtc { get; set; }
 
-        public object Data { get; set; }
+        public Dictionary<string, string> Data { get; set; }
 
         public string Id { get; set; }
     }

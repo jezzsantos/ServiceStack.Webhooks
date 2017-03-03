@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
@@ -23,7 +24,7 @@ namespace ServiceStack.Webhooks
 
         public int TimeoutSecs { get; set; }
 
-        public void Write<TDto>(string eventName, TDto data)
+        public void Write(string eventName, Dictionary<string, string> data)
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
@@ -32,7 +33,7 @@ namespace ServiceStack.Webhooks
                     NotifySubscription(sub, eventName, data));
         }
 
-        private void NotifySubscription<TDto>(SubscriptionConfig subscription, string eventName, TDto data)
+        private void NotifySubscription(SubscriptionConfig subscription, string eventName, Dictionary<string, string> data)
         {
             ServiceClient.Retries = Retries;
             ServiceClient.Timeout = TimeSpan.FromSeconds(TimeoutSecs);

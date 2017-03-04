@@ -12,11 +12,9 @@ By adding the `WebhookFeature` to the AppHost of your service, you automatically
 We _know_ that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. Now you can, with the `WebhookFeature`.
 
 For example: In one service, you may want to store the Webhook subscriptions in a _MongoDB database_, and have an _Azure worker role_ relay the events to subscribers from a (reliable) cloud _queue_.
-In another service, you may want to store subscriptions in _Ormlite SQL database_, and relay events to subscribers directly from within the same service _on a background thread_, or throw the event to an _AWS lambda_ to process.
+In another service, you may want to store subscriptions in _Ormlite SQL database_, and relay events to subscribers directly from within the same service _on a background thread_, or throw the event to an _AWS lambda_ to process. Whatever works for you, the choice is yours.
 
-The choice is entirely yours.
-
-_Oh, don't worry, we haven't left it entirely up to you, just to get started. We got your back with a built-in subscription store and built-in event sink that will get you going seeing how it works. But eventually you'll want to swap those out for your own pieces, which is easy._
+_Oh, don't worry, we haven't left it all entirely up to you, just to get started with the `WebhookFeature`. We got your back with a built-in subscription store and built-in event sink that will get you going seeing how it all works. But eventually you'll want to swap those out for your own pieces that fit your architecture, which is easy._
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 

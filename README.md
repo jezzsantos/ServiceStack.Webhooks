@@ -18,7 +18,7 @@ _Oh, don't worry, we haven't left it all entirely up to you, just to get started
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 
-If you cant find the component you want for your architecture, it should be easy for you to build add your own and _just plug it in_.
+If you cant find the component you want for your architecture (see [Plugins](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Plugins)), it should be easy for you to build add your own and _just plug it in_.
 
 ### Contribute!
 
@@ -259,10 +259,6 @@ public override void Configure(Container container)
 }
 ```
 
-# Related Projects
+# Documentation
 
-## [Servicestack.Webhooks.Azure](https://github.com/jezzsantos/ServiceStack.Webhooks.Azure)
-
-Use Azure Table storage, queues and worker roles to store subscriptions and relay events to subscribers
-
-![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Azure.PNG)
+The docs are [here](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki)

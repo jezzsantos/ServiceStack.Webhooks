@@ -24,7 +24,7 @@ If you cant find the component you want for your architecture (see [Plugins](htt
 
 Want to get involved in this project? or want to help improve this capability for your services? just send us a message or pull-request!
 
-# Getting Started
+# [Getting Started](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Getting-Started)
 
 Install from NuGet:
 ```
@@ -46,39 +46,6 @@ Note: You must add the `WebhookFeature` after you use either of these features:
 * `Plugins.Add(new ValidationFeature();`
 * `Plugins.Add(new AuthFeature());`
 
-## Subscription Service
-
-The `WebhookFeature` plugin automatically installs a built-in (and secure) subscription management API in your service on the following routes:
-
-* POST /webhooks/subscriptions - creates a new subscription (for the current user)
-* GET /webhooks/subscriptions - lists all subscriptions (for the current user)
-* GET /webhooks/subscriptions/{Id} - gets the details of the subscription
-* PUT /webhooks/subscriptions/{Id} - updates the subscription
-* DELETE /webhooks/subscriptions/{Id} - deletes the subscription
-* GET /webhooks/subscriptions/search - gets the subscribers for a specific event
-
-This allows any users of your web service to create webhook registrations (subscribers to webhook events) for the events you raise in your service.
-
-Note: Webhook subscriptions will be associated to the UserId (`ISession.UserId`) of the user using your service.
-
-Note: This service uses role-based authorization to restrict who can call what, and you can customize those roles. (see later)
-
-A subscriber creates a subscription by POSTing the following data:
-
-```
-POST /webhooks/subscriptions
-{
-    name: "aname",
-    events: ["anevent1", "anevent2"],
-    config: {
-        url: "http://myserver/api/incoming",
-        content-type: "application/json",  (optional)
-        secret: "ASUPERSECRETKEY",  (optional)
-    }
-}
-```
-
-## Pluggable Components
 
 By default, the following components are installed by the `WebhookFeature`:
 
@@ -88,7 +55,7 @@ By default, the following components are installed by the `WebhookFeature`:
 **WARNING:** In production systems these default components will **need to be replaced**, by customizing your configuration of the `WebhookFeature`: 
 
 * Configure a `IWebhookSubscriptionStore` with one that is more appropriate to more persistent storage, like an OrmLiteStore or RedisStore, or a stores subscriptions using a database of your choice. WARNING: If you don't do this, and you continue to use the built-in `MemoryWebhookSubscriptionStore` your subscriptions will be lost when your host/site is restarted.
-* (Optional) Consider configuring a `IWebhookEventSink` with one that introduces some buffering between raising events and POSTing them to registered subscribers, like an Trigger, Queue, Bus-based implementation of your choice. WARNING: If you don't do this, and you continue to use the built-in `AppHostWebhookEventSink` your subscribers will be notified in the same thread that you raised the event, which can slow down your service significantly. 
+* (Optional) Consider configuring a `IWebhookEventSink` with one that introduces some buffering between raising events and POSTing them to registered subscribers, like an Trigger, Queue, Bus-based implementation of your choice. WARNING: If you don't do this, and you continue to use the built-in `AppHostWebhookEventSink` your subscribers will be notified in the same thread that you raised the event, which can slow down your service significantly.
 
 ## Raising Events
 
@@ -155,110 +122,6 @@ public class Hello
 }
 ```
 
-## How It Works
+# [Documentation](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki)
 
-When you register the `WebhookFeature` in your AppHost, it installs the subscriptions API, and the basic components to support raising events.
-
-By default, the `AppHostWebhookEventSink` is used as the event sink.
-
-When events are raised to it, the sink queries the `ISubscriptionsService.Search(eventName)` (in-proc) to fetch all the subscriptions to POST events to. It caches those subscriptions for a TTL (say 60s), to reduce the number of times the query for the same event is made (to avoid chatter as events are raised in your services). Then is dispatches the notification of that event to all registered subscribers (over HTTP). It will retry 3 times before giving up (`EventServiceClient.Post`).
-
-![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Default.PNG)
-
-WARNING: The `AppHostWebhookEventSink` can work well in testing, but it is going to slow down your service request times, as it has to notify each of the subscribers, and that network latency is added to the call time of your API (since it is done in-proc and on the same thread as that of the web request that raised the event).
-
-* We recommend only using the `AppHostWebhookEventSink` in testing and non-production systems.
-* We recommend, configuring a `IWebhookEventSink` that scales better with your architecture, and decouples the raising of events from the notifying of subscribers.
-
-## Customizing
-
-There are various components of the webhook architecture that you can extend with your own pieces to suit your needs:
-
-### Subscription Service
-
-The subscription service is automatically built-in to your service when you add the `WebhookFeature`.
-If you prefer to roll your own subscription service, you can turn off the built-in one like this:
-
-```
-public override void Configure(Container container)
-{
-   // Add other plugins first
-
-    Plugins.Add(new WebhookFeature
-    {
-        IncludeSubscriptionService = false
-    });
-}
-```
-
-By default, the subscription service is secured by role-based access if you already have the `AuthFeature` plugin in your AppHost.
-If you don't use the `AuthFeature` then the subscription service is not secured, and can be used by anyone using your API.
-
-If you use the `AuthFeature`, rememmber to add the `WebhookFeature` plugin after you add the `AuthFeature` plugin.
-
-When the subscription service is secured, by default, the following roles are protecting the following operations:
-* POST /webhooks/subscriptions - "user"
-* GET /webhooks/subscriptions - "user"
-* GET /webhooks/subscriptions/{Id} - "user"
-* PUT /webhooks/subscriptions/{Id} - "user"
-* DELETE /webhooks/subscriptions/{Id} - "user"
-* GET /webhooks/subscriptions/search - "service"
-
-These roles are configurable by setting the following properties of the `WebhookFeature` when you register it:
-
-```
-public override void Configure(Container container)
-{
-    // Add the AuthFeature plugin first
-    Plugins.Add(new AuthFeature(......);
-
-    Plugins.Add(new WebhookFeature
-    {
-        SubscriptionAccessRoles = "accessrole1",
-        SubscriptionSearchRoles = "searchrole1;searchrole2"
-    });
-
-}
-```
-
-Note: You can even set the `SubscriptionAccessRoles` or `SubscriptionSearchRoles` to null if you don't want to use role-based access to secure them.
-
-### Subscription Store
-
-Subscriptons for webhooks need to be stored (in `IWebhookSubscriptionStore`), once a user of your service subscribes to a webhook (using the API: `POST /webhooks/subscriptions`)
-
-You specify your own store by registering it in the IOC container.
-If you specify no store, the default `MemoryWebhookSubscriptionStore` will be used, which is fine for testing, but beware that your subscriptions will be lost whenever your service is restarted.
-
-```
-public override void Configure(Container container)
-{
-    // Register your own subscription store
-    container.Register<IWebhookSubscriptionStore>(new MyDbSubscriptionStore());
-
-    Plugins.Add(new WebhookFeature();
-}
-```
-
-### Events Sink
-
-When events are raised they are passed to the event sink (`IWebhookEventSink`), typically temporarily, until they are "relayed" to all registered subscribers for that event. 
-
-Ideally, for scalability and performance, you probably would not want to do that on the same thread that riased the event, and probably not even by the same process.
-
-You specify your own sink by registering it in the IOC container.
-If you specify no sink, the default `AppHostWebhookEventSink` will be used, which is fine for testing, but beware that this sink works synchronously on the same thread that raises the event, and so it is not optimal for scale in production systems.
-
-```
-public override void Configure(Container container)
-{
-    // Register your own event store
-    container.Register<IWebhookEventSink>(new MyDbEventSink());
-
-    Plugins.Add(new WebhookFeature();
-}
-```
-
-# Documentation
-
-The docs are [here](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki)
+More documentation about how the `WebhookFeature` works, and how to customize it are available in [here](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki)

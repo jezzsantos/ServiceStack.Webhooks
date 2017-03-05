@@ -3,6 +3,8 @@
 # ServiceStack.Webhooks
 Add Webhooks to your ServiceStack services
 
+## [Release Notes](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Release-Notes)
+
 # Overview
 
 This project makes it very easy to expose your own Webhooks to your ServiceStack services, and to manage your user's subscriptions to those webhooks.

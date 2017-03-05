@@ -59,7 +59,7 @@ By default, the following components are installed by the `WebhookFeature`:
 
 ## Raising Events
 
-To raise events from your own services, add the `IWebhooks` dependency to your service, and call: `IWebhooks.Publish<TDto>(string eventName, TDto data)`. Simple as that.
+To raise events from your own services, add the `IWebhooks` dependency to your service, and call: `IWebhooks.Publish<TDto>(string eventName, TDto data)`. As simple as this:
 
 ```
 internal class HelloService : Service
@@ -73,13 +73,13 @@ internal class HelloService : Service
 }
 ```
 
-## Receiving Events
+## Consuming Events
 
-A subscriber that subscribes to your raised events  would need to provide a HTTP POST endpoint to receive the webhook event. 
+A subscriber that subscribes to your webhook events would need to provide a public HTTP POST endpoint that would receive the webhook event. 
 
-The URL to that endpoint is the  `Config.Url` of the created subscription.
+The URL to that endpoint is the  `Subscription.Config.Url` of the subscription that they created.
 
-In the case of the "hello" event above, the POSTed request would look something like this:
+In the case of the "hello" event (above), the POSTed request would look something like this:
 
 ```
 POST http://myserver/hello HTTP/1.1
@@ -95,11 +95,11 @@ Expect: 100-continue
 Proxy-Connection: Keep-Alive
 
 {
-    "Text":"Hello"
+    "Text": "Hello"
 }
 ```
 
-In this case the subscriber would need the following [ServiceStack] service operation to receive this particular event's payload:
+To conume this event, the subscriber would need to standup a public [ServiceStack] API like the one below, to receive this particular event's payload:
 
 ```
 internal class MyService : Service

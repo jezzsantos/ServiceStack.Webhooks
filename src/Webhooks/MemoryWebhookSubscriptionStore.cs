@@ -35,12 +35,13 @@ namespace ServiceStack.Webhooks
                 .ToList();
         }
 
-        public List<SubscriptionConfig> Search(string eventName)
+        public List<SubscriptionConfig> Search(string eventName, bool? isActive = null)
         {
             var keys = CacheClient.GetKeysStartingWith(CachekeyPrefix);
 
             return CacheClient.GetAll<WebhookSubscription>(keys)
-                .Where(pair => pair.Value.Event.EqualsIgnoreCase(eventName))
+                .Where(pair => pair.Value.Event.EqualsIgnoreCase(eventName)
+                               && (!isActive.HasValue || (pair.Value.IsActive == isActive.Value)))
                 .Select(pair => pair.Value.Config)
                 .ToList();
         }

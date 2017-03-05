@@ -22,12 +22,12 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         List<SubscriptionConfig> ISubscriptionService.Search(string eventName)
         {
-            return Store.Search(eventName);
+            return Store.Search(eventName, true);
         }
 
         public SearchSubscriptionsResponse Get(SearchSubscriptions request)
         {
-            var subscribers = Store.Search(request.EventName);
+            var subscribers = Store.Search(request.EventName, true);
 
             logger.InfoFormat(@"Retrieved subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
 

@@ -31,8 +31,9 @@ namespace ServiceStack.Webhooks
         void Delete(string subscriptionId);
 
         /// <summary>
-        ///     Returns all subscription configurations for all users for the specified event
+        ///     Returns all subscription configurations for all users for the specified event,
+        ///     and optionally whether they are currently active or not
         /// </summary>
-        List<SubscriptionConfig> Search(string eventName);
+        List<SubscriptionConfig> Search(string eventName, bool? isActive);
     }
 }

@@ -128,6 +128,37 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
+            public void WhenSearchAndIsActive_ThenReturnsActiveSubscriptionsOnly()
+            {
+                var config1 = new SubscriptionConfig();
+                var config2 = new SubscriptionConfig();
+                var subscription1 = new WebhookSubscription
+                {
+                    Event = "aneventname",
+                    Config = config1,
+                    IsActive = false
+                };
+                var subscription2 = new WebhookSubscription
+                {
+                    Event = "aneventname",
+                    Config = config2,
+                    IsActive = true
+                };
+                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
+                    .Returns(new Dictionary<string, WebhookSubscription>
+                    {
+                        {"akey1", subscription1},
+                        {"akey2", subscription2}
+                    });
+
+                var result = store.Search("aneventname", true);
+
+                Assert.That(result[0], Is.EqualTo(config2));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
+                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+            }
+
+            [Test, Category("Unit")]
             public void WhenUpdateWithNullSubscriptionId_ThenThrows()
             {
                 Assert.That(() => store.Update(null, new WebhookSubscription()), Throws.ArgumentNullException);

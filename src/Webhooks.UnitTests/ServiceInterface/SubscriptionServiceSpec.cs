@@ -246,13 +246,13 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
             }
 
             [Test, Category("Unit")]
-            public void WhenSearch_ThenReturnsSubscriptions()
+            public void WhenSearch_ThenReturnsActiveSubscriptions()
             {
                 var config = new SubscriptionConfig
                 {
                     Url = "aurl"
                 };
-                store.Setup(s => s.Search("aneventname"))
+                store.Setup(s => s.Search("aneventname", true))
                     .Returns(new List<SubscriptionConfig>
                     {
                         config
@@ -265,7 +265,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 Assert.That(result.Subscribers.Count, Is.EqualTo(1));
                 Assert.That(result.Subscribers[0], Is.EqualTo(config));
-                store.Verify(s => s.Search("aneventname"));
+                store.Verify(s => s.Search("aneventname", true));
             }
         }
     }

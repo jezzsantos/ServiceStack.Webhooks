@@ -84,7 +84,7 @@ namespace ServiceStack.Webhooks
             {
                 new AuthenticateAttribute().Execute(request, response, dto);
 
-                var requiredRoles = GetRequiredRoles(request.PathInfo);
+                var requiredRoles = GetRequiredRoles(request.Dto);
                 if (requiredRoles.Length > 0)
                 {
                     RequiresAnyRoleAttribute.AssertRequiredRoles(request, requiredRoles);
@@ -97,13 +97,14 @@ namespace ServiceStack.Webhooks
             return pathInfo.StartsWith(Subscription.RootPath);
         }
 
-        private string[] GetRequiredRoles(string pathInfo)
+        private string[] GetRequiredRoles(object dto)
         {
-            var searchRequestPath = new SearchSubscriptions().ToGetUrl();
-            return (pathInfo.EqualsIgnoreCase(searchRequestPath)
-                    ? SubscriptionSearchRoles
-                    : SubscriptionAccessRoles)
-                .SafeSplit(RoleDelimiters);
+            if (dto is SearchSubscriptions)
+            {
+                return SubscriptionSearchRoles.SafeSplit(RoleDelimiters);
+            }
+
+            return SubscriptionAccessRoles.SafeSplit(RoleDelimiters);
         }
     }
 }

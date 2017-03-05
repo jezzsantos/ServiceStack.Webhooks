@@ -153,7 +153,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedInWrongRole_ThenThrowsForbidden()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedInWrongRole_ThenThrowsForbidden()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -162,11 +162,13 @@ namespace ServiceStack.Webhooks.UnitTests
                     PathInfo = new GetSubscription
                     {
                         Id = "asubscriptionid"
-                    }.ToGetUrl()
+                    }.ToGetUrl(),
+                    Dto = new GetSubscription()
                 };
                 request.Items.Add(Keywords.Session, new AuthUserSession
                 {
-                    IsAuthenticated = true
+                    IsAuthenticated = true,
+                    Roles = new List<string> {"anotherrole"}
                 });
                 var response = new MockHttpResponse(request);
 
@@ -174,7 +176,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedAndNoAccessRoles_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedAndNoAccessRoles_ThenAuthorized()
             {
                 var feature = new WebhookFeature {SubscriptionAccessRoles = null};
                 feature.Register(appHost);
@@ -183,7 +185,8 @@ namespace ServiceStack.Webhooks.UnitTests
                     PathInfo = new GetSubscription
                     {
                         Id = "asubscriptionid"
-                    }.ToGetUrl()
+                    }.ToGetUrl(),
+                    Dto = new GetSubscription()
                 };
                 request.Items.Add(Keywords.Session, new AuthUserSession
                 {
@@ -195,28 +198,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedAndNoSearchRoles_ThenAuthorized()
-            {
-                var feature = new WebhookFeature {SubscriptionAccessRoles = null};
-                feature.Register(appHost);
-                var request = new MockHttpRequest
-                {
-                    PathInfo = new GetSubscription
-                    {
-                        Id = "asubscriptionid"
-                    }.ToGetUrl()
-                };
-                request.Items.Add(Keywords.Session, new AuthUserSession
-                {
-                    IsAuthenticated = true
-                });
-                var response = new MockHttpResponse(request);
-
-                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
-            }
-
-            [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedInAccessRole_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedInAccessRole_ThenAuthorized()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -225,7 +207,8 @@ namespace ServiceStack.Webhooks.UnitTests
                     PathInfo = new GetSubscription
                     {
                         Id = "asubscriptionid"
-                    }.ToGetUrl()
+                    }.ToGetUrl(),
+                    Dto = new GetSubscription()
                 };
                 request.Items.Add(Keywords.Session, new AuthUserSession
                 {
@@ -239,13 +222,54 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSubscriptionServiceAndAuthenticatedInSearchRole_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedInWrongRole_ThenThrowsForbidden()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
                 var request = new MockHttpRequest
                 {
-                    PathInfo = new SearchSubscriptions().ToGetUrl()
+                    PathInfo = new SearchSubscriptions().ToGetUrl(),
+                    Dto = new SearchSubscriptions()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true,
+                    UserAuthId = "auserid",
+                    Roles = new List<string> {"anotherrole"}
+                });
+                var response = new MockHttpResponse(request);
+
+                Assert.That(() => feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Forbidden));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedAndNoSearchRoles_ThenAuthorized()
+            {
+                var feature = new WebhookFeature {SubscriptionSearchRoles = null};
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new SearchSubscriptions().ToGetUrl(),
+                    Dto = new SearchSubscriptions()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true
+                });
+                var response = new MockHttpResponse(request);
+
+                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedInSearchRole_ThenAuthorized()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new SearchSubscriptions().ToGetUrl(),
+                    Dto = new SearchSubscriptions()
                 };
                 request.Items.Add(Keywords.Session, new AuthUserSession
                 {
@@ -290,7 +314,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 throw new NotImplementedException();
             }
 
-            public List<SubscriptionConfig> Search(string eventName)
+            public List<SubscriptionConfig> Search(string eventName, bool? isActive)
             {
                 throw new NotImplementedException();
             }

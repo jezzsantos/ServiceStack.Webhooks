@@ -42,20 +42,7 @@ public override void Configure(Container container)
 }
 ```
 
-Note: You must add the `WebhookFeature` after you use either of these features:
-* `Plugins.Add(new ValidationFeature();`
-* `Plugins.Add(new AuthFeature());`
-
-
-By default, the following components are installed by the `WebhookFeature`:
-
-* SubscriptionStore: `MemoryWebhookSubscriptionStore` to store all registered subscriptions
-* Event Sink: `AppHostWebhookEventSink` to relay raised events directly from your service to subscribers.
-
-**WARNING:** In production systems these default components will **need to be replaced**, by customizing your configuration of the `WebhookFeature`: 
-
-* Configure a `IWebhookSubscriptionStore` with one that is more appropriate to more persistent storage, like an OrmLiteStore or RedisStore, or a stores subscriptions using a database of your choice. WARNING: If you don't do this, and you continue to use the built-in `MemoryWebhookSubscriptionStore` your subscriptions will be lost when your host/site is restarted.
-* (Optional) Consider configuring a `IWebhookEventSink` with one that introduces some buffering between raising events and POSTing them to registered subscribers, like an Trigger, Queue, Bus-based implementation of your choice. WARNING: If you don't do this, and you continue to use the built-in `AppHostWebhookEventSink` your subscribers will be notified in the same thread that you raised the event, which can slow down your service significantly.
+See [Getting Started](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Getting-Started) for more details.
 
 ## Raising Events
 
@@ -73,13 +60,30 @@ internal class HelloService : Service
 }
 ```
 
+## Subscribing to Events
+
+Subscribers to events raised by your services need to create a webhook subscription to those events.
+
+They do this by POSTing something like the following, to your service:
+
+```
+POST /webhooks/subscriptions
+{
+    name: "My Webhook",
+    events: ["hello", "goodbye"],
+    config: {
+        url: "http://myserver/api/incoming",
+    }
+}
+```
+
 ## Consuming Events
 
-A subscriber that subscribes to your webhook events would need to provide a public HTTP POST endpoint that would receive the webhook event. 
+To consume events, a subscriber needs to provide a public HTTP POST endpoint that would receive the webhook event. 
 
-The URL to that endpoint is the  `Subscription.Config.Url` of the subscription that they created.
+The URL to that endpoint is defined in the `config.url` of the subscription (above).
 
-In the case of the "hello" event (above), the POSTed request would look something like this:
+In the case of the "hello" event (raised above), the POSTed request might look something like this:
 
 ```
 POST http://myserver/hello HTTP/1.1
@@ -90,7 +94,7 @@ X-Webhook-Delivery: 7a6224aad9c8400fb0a70b8a71262400
 X-Webhook-Event: hello
 Content-Type: application/json
 Host: myserver
-Content-Length: 25
+Content-Length: 26
 Expect: 100-continue
 Proxy-Connection: Keep-Alive
 
@@ -99,16 +103,16 @@ Proxy-Connection: Keep-Alive
 }
 ```
 
-To conume this event, the subscriber would need to standup a public [ServiceStack] API like the one below, to receive this particular event's payload:
+To consume this event with a ServiceStack service, the subscriber would standup a public API like the one below, that could receive the 'Hello' event being raised from `Webhooks.Publish("hello", new HelloEvent{ Text = "Hello" })`:
 
 ```
 internal class MyService : Service
 {
-    public void Post(Hello request)
+    public void Post(HelloDto request)
     {
        // I got a webhook event!
        
-       // The event name, and other messaging metadata are included in the headers
+       // The event name, messaging metadata are included in the headers
        var eventName = Request.Headers["X-Webhook-Event"];
        var deliveryId = Request.Headers["X-Webhook-Delivery"];
        var signature = Request.Headers["X-Hub-Signature"];
@@ -116,7 +120,7 @@ internal class MyService : Service
 }
 
 [Route("/hello", "POST")]
-public class Hello
+public class HelloDto
 {
     public string Text { get; set; }
 }

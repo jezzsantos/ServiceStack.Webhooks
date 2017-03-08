@@ -62,9 +62,10 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="MemorySubscriptionStoreSpec.cs" />
     <Compile Include="SubscriptionStoreSpecBase.cs" />
     <Compile Include="Services\AppHostForTesting.cs" />
-    <Compile Include="MemoryWebhookSubscriptionStoreSpec.cs" />
+    <Compile Include="CacheClientSubscriptionStoreSpec.cs" />
     <Compile Include="Services\StubSubscriberService.cs" />
     <Compile Include="SubscriptionServiceSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

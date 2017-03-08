@@ -5,7 +5,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
 {
-    internal class MemoryWebhookSubscriptionStore : IWebhookSubscriptionStore
+    public class CacheClientSubscriptionStore : IWebhookSubscriptionStore
     {
         internal const string CachekeyPrefix = @"subscriptions";
         internal const string CachekeyFormat = CachekeyPrefix + @":{0}:{1}";

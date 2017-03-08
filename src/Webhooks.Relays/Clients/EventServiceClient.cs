@@ -52,7 +52,6 @@ namespace ServiceStack.Webhooks.Relays.Clients
                         logger.Warn(Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts), ex);
                         return CreateDeliveryResult(subscription.SubscriptionId, (HttpStatusCode) ex.StatusCode, ex.StatusDescription);
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -63,7 +62,6 @@ namespace ServiceStack.Webhooks.Relays.Clients
                         logger.Warn(message, ex);
                         return CreateDeliveryResult(subscription.SubscriptionId, HttpStatusCode.ServiceUnavailable, message);
                     }
-
                 }
             }
 

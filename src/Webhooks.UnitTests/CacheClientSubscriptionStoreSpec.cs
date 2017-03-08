@@ -8,13 +8,13 @@ using ServiceStack.Webhooks.UnitTesting;
 
 namespace ServiceStack.Webhooks.UnitTests
 {
-    public class MemoryWebhookSubscriptionStoreSpec
+    public class CacheClientSubscriptionStoreSpec
     {
         [TestFixture]
         public class GivenACacheClient
         {
             private Mock<ICacheClient> cacheClient;
-            private MemoryWebhookSubscriptionStore store;
+            private CacheClientSubscriptionStore store;
 
             [SetUp]
             public void Initialize()
@@ -24,7 +24,7 @@ namespace ServiceStack.Webhooks.UnitTests
                     .Returns(new List<string> {"akey"});
 
                 cacheClient.Setup(cc => cc.Add(It.IsAny<string>(), It.IsAny<WebhookSubscription>()));
-                store = new MemoryWebhookSubscriptionStore
+                store = new CacheClientSubscriptionStore
                 {
                     CacheClient = cacheClient.Object
                 };
@@ -33,17 +33,17 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenFormatCacheKeyAndNullUserId_ThenReturnsAnonymousUserkey()
             {
-                var result = MemoryWebhookSubscriptionStore.FormatCacheKey(null, "aneventname");
+                var result = CacheClientSubscriptionStore.FormatCacheKey(null, "aneventname");
 
-                Assert.That(result, Is.EqualTo(MemoryWebhookSubscriptionStore.FormatCacheKey(MemoryWebhookSubscriptionStore.CacheKeyForAnonymousUser, "aneventname")));
+                Assert.That(result, Is.EqualTo(CacheClientSubscriptionStore.FormatCacheKey(CacheClientSubscriptionStore.CacheKeyForAnonymousUser, "aneventname")));
             }
 
             [Test, Category("Unit")]
             public void WhenFormatCacheKeyAndUserId_ThenReturnsUserkey()
             {
-                var result = MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname");
+                var result = CacheClientSubscriptionStore.FormatCacheKey("auserid", "aneventname");
 
-                Assert.That(result, Is.EqualTo(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname")));
+                Assert.That(result, Is.EqualTo(CacheClientSubscriptionStore.FormatCacheKey("auserid", "aneventname")));
             }
 
             [Test, Category("Unit")]
@@ -63,7 +63,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = store.Add(subscription);
 
                 Assert.That(result.IsEntityId(), Is.True);
-                cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname"), It.Is<WebhookSubscription>(sub
+                cacheClient.Verify(cc => cc.Add(CacheClientSubscriptionStore.FormatCacheKey("auserid", "aneventname"), It.Is<WebhookSubscription>(sub
                     => sub.Id.IsEntityId())));
             }
 
@@ -83,7 +83,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result, Is.EqualTo(subscription));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname") + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(CacheClientSubscriptionStore.FormatCacheKey("auserid", "aneventname") + "*"));
                 cacheClient.Verify(cc => cc.Get<object>("akey"));
             }
 
@@ -97,7 +97,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = store.Find("auserid");
 
                 Assert.That(result[0], Is.EqualTo(subscription));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", null) + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(CacheClientSubscriptionStore.FormatCacheKey("auserid", null) + "*"));
                 cacheClient.Verify(cc => cc.Get<object>("akey"));
             }
 
@@ -116,7 +116,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = store.Search("aneventname");
 
                 Assert.That(result[0].Config, Is.EqualTo(config));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(CacheClientSubscriptionStore.CachekeyPrefix + "*"));
                 cacheClient.Verify(cc => cc.Get<object>("akey"));
             }
 
@@ -147,7 +147,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = store.Search("aneventname", true);
 
                 Assert.That(result[0].Config, Is.EqualTo(config2));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(CacheClientSubscriptionStore.CachekeyPrefix + "*"));
                 cacheClient.Verify(cc => cc.Get<object>("akey1"));
                 cacheClient.Verify(cc => cc.Get<object>("akey2"));
             }
@@ -248,7 +248,7 @@ namespace ServiceStack.Webhooks.UnitTests
 
                 store.Add("asubscriptionid", result);
 
-                cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatHistoryCacheKey("auserid", "aneventname", "aresultid"), It.Is<SubscriptionDeliveryResult>(sub =>
+                cacheClient.Verify(cc => cc.Add(CacheClientSubscriptionStore.FormatHistoryCacheKey("auserid", "aneventname", "aresultid"), It.Is<SubscriptionDeliveryResult>(sub =>
                     (sub.Id == "aresultid")
                     && (sub.AttemptedDateUtc == datum))));
             }
@@ -285,8 +285,8 @@ namespace ServiceStack.Webhooks.UnitTests
 
                 Assert.That(result.Count, Is.EqualTo(1));
                 Assert.That(result[0].Id, Is.EqualTo("aresultid2"));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
-                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyFormat.Fmt("auserid", "aneventname") + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(CacheClientSubscriptionStore.CachekeyPrefix + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(CacheClientSubscriptionStore.CachekeyFormat.Fmt("auserid", "aneventname") + "*"));
                 cacheClient.Verify(cc => cc.Get<object>("asubscriptionkey"));
                 cacheClient.Verify(cc => cc.Get<object>("aresultkey1"));
                 cacheClient.Verify(cc => cc.Get<object>("aresultkey2"));

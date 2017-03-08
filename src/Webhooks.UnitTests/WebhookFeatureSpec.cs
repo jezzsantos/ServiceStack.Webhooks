@@ -80,7 +80,7 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 new WebhookFeature().Register(appHost);
 
-                Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<MemoryWebhookSubscriptionStore>());
+                Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<MemorySubscriptionStore>());
             }
 
             [Test, Category("Unit")]

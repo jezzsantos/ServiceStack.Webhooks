@@ -210,7 +210,8 @@ namespace ServiceStack.Webhooks.IntTests
 
             store.Add(subscriptionId, new SubscriptionDeliveryResult
             {
-                Id = "aresultid"
+                Id = "aresultid",
+                SubscriptionId = subscriptionId
             });
 
             var result = store.Search(subscriptionId, 100);
@@ -431,7 +432,8 @@ namespace ServiceStack.Webhooks.IntTests
 
             store.Add(subscriptionId, new SubscriptionDeliveryResult
             {
-                Id = "aresultid"
+                Id = "aresultid",
+                SubscriptionId = subscriptionId
             });
 
             var result = store.Search(subscriptionId, 100);

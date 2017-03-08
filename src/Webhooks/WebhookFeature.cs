@@ -54,7 +54,7 @@ namespace ServiceStack.Webhooks
         {
             if (!container.Exists<IWebhookSubscriptionStore>())
             {
-                container.RegisterAutoWiredAs<MemoryWebhookSubscriptionStore, IWebhookSubscriptionStore>();
+                container.RegisterAutoWiredAs<MemorySubscriptionStore, IWebhookSubscriptionStore>();
             }
         }
 

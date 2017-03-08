@@ -10,9 +10,9 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceModel
         [TestFixture]
         public class GivenADto
         {
+            private Mock<ISubscriptionDeliveryResultValidator> deliveryResultValidator;
             private UpdateSubscriptionHistory dto;
             private UpdateSubscriptionHistoryValidator validator;
-            private Mock<ISubscriptionDeliveryResultValidator> deliveryResultValidator;
 
             [SetUp]
             public void Initialize()

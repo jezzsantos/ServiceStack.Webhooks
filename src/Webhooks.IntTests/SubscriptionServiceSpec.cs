@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using NUnit.Framework;
-using ServiceStack.Caching;
 using ServiceStack.Logging;
 using ServiceStack.Webhooks.IntTests.Services;
 using ServiceStack.Webhooks.ServiceModel;
@@ -42,7 +41,7 @@ namespace ServiceStack.Webhooks.IntTests
             [SetUp]
             public void Initialize()
             {
-                appHost.Resolve<ICacheClient>().FlushAll();
+                ((MemorySubscriptionStore) appHost.Resolve<IWebhookSubscriptionStore>()).Clear();
                 userId = appHost.LoginUser(client, "asubscriber", WebhookFeature.DefaultSubscriberRoles);
             }
 
@@ -283,7 +282,7 @@ namespace ServiceStack.Webhooks.IntTests
             [SetUp]
             public void Initialize()
             {
-                appHost.Resolve<ICacheClient>().FlushAll();
+                ((MemorySubscriptionStore) appHost.Resolve<IWebhookSubscriptionStore>()).Clear();
                 appHost.LoginUser(client, "aservice", WebhookFeature.DefaultRelayRoles);
             }
 

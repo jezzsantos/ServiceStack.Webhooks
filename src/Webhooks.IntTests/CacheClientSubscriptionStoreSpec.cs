@@ -2,24 +2,24 @@
 
 namespace ServiceStack.Webhooks.IntTests
 {
-    public class MemoryWebhookSubscriptionStoreSpec
+    public class CacheClientSubscriptionStoreSpec
     {
-        public class GivenMemoryWebhookSubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
+        public class GivenCacheClientSubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
         {
             public override IWebhookSubscriptionStore GetSubscriptionStore()
             {
-                return new MemoryWebhookSubscriptionStore
+                return new CacheClientSubscriptionStore
                 {
                     CacheClient = new MemoryCacheClient()
                 };
             }
         }
 
-        public class GivenMemoryWebhookSubscriptionStoreAndAUser : GivenAUserWithSubscriptionStoreBase
+        public class GivenCacheClientSubscriptionStoreAndAUser : GivenAUserWithSubscriptionStoreBase
         {
             public override IWebhookSubscriptionStore GetSubscriptionStore()
             {
-                return new MemoryWebhookSubscriptionStore
+                return new CacheClientSubscriptionStore
                 {
                     CacheClient = new MemoryCacheClient()
                 };

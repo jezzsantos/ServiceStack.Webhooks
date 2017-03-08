@@ -19,7 +19,6 @@ namespace ServiceStack.Webhooks.IntTests
             private static AppHostForTesting appHost;
             private static JsonServiceClient client;
             private const string BaseUrl = "http://localhost:5567/";
-            private static ICacheClient cacheClient;
 
             [OneTimeTearDown]
             public void CleanupContext()
@@ -36,15 +35,14 @@ namespace ServiceStack.Webhooks.IntTests
                 appHost.Start(BaseUrl);
 
                 client = new JsonServiceClient(BaseUrl);
-                cacheClient = appHost.Resolve<ICacheClient>();
-
-                client.Put(new ResetConsumedEvents());
             }
 
             [SetUp]
             public void Initialize()
             {
-                cacheClient.FlushAll();
+                appHost.Resolve<ICacheClient>().FlushAll();
+                ((MemorySubscriptionStore) appHost.Resolve<IWebhookSubscriptionStore>()).Clear();
+
                 client.Put(new ResetConsumedEvents());
                 var subscriberUrl = BaseUrl.WithoutTrailingSlash() + new ConsumeEvent().ToPostUrl();
 

@@ -371,6 +371,7 @@ namespace ServiceStack.Webhooks.IntTests
             });
 
             var results = store.Search("aneventname", null)
+                .OrderBy(r=> r.Config.Url)
                 .ToList();
 
             Assert.That(results.Count, Is.EqualTo(2));

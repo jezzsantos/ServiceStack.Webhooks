@@ -118,11 +118,8 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                     CreatedById = "auserid",
                     Event = "anevent1"
                 };
-                store.Setup(s => s.Find("auserid"))
-                    .Returns(new List<WebhookSubscription>
-                    {
-                        subscription
-                    });
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns(subscription);
                 var datum1 = DateTime.UtcNow.ToNearestSecond();
                 var datum2 = datum1.AddDays(1);
                 store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
@@ -148,7 +145,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 Assert.That(result.Subscription, Is.EqualTo(subscription));
                 Assert.That(result.History[0].Id, Is.EqualTo("aresultid2"));
                 Assert.That(result.History[1].Id, Is.EqualTo("aresultid1"));
-                store.Verify(s => s.Find("auserid"));
+                store.Verify(s => s.Get("asubscriptionid"));
                 store.Verify(s => s.Search("asubscriptionid", 100));
             }
 
@@ -177,8 +174,8 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
             [Test, Category("Unit")]
             public void WhenUpdateWithUnknownId_ThenThrowsNotFound()
             {
-                store.Setup(s => s.Find("auserid"))
-                    .Returns(new List<WebhookSubscription>());
+                store.Setup(s => s.Get(It.IsAny<string>()))
+                    .Returns((WebhookSubscription) null);
 
                 Assert.That(() => service.Put(new UpdateSubscription
                 {
@@ -202,11 +199,8 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                     },
                     IsActive = false
                 };
-                store.Setup(s => s.Find("auserid"))
-                    .Returns(new List<WebhookSubscription>
-                    {
-                        subscription
-                    });
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns(subscription);
 
                 var result = service.Put(new UpdateSubscription
                 {
@@ -219,7 +213,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 Assert.That(result.Subscription, Is.EqualTo(subscription));
                 Assert.That(result.Subscription.Config.Url, Is.EqualTo("anewurl"));
-                store.Verify(s => s.Find("auserid"));
+                store.Verify(s => s.Get("asubscriptionid"));
                 store.Verify(s => s.Update("asubscriptionid", It.Is<WebhookSubscription>(whs =>
                     (whs.Config.Url == "anewurl")
                     && (whs.Config.Secret == "anewsecret")
@@ -249,18 +243,15 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                     CreatedById = "auserid",
                     Event = "anevent1"
                 };
-                store.Setup(s => s.Find("auserid"))
-                    .Returns(new List<WebhookSubscription>
-                    {
-                        subscription
-                    });
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns(subscription);
 
                 service.Delete(new DeleteSubscription
                 {
                     Id = "asubscriptionid"
                 });
 
-                store.Verify(s => s.Find("auserid"));
+                store.Verify(s => s.Get("asubscriptionid"));
                 store.Verify(s => s.Delete("asubscriptionid"));
             }
 
@@ -311,6 +302,8 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 store.Verify(s => s.Search("asubscriptionid", 1));
                 store.Verify(s => s.Add(It.IsAny<string>(), It.IsAny<SubscriptionDeliveryResult>()), Times.Never);
+                store.Verify(s => s.Get(It.IsAny<string>()), Times.Never);
+                store.Verify(s => s.Update(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
             }
 
             [Test, Category("Unit")]
@@ -346,6 +339,75 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 store.Verify(s => s.Search("asubscriptionid", 2));
                 store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
                         sdr.Id == "aresultid2")));
+                store.Verify(s => s.Get(It.IsAny<string>()), Times.Never);
+                store.Verify(s => s.Update(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateHistoryAndResultIncludes2XX_ThenDoesNotDeactiveSubscription()
+            {
+                var history = new List<SubscriptionDeliveryResult>
+                {
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid",
+                        SubscriptionId = "asubscriptionid",
+                        StatusCode = HttpStatusCode.OK
+                    }
+                };
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(new List<SubscriptionDeliveryResult>());
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns(new WebhookSubscription
+                    {
+                        Id = "asubscriptionid"
+                    });
+
+                service.Put(new UpdateSubscriptionHistory
+                {
+                    Results = history
+                });
+
+                store.Verify(s => s.Search("asubscriptionid", 1));
+                store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
+                        sdr.Id == "aresultid")));
+                store.Verify(s => s.Get(It.IsAny<string>()), Times.Never);
+                store.Verify(s => s.Update("asubscriptionid", It.IsAny<WebhookSubscription>()), Times.Never);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateHistoryAndResultIncludes4XX_ThenDeactivatesSubscription()
+            {
+                var history = new List<SubscriptionDeliveryResult>
+                {
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid",
+                        SubscriptionId = "asubscriptionid",
+                        StatusCode = HttpStatusCode.BadRequest
+                    }
+                };
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(new List<SubscriptionDeliveryResult>());
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns(new WebhookSubscription
+                    {
+                        Id = "asubscriptionid",
+                        IsActive = true
+                    });
+
+                service.Put(new UpdateSubscriptionHistory
+                {
+                    Results = history
+                });
+
+                store.Verify(s => s.Search("asubscriptionid", 1));
+                store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
+                        sdr.Id == "aresultid")));
+                store.Verify(s => s.Get("asubscriptionid"));
+                store.Verify(s => s.Update("asubscriptionid", It.Is<WebhookSubscription>(sub =>
+                    (sub.Id == "asubscriptionid")
+                    && (sub.IsActive == false))));
             }
         }
     }

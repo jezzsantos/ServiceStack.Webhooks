@@ -21,12 +21,17 @@ namespace ServiceStack.Webhooks
         WebhookSubscription Get(string userId, string eventName);
 
         /// <summary>
-        ///     Updates the subscription
+        ///     Gets the specified subscription
+        /// </summary>
+        WebhookSubscription Get(string subscriptionId);
+
+        /// <summary>
+        ///     Updates the specified subscription
         /// </summary>
         void Update(string subscriptionId, WebhookSubscription subscription);
 
         /// <summary>
-        ///     Deletes the subscription
+        ///     Deletes the specified subscription
         /// </summary>
         void Delete(string subscriptionId);
 

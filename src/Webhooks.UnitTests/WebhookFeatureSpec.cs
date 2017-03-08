@@ -344,6 +344,11 @@ namespace ServiceStack.Webhooks.UnitTests
                 throw new NotImplementedException();
             }
 
+            public WebhookSubscription Get(string subscriptionId)
+            {
+                throw new NotImplementedException();
+            }
+
             public void Update(string subscriptionId, WebhookSubscription subscription)
             {
                 throw new NotImplementedException();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using ServiceStack.Logging;
 using ServiceStack.Webhooks.Properties;
 using ServiceStack.Webhooks.Relays;
@@ -77,8 +78,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public GetSubscriptionResponse Get(GetSubscription request)
         {
-            var subscription = Store.Find(Caller.UserId).Safe()
-                .FirstOrDefault(sub => sub.Id.EqualsIgnoreCase(request.Id));
+            var subscription = Store.Get(request.Id);
             if (subscription == null)
             {
                 throw HttpError.NotFound(null);
@@ -112,8 +112,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
         public UpdateSubscriptionResponse Put(UpdateSubscription request)
         {
             var now = DateTime.UtcNow.ToNearestSecond();
-            var subscription = Store.Find(Caller.UserId).Safe()
-                .FirstOrDefault(sub => sub.Id.EqualsIgnoreCase(request.Id));
+            var subscription = Store.Get(request.Id);
             if (subscription == null)
             {
                 throw HttpError.NotFound(null);
@@ -153,8 +152,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public DeleteSubscriptionResponse Delete(DeleteSubscription request)
         {
-            var subscription = Store.Find(Caller.UserId).Safe()
-                .FirstOrDefault(sub => sub.Id.EqualsIgnoreCase(request.Id));
+            var subscription = Store.Get(request.Id);
             if (subscription == null)
             {
                 throw HttpError.NotFound(null);
@@ -187,6 +185,14 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 if (!existing.Any(exist => exist.Id.EqualsIgnoreCase(incoming.Id)))
                 {
                     Store.Add(incoming.SubscriptionId, incoming);
+
+                    if ((incoming.StatusCode >= HttpStatusCode.BadRequest)
+                        && (incoming.StatusCode < HttpStatusCode.InternalServerError))
+                    {
+                        var subscription = Store.Get(incoming.SubscriptionId);
+                        subscription.IsActive = false;
+                        Store.Update(incoming.SubscriptionId, subscription);
+                    }
                 }
             });
         }

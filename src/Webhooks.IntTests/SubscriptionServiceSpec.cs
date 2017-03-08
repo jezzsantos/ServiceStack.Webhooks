@@ -472,6 +472,51 @@ namespace ServiceStack.Webhooks.IntTests
                 Assert.That(result[0].AttemptedDateUtc, Is.EqualTo(datum2));
                 Assert.That(result[1].AttemptedDateUtc, Is.EqualTo(datum1));
             }
+
+            [Test, Category("Integration")]
+            public void WhenUpdateSubscriptionHistoryWithA4XX_ThenSubscriptionDeActivated()
+            {
+                appHost.LoginUser(client, "asubscriber", WebhookFeature.DefaultSubscriberRoles);
+                var subscription = client.Post(new CreateSubscription
+                    {
+                        Name = "aname",
+                        Events = new List<string> {"anevent1"},
+                        Config = new SubscriptionConfig
+                        {
+                            Url = "http://localhost:3333"
+                        }
+                    }).Subscriptions
+                    .First();
+
+                var datum = DateTime.UtcNow.ToNearestSecond();
+                appHost.LoginUser(client, "arelay", WebhookFeature.DefaultRelayRoles);
+                client.Put(new UpdateSubscriptionHistory
+                {
+                    Results = new List<SubscriptionDeliveryResult>
+                    {
+                        new SubscriptionDeliveryResult
+                        {
+                            Id = DataFormats.CreateEntityIdentifier(),
+                            SubscriptionId = subscription.Id,
+                            AttemptedDateUtc = datum,
+                            StatusCode = HttpStatusCode.BadRequest,
+                            StatusDescription = "adescription"
+                        }
+                    }
+                });
+
+                appHost.LoginUser(client, "asubscriber", WebhookFeature.DefaultSubscriberRoles);
+                var result = client.Get(new GetSubscription
+                {
+                    Id = subscription.Id
+                });
+
+                Assert.That(result.History.Count, Is.EqualTo(1));
+                Assert.That(result.History[0].AttemptedDateUtc, Is.EqualTo(datum));
+                Assert.That(result.History[0].StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(result.History[0].StatusDescription, Is.EqualTo("adescription"));
+                Assert.That(result.Subscription.IsActive, Is.False);
+            }
         }
     }
 }

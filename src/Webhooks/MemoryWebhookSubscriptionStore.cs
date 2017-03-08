@@ -64,6 +64,14 @@ namespace ServiceStack.Webhooks
             return subscription;
         }
 
+        public WebhookSubscription Get(string subscriptionId)
+        {
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
+
+            var persistedSubscription = GetSubscription(subscriptionId);
+            return persistedSubscription.Value;
+        }
+
         public void Update(string subscriptionId, WebhookSubscription subscription)
         {
             Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);

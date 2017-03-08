@@ -10,8 +10,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.3.0")]
-[assembly: AssemblyInformationalVersion("1.3.0")]
+[assembly: AssemblyFileVersion("1.4.0")]
+[assembly: AssemblyInformationalVersion("1.4.0")]
 
 #if ASSEMBLYSIGNED
 [assembly:

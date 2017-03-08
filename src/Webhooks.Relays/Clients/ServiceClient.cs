@@ -24,9 +24,9 @@ namespace ServiceStack.Webhooks.Relays.Clients
             set { jsonClient.RequestFilter = value; }
         }
 
-        public void Post<TRequest>(string url, TRequest request)
+        public HttpWebResponse Post<TRequest>(string url, TRequest request)
         {
-            jsonClient.Post<TRequest>(url, request);
+            return jsonClient.Post<HttpWebResponse>(url, request);
         }
 
         public TResponse Get<TResponse>(IReturn<TResponse> request)

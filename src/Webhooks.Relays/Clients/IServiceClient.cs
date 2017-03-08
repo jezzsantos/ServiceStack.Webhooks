@@ -18,7 +18,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
         /// <summary>
         ///     Posts the specified data to the specified URL
         /// </summary>
-        void Post<TRequest>(string url, TRequest data);
+        HttpWebResponse Post<TRequest>(string url, TRequest data);
 
         /// <summary>
         ///     Returns the response for a GET request

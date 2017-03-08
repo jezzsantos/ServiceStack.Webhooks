@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ServiceStack.Webhooks.Clients;
+using ServiceStack.Webhooks.Relays;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
@@ -20,6 +22,8 @@ namespace ServiceStack.Webhooks
 
         public IWebhookEventServiceClient ServiceClient { get; set; }
 
+        public ISubscriptionService SubscriptionService { get; set; }
+
         public int Retries { get; set; }
 
         public int TimeoutSecs { get; set; }
@@ -29,15 +33,27 @@ namespace ServiceStack.Webhooks
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
             var subscriptions = SubscriptionCache.GetAll(eventName);
+            var results = new List<SubscriptionDeliveryResult>();
             subscriptions.ForEach(sub =>
-                    NotifySubscription(sub, eventName, data));
+            {
+                var result = NotifySubscription(sub, eventName, data);
+                if (result != null)
+                {
+                    results.Add(result);
+                }
+            });
+
+            if (results.Any())
+            {
+                SubscriptionService.UpdateResults(results);
+            }
         }
 
-        private void NotifySubscription(SubscriptionConfig subscription, string eventName, Dictionary<string, string> data)
+        private SubscriptionDeliveryResult NotifySubscription(SubscriptionRelayConfig subscription, string eventName, Dictionary<string, string> data)
         {
             ServiceClient.Retries = Retries;
             ServiceClient.Timeout = TimeSpan.FromSeconds(TimeoutSecs);
-            ServiceClient.Post(subscription, eventName, data);
+            return ServiceClient.Relay(subscription, eventName, data);
         }
     }
 }

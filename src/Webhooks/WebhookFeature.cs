@@ -11,22 +11,22 @@ namespace ServiceStack.Webhooks
 {
     public class WebhookFeature : IPlugin
     {
-        public const string DefaultAccessRoles = @"user";
-        public const string DefaultSearchRoles = @"service";
+        public const string DefaultSubscriberRoles = @"user";
+        public const string DefaultRelayRoles = @"service";
         public static readonly string[] RoleDelimiters = {",", ";"};
 
         public WebhookFeature()
         {
             IncludeSubscriptionService = true;
-            SubscriptionAccessRoles = DefaultAccessRoles;
-            SubscriptionSearchRoles = DefaultSearchRoles;
+            SecureSubscriberRoles = DefaultSubscriberRoles;
+            SecureRelayRoles = DefaultRelayRoles;
         }
 
         public bool IncludeSubscriptionService { get; set; }
 
-        public string SubscriptionAccessRoles { get; set; }
+        public string SecureSubscriberRoles { get; set; }
 
-        public string SubscriptionSearchRoles { get; set; }
+        public string SecureRelayRoles { get; set; }
 
         public void Register(IAppHost appHost)
         {
@@ -68,6 +68,7 @@ namespace ServiceStack.Webhooks
                 container.RegisterValidators(typeof(WebHookInterfaces).Assembly, typeof(SubscriptionService).Assembly);
                 container.RegisterAutoWiredAs<SubscriptionEventsValidator, ISubscriptionEventsValidator>();
                 container.RegisterAutoWiredAs<SubscriptionConfigValidator, ISubscriptionConfigValidator>();
+                container.RegisterAutoWiredAs<SubscriptionDeliveryResultValidator, ISubscriptionDeliveryResultValidator>();
 
                 container.RegisterAutoWiredAs<AuthSessionCurrentCaller, ICurrentCaller>();
 
@@ -99,12 +100,12 @@ namespace ServiceStack.Webhooks
 
         private string[] GetRequiredRoles(object dto)
         {
-            if (dto is SearchSubscriptions)
+            if (dto is SearchSubscriptions || dto is UpdateSubscriptionHistory)
             {
-                return SubscriptionSearchRoles.SafeSplit(RoleDelimiters);
+                return SecureRelayRoles.SafeSplit(RoleDelimiters);
             }
 
-            return SubscriptionAccessRoles.SafeSplit(RoleDelimiters);
+            return SecureSubscriberRoles.SafeSplit(RoleDelimiters);
         }
     }
 }

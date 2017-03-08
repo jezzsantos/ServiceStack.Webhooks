@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using ServiceStack.Logging;
 using ServiceStack.Webhooks.Clients;
+using ServiceStack.Webhooks.Relays.Properties;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Relays.Clients
@@ -24,7 +25,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
 
         public int Retries { get; set; }
 
-        public void Post(SubscriptionConfig subscription, string eventName, object data)
+        public SubscriptionDeliveryResult Relay(SubscriptionRelayConfig subscription, string eventName, object data)
         {
             Guard.AgainstNull(() => subscription, subscription);
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
@@ -39,27 +40,46 @@ namespace ServiceStack.Webhooks.Relays.Clients
 
                 try
                 {
-                    serviceClient.Post(subscription.Url, data);
-                    return;
+                    using (var response = serviceClient.Post(subscription.Config.Url, data))
+                    {
+                        return CreateDeliveryResult(subscription.SubscriptionId, response.StatusCode, response.StatusDescription);
+                    }
                 }
                 catch (WebServiceException ex)
                 {
                     if (HasNoMoreRetries(attempts) || ex.IsAny400())
                     {
-                        logger.Warn("Failed to notify subscriber at {0} (after {1} attempts)".Fmt(subscription.Url, attempts), ex);
-                        return;
+                        logger.Warn(Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts), ex);
+                        return CreateDeliveryResult(subscription.SubscriptionId, (HttpStatusCode) ex.StatusCode, ex.StatusDescription);
                     }
+
                 }
                 catch (Exception ex)
                 {
                     // Timeout (WebException) or other Exception
                     if (HasNoMoreRetries(attempts))
                     {
-                        logger.Warn("Failed to notify subscriber at {0} (after {1} attempts)".Fmt(subscription.Url, attempts), ex);
-                        return;
+                        var message = Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts);
+                        logger.Warn(message, ex);
+                        return CreateDeliveryResult(subscription.SubscriptionId, HttpStatusCode.ServiceUnavailable, message);
                     }
+
                 }
             }
+
+            return null;
+        }
+
+        private SubscriptionDeliveryResult CreateDeliveryResult(string subscriptionId, HttpStatusCode statusCode, string statusDescription)
+        {
+            return new SubscriptionDeliveryResult
+            {
+                Id = DataFormats.CreateEntityIdentifier(),
+                AttemptedDateUtc = DateTime.UtcNow.ToNearestMillisecond(),
+                SubscriptionId = subscriptionId,
+                StatusDescription = statusDescription,
+                StatusCode = statusCode
+            };
         }
 
         private bool HasNoMoreRetries(int attempts)
@@ -71,11 +91,11 @@ namespace ServiceStack.Webhooks.Relays.Clients
         ///     Creates an instance of a serviceclient and configures it to send an event notification.
         ///     See: https://developer.github.com/webhooks/#payloads for specification
         /// </summary>
-        private IServiceClient CreateServiceClient(SubscriptionConfig config, string eventName, TimeSpan? timeout)
+        private IServiceClient CreateServiceClient(SubscriptionRelayConfig relayConfig, string eventName, TimeSpan? timeout)
         {
             try
             {
-                var client = ServiceClientFactory.Create(config.Url);
+                var client = ServiceClientFactory.Create(relayConfig.Config.Url);
                 client.Timeout = timeout;
                 client.RequestFilter = request =>
                 {
@@ -84,13 +104,13 @@ namespace ServiceStack.Webhooks.Relays.Clients
                     request.Headers.Remove(WebhookEventConstants.RequestIdHeaderName);
                     request.Headers.Remove(WebhookEventConstants.EventNameHeaderName);
 
-                    if (config.ContentType.HasValue())
+                    if (relayConfig.Config.ContentType.HasValue())
                     {
-                        request.ContentType = config.ContentType;
+                        request.ContentType = relayConfig.Config.ContentType;
                     }
-                    if (config.Secret.HasValue())
+                    if (relayConfig.Config.Secret.HasValue())
                     {
-                        request.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, CreateContentHmacSignature(request, config.Secret));
+                        request.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, CreateContentHmacSignature(request, relayConfig.Config.Secret));
                     }
                     request.Headers.Add(WebhookEventConstants.RequestIdHeaderName, CreateRequestIdentifier());
                     request.Headers.Add(WebhookEventConstants.EventNameHeaderName, eventName);
@@ -99,7 +119,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
             }
             catch (Exception ex)
             {
-                logger.Error(@"Failed to connect to subscriber: {0}, this URL is not valid".Fmt(config.Url), ex);
+                logger.Error(@"Failed to connect to subscriber: {0}, this URL is not valid".Fmt(relayConfig.Config.Url), ex);
                 return null;
             }
         }

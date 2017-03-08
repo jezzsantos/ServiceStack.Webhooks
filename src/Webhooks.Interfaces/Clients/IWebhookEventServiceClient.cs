@@ -16,8 +16,8 @@ namespace ServiceStack.Webhooks.Clients
         int Retries { get; set; }
 
         /// <summary>
-        ///     Posts the specified event to the specified subscription
+        ///     Relays the specified event to the specified subscription configuration
         /// </summary>
-        void Post(SubscriptionConfig subscription, string eventName, object data);
+        SubscriptionDeliveryResult Relay(SubscriptionRelayConfig subscription, string eventName, object data);
     }
 }

@@ -20,16 +20,21 @@ namespace ServiceStack.Webhooks.ServiceInterface
             get { return Request.ToCaller(); }
         }
 
-        List<SubscriptionConfig> ISubscriptionService.Search(string eventName)
+        List<SubscriptionRelayConfig> ISubscriptionService.Search(string eventName)
         {
             return Store.Search(eventName, true);
+        }
+
+        void ISubscriptionService.UpdateResults(List<SubscriptionDeliveryResult> results)
+        {
+            UpdateDeliveryHistory(results);
         }
 
         public SearchSubscriptionsResponse Get(SearchSubscriptions request)
         {
             var subscribers = Store.Search(request.EventName, true);
 
-            logger.InfoFormat(@"Retrieved subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
+            logger.InfoFormat(@"Searched subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
 
             return new SearchSubscriptionsResponse
             {
@@ -72,18 +77,23 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public GetSubscriptionResponse Get(GetSubscription request)
         {
-            var subscription = Store.Find(Caller.UserId)
+            var subscription = Store.Find(Caller.UserId).Safe()
                 .FirstOrDefault(sub => sub.Id.EqualsIgnoreCase(request.Id));
             if (subscription == null)
             {
                 throw HttpError.NotFound(null);
             }
 
+            var history = Store.Search(request.Id, 100)
+                .OrderByDescending(result => result.AttemptedDateUtc)
+                .ToList();
+
             logger.InfoFormat(@"Retrieved subscription {0} by user {1}", subscription.Id, Caller.UserId);
 
             return new GetSubscriptionResponse
             {
-                Subscription = subscription
+                Subscription = subscription,
+                History = history
             };
         }
 
@@ -102,7 +112,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
         public UpdateSubscriptionResponse Put(UpdateSubscription request)
         {
             var now = DateTime.UtcNow.ToNearestSecond();
-            var subscription = Store.Find(Caller.UserId)
+            var subscription = Store.Find(Caller.UserId).Safe()
                 .FirstOrDefault(sub => sub.Id.EqualsIgnoreCase(request.Id));
             if (subscription == null)
             {
@@ -143,7 +153,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public DeleteSubscriptionResponse Delete(DeleteSubscription request)
         {
-            var subscription = Store.Find(Caller.UserId)
+            var subscription = Store.Find(Caller.UserId).Safe()
                 .FirstOrDefault(sub => sub.Id.EqualsIgnoreCase(request.Id));
             if (subscription == null)
             {
@@ -155,6 +165,30 @@ namespace ServiceStack.Webhooks.ServiceInterface
             logger.InfoFormat(@"Deleted subscription {0} by user {1}", subscription.Id, Caller.UserId);
 
             return new DeleteSubscriptionResponse();
+        }
+
+        public UpdateSubscriptionHistoryResponse Put(UpdateSubscriptionHistory request)
+        {
+            if (request.Results.Any())
+            {
+                UpdateDeliveryHistory(request.Results);
+
+                logger.InfoFormat(@"Added subscription history by user {0}", Caller.UserId);
+            }
+
+            return new UpdateSubscriptionHistoryResponse();
+        }
+
+        private void UpdateDeliveryHistory(List<SubscriptionDeliveryResult> results)
+        {
+            results.ForEach(incoming =>
+            {
+                var existing = Store.Search(incoming.SubscriptionId, results.Count);
+                if (!existing.Any(exist => exist.Id.EqualsIgnoreCase(incoming.Id)))
+                {
+                    Store.Add(incoming.SubscriptionId, incoming);
+                }
+            });
         }
     }
 }

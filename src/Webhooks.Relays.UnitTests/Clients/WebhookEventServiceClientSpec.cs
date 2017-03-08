@@ -3,6 +3,7 @@ using System.Net;
 using Moq;
 using NUnit.Framework;
 using ServiceStack.Webhooks.Relays.Clients;
+using ServiceStack.Webhooks.Relays.Properties;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
@@ -21,6 +22,11 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             {
                 serviceClientFactory = new Mock<IEventServiceClientFactory>();
                 serviceClient = new Mock<Relays.Clients.IServiceClient>();
+                var response = new Mock<HttpWebResponse>();
+                response.Setup(res => res.StatusCode).Returns(HttpStatusCode.OK);
+                response.Setup(res => res.StatusDescription).Returns("astatusdescription");
+                serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
+                    .Returns(response.Object);
                 serviceClientFactory.Setup(scf => scf.Create(It.IsAny<string>()))
                     .Returns(serviceClient.Object);
                 client = new EventServiceClient
@@ -30,21 +36,21 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndNullSubscription_ThenThrows()
+            public void WhenRelayAndNullSubscription_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        client.Post(null, "aneventname", "adata"));
+                        client.Relay(null, "aneventname", "adata"));
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndNullEvent_ThenThrows()
+            public void WhenRelayAndNullEvent_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        client.Post(new SubscriptionConfig(), null, "adata"));
+                        client.Relay(new SubscriptionRelayConfig(), null, "adata"));
             }
 
             [Test, Category("Unit")]
-            public void WhenPost_ThenRequestIncludesStandardHeaders()
+            public void WhenRelay_ThenRequestIncludesStandardHeaders()
             {
                 var request = new Mock<HttpWebRequest>();
                 request.Setup(req => req.Headers)
@@ -52,9 +58,12 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 serviceClient.SetupSet(sc => sc.RequestFilter = It.IsAny<Action<HttpWebRequest>>())
                     .Callback((Action<HttpWebRequest> action) => { action(request.Object); });
 
-                client.Post(new SubscriptionConfig
+                client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
@@ -66,7 +75,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndSubscriptionHasSecret_ThenRequestIncludesSecretSignatureHeader()
+            public void WhenRelayAndSubscriptionHasSecret_ThenRequestIncludesSecretSignatureHeader()
             {
                 var request = new Mock<HttpWebRequest>();
                 request.Setup(req => req.Headers)
@@ -74,10 +83,13 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 serviceClient.SetupSet(sc => sc.RequestFilter = It.IsAny<Action<HttpWebRequest>>())
                     .Callback((Action<HttpWebRequest> action) => { action(request.Object); });
 
-                client.Post(new SubscriptionConfig
+                client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl",
-                    Secret = "asecret"
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl",
+                        Secret = "asecret"
+                    }
                 }, "aneventname", "adata");
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
@@ -88,7 +100,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndSubscriptionHasContentType_ThenSetsRequestContentType()
+            public void WhenRelayAndSubscriptionHasContentType_ThenSetsRequestContentType()
             {
                 var request = new Mock<HttpWebRequest>();
                 request.Setup(req => req.Headers)
@@ -96,11 +108,14 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 serviceClient.SetupSet(sc => sc.RequestFilter = It.IsAny<Action<HttpWebRequest>>())
                     .Callback((Action<HttpWebRequest> action) => { action(request.Object); });
 
-                client.Post(new SubscriptionConfig
+                client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl",
-                    Secret = "asecret",
-                    ContentType = "acontenttype"
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl",
+                        Secret = "asecret",
+                        ContentType = "acontenttype"
+                    }
                 }, "aneventname", "adata");
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
@@ -112,87 +127,116 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndServiceClientFailsWith400_ThenDoesNotRetry()
+            public void WhenRelayAndServiceClientFailsWith400_ThenDoesNotRetry()
             {
                 serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
                     .Throws(new WebServiceException
                     {
-                        StatusCode = (int) HttpStatusCode.BadRequest
+                        StatusCode = (int) HttpStatusCode.BadRequest,
+                        StatusDescription = "astatusdescription"
                     });
 
-                client.Post(new SubscriptionConfig
+                var result = client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
+                AssertDeliveryResult(result, HttpStatusCode.BadRequest);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndServiceClientFailsWith401_ThenDoesNotRetry()
+            public void WhenRelayAndServiceClientFailsWith401_ThenDoesNotRetry()
             {
                 serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
                     .Throws(new WebServiceException
                     {
-                        StatusCode = (int) HttpStatusCode.Unauthorized
+                        StatusCode = (int) HttpStatusCode.Unauthorized,
+                        StatusDescription = "astatusdescription"
                     });
 
-                client.Post(new SubscriptionConfig
+                var result = client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
+                AssertDeliveryResult(result, HttpStatusCode.Unauthorized);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndServiceClientFailsWithAny500_ThenRetries()
+            public void WhenRelayAndServiceClientFailsWithAny500_ThenRetries()
             {
                 serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
                     .Throws(new WebServiceException
                     {
-                        StatusCode = (int) HttpStatusCode.InternalServerError
+                        StatusCode = (int) HttpStatusCode.InternalServerError,
+                        StatusDescription = "astatusdescription"
                     });
 
-                client.Post(new SubscriptionConfig
+                var result = client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
+                AssertDeliveryResult(result, HttpStatusCode.InternalServerError);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndServiceClientFailsWithTimeout_ThenRetries()
+            public void WhenRelayAndServiceClientFailsWithTimeout_ThenRetries()
             {
                 serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
                     .Throws(new WebException());
 
-                client.Post(new SubscriptionConfig
+                var result = client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
+                AssertDeliveryResult(result, HttpStatusCode.ServiceUnavailable, Resources.EventServiceClient_FailedDelivery.Fmt("aurl", 3));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndServiceClientSucceedsFirstTime_ThenDoesNotRetry()
+            public void WhenRelayAndServiceClientSucceedsFirstTime_ThenDoesNotRetry()
             {
-                serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()));
-
-                client.Post(new SubscriptionConfig
+                var result = client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
+                AssertDeliveryResult(result, HttpStatusCode.OK);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndServiceClientFailsFirstTimeOnly_ThenRetriesOnceOnly()
+            public void WhenRelayAndServiceClientFailsFirstTimeOnly_ThenRetriesOnceOnly()
             {
                 var times = 1;
+                var response = new Mock<HttpWebResponse>();
+                response.Setup(res => res.StatusCode).Returns(HttpStatusCode.OK);
+                response.Setup(res => res.StatusDescription).Returns("astatusdescription");
                 serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
                     .Callback(() =>
                     {
@@ -202,29 +246,46 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                             throw new WebServiceException();
                         }
                         times++;
-                    });
+                    }).Returns(response.Object);
 
-                client.Post(new SubscriptionConfig
+                client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(2));
             }
 
             [Test, Category("Unit")]
-            public void WhenPostAndRetriesIsZeroAndServiceClientFailsFirstTime_ThenDoesNotRetry()
+            public void WhenRelayAndRetriesIsZeroAndServiceClientFailsFirstTime_ThenDoesNotRetry()
             {
                 client.Retries = 0;
                 serviceClient.Setup(sc => sc.Post(It.IsAny<string>(), It.IsAny<object>()))
                     .Callback(() => { throw new Exception(); });
 
-                client.Post(new SubscriptionConfig
+                client.Relay(new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    SubscriptionId = "asubscriptionid",
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 }, "aneventname", "adata");
 
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
+            }
+
+            private static void AssertDeliveryResult(SubscriptionDeliveryResult result, HttpStatusCode statusCode, string statusDescription = null)
+            {
+                Assert.That(result.Id.IsEntityId);
+                Assert.That(result.SubscriptionId, Is.EqualTo("asubscriptionid"));
+                Assert.That(result.AttemptedDateUtc, Is.EqualTo(DateTime.UtcNow).Within(1).Seconds);
+                Assert.That(result.StatusCode, Is.EqualTo(statusCode));
+                Assert.That(result.StatusDescription, Is.EqualTo(statusDescription.HasValue() ? statusDescription : "astatusdescription"));
             }
         }
     }

@@ -5,6 +5,8 @@ namespace ServiceStack.Webhooks.Relays
 {
     public interface ISubscriptionService
     {
-        List<SubscriptionConfig> Search(string eventName);
+        List<SubscriptionRelayConfig> Search(string eventName);
+
+        void UpdateResults(List<SubscriptionDeliveryResult> results);
     }
 }

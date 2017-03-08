@@ -24,5 +24,10 @@ namespace ServiceStack.Webhooks.Relays.Clients
         ///     Returns the response for a GET request
         /// </summary>
         TResponse Get<TResponse>(IReturn<TResponse> request);
+
+        /// <summary>
+        ///     Puts the specified data to the specified URL
+        /// </summary>
+        TResponse Put<TResponse>(IReturn<TResponse> request);
     }
 }

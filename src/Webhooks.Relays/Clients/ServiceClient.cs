@@ -33,5 +33,10 @@ namespace ServiceStack.Webhooks.Relays.Clients
         {
             return jsonClient.Get(request);
         }
+
+        public TResponse Put<TResponse>(IReturn<TResponse> request)
+        {
+            return jsonClient.Put(request);
+        }
     }
 }

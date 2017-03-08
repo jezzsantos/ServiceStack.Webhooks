@@ -131,7 +131,7 @@ namespace ServiceStack.Webhooks.IntTests
                     .ToList();
 
                 Assert.That(results.Count, Is.EqualTo(1));
-                Assert.That(results[0].Url, Is.EqualTo("aurl"));
+                Assert.That(results[0].Config.Url, Is.EqualTo("aurl"));
             }
 
             [Test, Category("Integration")]
@@ -160,7 +160,7 @@ namespace ServiceStack.Webhooks.IntTests
                     .ToList();
 
                 Assert.That(results.Count, Is.EqualTo(1));
-                Assert.That(results[0].Url, Is.EqualTo("aurl1"));
+                Assert.That(results[0].Config.Url, Is.EqualTo("aurl1"));
             }
 
             [Test, Category("Integration")]
@@ -201,6 +201,28 @@ namespace ServiceStack.Webhooks.IntTests
                 var result = store.Get(null, "aneventname1");
 
                 Assert.That(result, Is.Null);
+            }
+
+            [Test, Category("Integration")]
+            public void WhenAddHistory_ThenAdds()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname1"
+                };
+
+                var subscriptionId = store.Add(subscription);
+
+                store.Add(subscriptionId, new SubscriptionDeliveryResult
+                {
+                    Id = "aresultid"
+                });
+
+                var result = store.Search(subscriptionId, 100);
+
+                Assert.That(result.Count, Is.EqualTo(1));
+                Assert.That(result[0].Id, Is.EqualTo("aresultid"));
             }
         }
 
@@ -329,7 +351,7 @@ namespace ServiceStack.Webhooks.IntTests
                     .ToList();
 
                 Assert.That(results.Count, Is.EqualTo(1));
-                Assert.That(results[0].Url, Is.EqualTo("aurl"));
+                Assert.That(results[0].Config.Url, Is.EqualTo("aurl"));
             }
 
             [Test, Category("Integration")]
@@ -358,8 +380,8 @@ namespace ServiceStack.Webhooks.IntTests
                     .ToList();
 
                 Assert.That(results.Count, Is.EqualTo(2));
-                Assert.That(results[0].Url, Is.EqualTo("aurl1"));
-                Assert.That(results[1].Url, Is.EqualTo("aurl2"));
+                Assert.That(results[0].Config.Url, Is.EqualTo("aurl1"));
+                Assert.That(results[1].Config.Url, Is.EqualTo("aurl2"));
             }
 
             [Test, Category("Integration")]
@@ -401,6 +423,28 @@ namespace ServiceStack.Webhooks.IntTests
                 var result = store.Get("auserid", "aneventname1");
 
                 Assert.That(result, Is.Null);
+            }
+
+            [Test, Category("Integration")]
+            public void WhenAddHistory_ThenAdds()
+            {
+                var subscription = new WebhookSubscription
+                {
+                    CreatedById = null,
+                    Event = "aneventname1"
+                };
+
+                var subscriptionId = store.Add(subscription);
+
+                store.Add(subscriptionId, new SubscriptionDeliveryResult
+                {
+                    Id = "aresultid"
+                });
+
+                var result = store.Search(subscriptionId, 100);
+
+                Assert.That(result.Count, Is.EqualTo(1));
+                Assert.That(result[0].Id, Is.EqualTo("aresultid"));
             }
         }
     }

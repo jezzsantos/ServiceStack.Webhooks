@@ -82,6 +82,8 @@
     <Compile Include="ServiceInterface\SubscriptionServiceSpec.cs" />
     <Compile Include="ServiceModel\SearchSubscriptionsValidatorSpec.cs" />
     <Compile Include="ServiceModel\ListSubscriptionsValidatorSpec.cs" />
+    <Compile Include="ServiceModel\SubscriptionDeliveryResultValidatorSpec.cs" />
+    <Compile Include="ServiceModel\UpdateSubscriptionHistoryValidatorSpec.cs" />
     <Compile Include="ServiceModel\UpdateSubscriptionValidatorSpec.cs" />
     <Compile Include="ServiceModel\DeleteSubscriptionValidatorSpec.cs" />
     <Compile Include="ServiceModel\GetSubscriptionValidatorSpec.cs" />

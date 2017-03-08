@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using ServiceStack.Caching;
 using ServiceStack.Webhooks.ServiceModel.Types;
+using ServiceStack.Webhooks.UnitTesting;
 
 namespace ServiceStack.Webhooks.UnitTests
 {
@@ -19,7 +21,7 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 cacheClient = new Mock<ICacheClient>();
                 cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
-                    .Returns(new List<string>());
+                    .Returns(new List<string> {"akey"});
 
                 cacheClient.Setup(cc => cc.Add(It.IsAny<string>(), It.IsAny<WebhookSubscription>()));
                 store = new MemoryWebhookSubscriptionStore
@@ -45,13 +47,13 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAddWithNullSubscription_ThenThrows()
+            public void WhenAddSubscriptionWithNullSubscription_ThenThrows()
             {
                 Assert.That(() => store.Add(null), Throws.ArgumentNullException);
             }
 
             [Test, Category("Unit")]
-            public void WhenAdd_ThenReturnsId()
+            public void WhenAddSubscription_ThenReturnsId()
             {
                 var subscription = new WebhookSubscription
                 {
@@ -75,34 +77,28 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenGet_ThenReturnsSubscriptions()
             {
                 var subscription = new WebhookSubscription();
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>
-                    {
-                        {"akey", subscription}
-                    });
+                cacheClient.Setup(cc => cc.Get<object>("akey"))
+                    .Returns(subscription);
 
                 var result = store.Get("auserid", "aneventname");
 
                 Assert.That(result, Is.EqualTo(subscription));
                 cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", "aneventname") + "*"));
-                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+                cacheClient.Verify(cc => cc.Get<object>("akey"));
             }
 
             [Test, Category("Unit")]
             public void WhenFind_ThenReturnsSubscriptions()
             {
                 var subscription = new WebhookSubscription();
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>
-                    {
-                        {"akey", subscription}
-                    });
+                cacheClient.Setup(cc => cc.Get<object>("akey"))
+                    .Returns(subscription);
 
                 var result = store.Find("auserid");
 
                 Assert.That(result[0], Is.EqualTo(subscription));
                 cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.FormatCacheKey("auserid", null) + "*"));
-                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+                cacheClient.Verify(cc => cc.Get<object>("akey"));
             }
 
             [Test, Category("Unit")]
@@ -114,17 +110,14 @@ namespace ServiceStack.Webhooks.UnitTests
                     Event = "aneventname",
                     Config = config
                 };
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>
-                    {
-                        {"akey", subscription}
-                    });
+                cacheClient.Setup(cc => cc.Get<object>("akey"))
+                    .Returns(subscription);
 
                 var result = store.Search("aneventname");
 
-                Assert.That(result[0], Is.EqualTo(config));
+                Assert.That(result[0].Config, Is.EqualTo(config));
                 cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
-                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+                cacheClient.Verify(cc => cc.Get<object>("akey"));
             }
 
             [Test, Category("Unit")]
@@ -144,18 +137,19 @@ namespace ServiceStack.Webhooks.UnitTests
                     Config = config2,
                     IsActive = true
                 };
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>
-                    {
-                        {"akey1", subscription1},
-                        {"akey2", subscription2}
-                    });
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                    .Returns(new List<string> {"akey1", "akey2"});
+                cacheClient.Setup(cc => cc.Get<object>("akey1"))
+                    .Returns(subscription1);
+                cacheClient.Setup(cc => cc.Get<object>("akey2"))
+                    .Returns(subscription2);
 
                 var result = store.Search("aneventname", true);
 
-                Assert.That(result[0], Is.EqualTo(config2));
+                Assert.That(result[0].Config, Is.EqualTo(config2));
                 cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
-                cacheClient.Verify(cc => cc.GetAll<WebhookSubscription>(It.IsAny<List<string>>()));
+                cacheClient.Verify(cc => cc.Get<object>("akey1"));
+                cacheClient.Verify(cc => cc.Get<object>("akey2"));
             }
 
             [Test, Category("Unit")]
@@ -173,11 +167,6 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenUpdateAndNotExists_ThenDoesNotUpdateSubscription()
             {
-                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
-                    .Returns(new List<string>());
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>());
-
                 store.Update("asubscriptionid", new WebhookSubscription());
 
                 cacheClient.Verify(cc => cc.Set(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
@@ -190,13 +179,8 @@ namespace ServiceStack.Webhooks.UnitTests
                 {
                     Id = "asubscriptionid"
                 };
-                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
-                    .Returns(new List<string> {"akey"});
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>
-                    {
-                        {"akey", subscription}
-                    });
+                cacheClient.Setup(cc => cc.Get<object>("akey"))
+                    .Returns(subscription);
 
                 store.Update("asubscriptionid", subscription);
 
@@ -205,19 +189,14 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenDeleteWithNullSubscription_ThenThrows()
+            public void WhenDeleteWithNullSubscriptionId_ThenThrows()
             {
-                Assert.That(() => store.Delete("asubscriptionid"), Throws.ArgumentNullException);
+                Assert.That(() => store.Delete(null), Throws.ArgumentNullException);
             }
 
             [Test, Category("Unit")]
             public void WhenDeleteAndNotExists_ThenDoesNotDeleteSubscription()
             {
-                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
-                    .Returns(new List<string>());
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>());
-
                 store.Delete("asubscriptionid");
 
                 cacheClient.Verify(cc => cc.Remove(It.IsAny<string>()), Times.Never);
@@ -230,17 +209,87 @@ namespace ServiceStack.Webhooks.UnitTests
                 {
                     Id = "asubscriptionid"
                 };
-                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
-                    .Returns(new List<string> {"akey"});
-                cacheClient.Setup(cc => cc.GetAll<WebhookSubscription>(It.IsAny<IEnumerable<string>>()))
-                    .Returns(new Dictionary<string, WebhookSubscription>
-                    {
-                        {"akey", subscription}
-                    });
+                cacheClient.Setup(cc => cc.Get<object>("akey"))
+                    .Returns(subscription);
 
                 store.Delete("asubscriptionid");
 
                 cacheClient.Verify(cc => cc.Remove("akey"));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAddHistoryWithNullSubscriptionId_ThenThrows()
+            {
+                Assert.That(() => store.Add(null, new SubscriptionDeliveryResult()), Throws.ArgumentNullException);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAddHistoryWithNullResult_ThenThrows()
+            {
+                Assert.That(() => store.Add("asubscriptionid", null), Throws.ArgumentNullException);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAddHistory_ThenAddsHistory()
+            {
+                var datum = DateTime.UtcNow.ToNearestSecond();
+                cacheClient.Setup(cc => cc.Get<object>("akey"))
+                    .Returns(new WebhookSubscription
+                    {
+                        Id = "asubscriptionid",
+                        Event = "aneventname",
+                        CreatedById = "auserid"
+                    });
+                var result = new SubscriptionDeliveryResult
+                {
+                    Id = "aresultid",
+                    AttemptedDateUtc = datum
+                };
+
+                store.Add("asubscriptionid", result);
+
+                cacheClient.Verify(cc => cc.Add(MemoryWebhookSubscriptionStore.FormatHistoryCacheKey("auserid", "aneventname", "aresultid"), It.Is<SubscriptionDeliveryResult>(sub =>
+                    (sub.Id == "aresultid")
+                    && (sub.AttemptedDateUtc == datum))));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenSearchHistory_ThenReturnsSortedResults()
+            {
+                var datum1 = DateTime.UtcNow;
+                var datum2 = DateTime.UtcNow.AddDays(1);
+                var subscription = new WebhookSubscription
+                {
+                    Id = "asubscriptionid",
+                    Event = "aneventname",
+                    CreatedById = "auserid"
+                };
+                cacheClient.As<ICacheClientExtended>().Setup(cc => cc.GetKeysByPattern(It.IsAny<string>()))
+                    .ReturnsInOrder(new List<string> {"asubscriptionkey"}, new List<string> {"aresultkey1", "aresultkey2"});
+                cacheClient.Setup(cc => cc.Get<object>("asubscriptionkey"))
+                    .Returns(subscription);
+                cacheClient.Setup(cc => cc.Get<object>("aresultkey1"))
+                    .Returns(new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid1",
+                        AttemptedDateUtc = datum1
+                    });
+                cacheClient.Setup(cc => cc.Get<object>("aresultkey2"))
+                    .Returns(new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid2",
+                        AttemptedDateUtc = datum2
+                    });
+
+                var result = store.Search("asubscriptionid", 1);
+
+                Assert.That(result.Count, Is.EqualTo(1));
+                Assert.That(result[0].Id, Is.EqualTo("aresultid2"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyPrefix + "*"));
+                cacheClient.As<ICacheClientExtended>().Verify(cc => cc.GetKeysByPattern(MemoryWebhookSubscriptionStore.CachekeyFormat.Fmt("auserid", "aneventname") + "*"));
+                cacheClient.Verify(cc => cc.Get<object>("asubscriptionkey"));
+                cacheClient.Verify(cc => cc.Get<object>("aresultkey1"));
+                cacheClient.Verify(cc => cc.Get<object>("aresultkey2"));
             }
         }
     }

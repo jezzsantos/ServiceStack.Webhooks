@@ -34,6 +34,16 @@ namespace ServiceStack.Webhooks
         ///     Returns all subscription configurations for all users for the specified event,
         ///     and optionally whether they are currently active or not
         /// </summary>
-        List<SubscriptionConfig> Search(string eventName, bool? isActive);
+        List<SubscriptionRelayConfig> Search(string eventName, bool? isActive);
+
+        /// <summary>
+        ///     Adds a new delivery result to the subscription
+        /// </summary>
+        void Add(string subscriptionId, SubscriptionDeliveryResult result);
+
+        /// <summary>
+        ///     Returns the top specified delivery results for the specified subscription (in descending date order)
+        /// </summary>
+        List<SubscriptionDeliveryResult> Search(string subscriptionId, int top);
     }
 }

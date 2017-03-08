@@ -27,7 +27,7 @@ namespace ServiceStack.Webhooks.Relays
 
         public int ExpiryTimeSeconds { get; set; }
 
-        public List<SubscriptionConfig> GetAll(string eventName)
+        public List<SubscriptionRelayConfig> GetAll(string eventName)
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
@@ -59,6 +59,6 @@ namespace ServiceStack.Webhooks.Relays
 
     internal class CachedSubscription
     {
-        public List<SubscriptionConfig> Subscribers { get; set; }
+        public List<SubscriptionRelayConfig> Subscribers { get; set; }
     }
 }

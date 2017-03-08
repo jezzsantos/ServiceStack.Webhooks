@@ -123,6 +123,22 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                     {
                         subscription
                     });
+                var datum1 = DateTime.UtcNow.ToNearestSecond();
+                var datum2 = datum1.AddDays(1);
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(new List<SubscriptionDeliveryResult>
+                    {
+                        new SubscriptionDeliveryResult
+                        {
+                            Id = "aresultid1",
+                            AttemptedDateUtc = datum1
+                        },
+                        new SubscriptionDeliveryResult
+                        {
+                            Id = "aresultid2",
+                            AttemptedDateUtc = datum2
+                        }
+                    });
 
                 var result = service.Get(new GetSubscription
                 {
@@ -130,7 +146,10 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 });
 
                 Assert.That(result.Subscription, Is.EqualTo(subscription));
+                Assert.That(result.History[0].Id, Is.EqualTo("aresultid2"));
+                Assert.That(result.History[1].Id, Is.EqualTo("aresultid1"));
                 store.Verify(s => s.Find("auserid"));
+                store.Verify(s => s.Search("asubscriptionid", 100));
             }
 
             [Test, Category("Unit")]
@@ -248,12 +267,15 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
             [Test, Category("Unit")]
             public void WhenSearch_ThenReturnsActiveSubscriptions()
             {
-                var config = new SubscriptionConfig
+                var config = new SubscriptionRelayConfig
                 {
-                    Url = "aurl"
+                    Config = new SubscriptionConfig
+                    {
+                        Url = "aurl"
+                    }
                 };
                 store.Setup(s => s.Search("aneventname", true))
-                    .Returns(new List<SubscriptionConfig>
+                    .Returns(new List<SubscriptionRelayConfig>
                     {
                         config
                     });
@@ -266,6 +288,64 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 Assert.That(result.Subscribers.Count, Is.EqualTo(1));
                 Assert.That(result.Subscribers[0], Is.EqualTo(config));
                 store.Verify(s => s.Search("aneventname", true));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateHistoryAndExistingHistory_ThenNotAddHistory()
+            {
+                var history = new List<SubscriptionDeliveryResult>
+                {
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid",
+                        SubscriptionId = "asubscriptionid"
+                    }
+                };
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(history);
+
+                service.Put(new UpdateSubscriptionHistory
+                {
+                    Results = history
+                });
+
+                store.Verify(s => s.Search("asubscriptionid", 1));
+                store.Verify(s => s.Add(It.IsAny<string>(), It.IsAny<SubscriptionDeliveryResult>()), Times.Never);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateHistory_ThenAddHistory()
+            {
+                var history = new List<SubscriptionDeliveryResult>
+                {
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid1",
+                        SubscriptionId = "asubscriptionid"
+                    },
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid2",
+                        SubscriptionId = "asubscriptionid"
+                    }
+                };
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(new List<SubscriptionDeliveryResult>
+                    {
+                        new SubscriptionDeliveryResult
+                        {
+                            Id = "aresultid1",
+                            SubscriptionId = "asubscriptionid"
+                        }
+                    });
+                service.Put(new UpdateSubscriptionHistory
+                {
+                    Results = history
+                });
+
+                store.Verify(s => s.Search("asubscriptionid", 2));
+                store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
+                        sdr.Id == "aresultid2")));
             }
         }
     }

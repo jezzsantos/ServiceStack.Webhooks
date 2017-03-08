@@ -61,6 +61,7 @@
     <Compile Include="ServiceModel\EntityIdValidator.cs" />
     <Compile Include="ServiceModel\SearchSubscriptions.cs" />
     <Compile Include="ServiceModel\ListSubscriptions.cs" />
+    <Compile Include="ServiceModel\UpdateSubscriptionHistory.cs" />
     <Compile Include="ServiceModel\UpdateSubscription.cs" />
     <Compile Include="ServiceModel\DeleteSubscription.cs" />
     <Compile Include="ServiceModel\GetSubscription.cs" />

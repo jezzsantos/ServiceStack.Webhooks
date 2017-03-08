@@ -151,6 +151,24 @@ namespace ServiceStack.Webhooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Id is invalid.
+        /// </summary>
+        internal static string SubscriptionDeliveryResultValidator_InvalidId {
+            get {
+                return ResourceManager.GetString("SubscriptionDeliveryResultValidator_InvalidId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The subscription Id is invalid.
+        /// </summary>
+        internal static string SubscriptionDeliveryResultValidator_InvalidSubscriptionId {
+            get {
+                return ResourceManager.GetString("SubscriptionDeliveryResultValidator_InvalidSubscriptionId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The subscription Event contains an empty name.
         /// </summary>
         internal static string SubscriptionEventsValidator_EmptyName {

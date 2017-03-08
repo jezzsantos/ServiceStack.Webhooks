@@ -38,6 +38,16 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceModel
 
                 Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.GetSubscriptionValidator_InvalidId));
             }
+
+            [Test, Category("Unit")]
+            public void WhenIdIsInvalid_ThenThrows()
+            {
+                dto.Id = "anid";
+
+                validator.Validate(dto);
+
+                Assert.That(() => validator.ValidateAndThrow(dto), Throws.TypeOf<ValidationException>().With.Message.Contain(Resources.GetSubscriptionValidator_InvalidId));
+            }
         }
     }
 }

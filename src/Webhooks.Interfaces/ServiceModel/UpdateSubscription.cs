@@ -1,12 +1,11 @@
-﻿using ServiceStack.Webhooks.ServiceModel.Types;
+﻿using ServiceStack.Model;
+using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
     [Route(Subscription.RootPath + "/subscriptions/{Id}", "PUT")]
-    public class UpdateSubscription : IReturn<UpdateSubscriptionResponse>
+    public class UpdateSubscription : IPut, IHasStringId, IReturn<UpdateSubscriptionResponse>
     {
-        public string Id { get; set; }
-
         public string Url { get; set; }
 
         public string Secret { get; set; }
@@ -14,6 +13,8 @@ namespace ServiceStack.Webhooks.ServiceModel
         public string ContentType { get; set; }
 
         public bool? IsActive { get; set; }
+
+        public string Id { get; set; }
     }
 
     public class UpdateSubscriptionResponse

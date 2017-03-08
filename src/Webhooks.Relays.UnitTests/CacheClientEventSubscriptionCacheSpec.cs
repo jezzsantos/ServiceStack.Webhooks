@@ -37,8 +37,8 @@ namespace ServiceStack.Webhooks.Relays.UnitTests
             [Test, Category("Unit")]
             public void WhenGetAllAndNothingInCache_ThenCachesSubscriptions()
             {
-                var config = new SubscriptionConfig();
-                var subscribers = new List<SubscriptionConfig>
+                var config = new SubscriptionRelayConfig();
+                var subscribers = new List<SubscriptionRelayConfig>
                 {
                     config
                 };
@@ -61,8 +61,8 @@ namespace ServiceStack.Webhooks.Relays.UnitTests
             [Test, Category("Unit")]
             public void WhenGetAllAndCached_ThenReturnsSubscriptions()
             {
-                var config = new SubscriptionConfig();
-                var subscribers = new List<SubscriptionConfig>
+                var config = new SubscriptionRelayConfig();
+                var subscribers = new List<SubscriptionRelayConfig>
                 {
                     config
                 };

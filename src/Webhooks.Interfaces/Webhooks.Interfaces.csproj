@@ -42,9 +42,12 @@
     <Compile Include="ServiceModel\DeleteSubscription.cs" />
     <Compile Include="ServiceModel\SearchSubscriptions.cs" />
     <Compile Include="ServiceModel\Subscription.cs" />
+    <Compile Include="ServiceModel\Types\SubscriptionDeliveryResult.cs" />
+    <Compile Include="ServiceModel\Types\SubscriptionRelayConfig.cs" />
     <Compile Include="ServiceModel\UpdateSubscription.cs" />
     <Compile Include="ServiceModel\ListSubscriptions.cs" />
     <Compile Include="ServiceModel\GetSubscription.cs" />
+    <Compile Include="ServiceModel\UpdateSubscriptionHistory.cs" />
     <Compile Include="WebhookEvent.cs" />
     <Compile Include="WebhookEventConstants.cs" />
     <Compile Include="WebHookInterfaces.cs" />

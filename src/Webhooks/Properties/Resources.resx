@@ -147,6 +147,12 @@
   <data name="SubscriptionConfigValidator_UnsupportedContentType" xml:space="preserve">
     <value>The subscription ContentType is not supported</value>
   </data>
+  <data name="SubscriptionDeliveryResultValidator_InvalidId" xml:space="preserve">
+    <value>The Id is invalid</value>
+  </data>
+  <data name="SubscriptionDeliveryResultValidator_InvalidSubscriptionId" xml:space="preserve">
+    <value>The subscription Id is invalid</value>
+  </data>
   <data name="SubscriptionEventsValidator_EmptyName" xml:space="preserve">
     <value>The subscription Event contains an empty name</value>
   </data>

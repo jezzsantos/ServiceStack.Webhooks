@@ -43,8 +43,8 @@ namespace ServiceStack.Webhooks.UnitTests
                 var result = new WebhookFeature();
 
                 Assert.That(result.IncludeSubscriptionService, Is.True);
-                Assert.That(result.SubscriptionAccessRoles, Is.EqualTo(WebhookFeature.DefaultAccessRoles));
-                Assert.That(result.SubscriptionSearchRoles, Is.EqualTo(WebhookFeature.DefaultSearchRoles));
+                Assert.That(result.SecureSubscriberRoles, Is.EqualTo(WebhookFeature.DefaultSubscriberRoles));
+                Assert.That(result.SecureRelayRoles, Is.EqualTo(WebhookFeature.DefaultRelayRoles));
             }
 
             [Test, Category("Unit")]
@@ -176,9 +176,9 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedAndNoAccessRoles_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedAndNoSubscriberRoles_ThenAuthorized()
             {
-                var feature = new WebhookFeature {SubscriptionAccessRoles = null};
+                var feature = new WebhookFeature {SecureSubscriberRoles = null};
                 feature.Register(appHost);
                 var request = new MockHttpRequest
                 {
@@ -198,7 +198,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedInAccessRole_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForGetSubscriptionAndAuthenticatedInSubscriberRole_ThenAuthorized()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -214,7 +214,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 {
                     IsAuthenticated = true,
                     UserAuthId = "auserid",
-                    Roles = new List<string>(feature.SubscriptionAccessRoles.SafeSplit(","))
+                    Roles = new List<string>(feature.SecureSubscriberRoles.SafeSplit(","))
                 });
                 var response = new MockHttpResponse(request);
 
@@ -243,9 +243,9 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedAndNoSearchRoles_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedAndNoRelayRoles_ThenAuthorized()
             {
-                var feature = new WebhookFeature {SubscriptionSearchRoles = null};
+                var feature = new WebhookFeature {SecureRelayRoles = null};
                 feature.Register(appHost);
                 var request = new MockHttpRequest
                 {
@@ -262,7 +262,47 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedInSearchRole_ThenAuthorized()
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForUpdateHistorySubscriptionAndAuthenticatedInWrongRole_ThenThrowsForbidden()
+            {
+                var feature = new WebhookFeature();
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new UpdateSubscriptionHistory().ToPutUrl(),
+                    Dto = new UpdateSubscriptionHistory()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true,
+                    UserAuthId = "auserid",
+                    Roles = new List<string> {"anotherrole"}
+                });
+                var response = new MockHttpResponse(request);
+
+                Assert.That(() => feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto()), ThrowsHttpError.WithStatusCode(HttpStatusCode.Forbidden));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForUpdateHistorySubscriptionAndAuthenticatedAndNoRelayRoles_ThenAuthorized()
+            {
+                var feature = new WebhookFeature {SecureRelayRoles = null};
+                feature.Register(appHost);
+                var request = new MockHttpRequest
+                {
+                    PathInfo = new UpdateSubscriptionHistory().ToPutUrl(),
+                    Dto = new UpdateSubscriptionHistory()
+                };
+                request.Items.Add(Keywords.Session, new AuthUserSession
+                {
+                    IsAuthenticated = true
+                });
+                var response = new MockHttpResponse(request);
+
+                feature.AuthorizeSubscriptionServiceRequests(request, response, new TestDto());
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthorizeSubscriptionServiceRequestsAndForSearchSubscriptionAndAuthenticatedInRelayRole_ThenAuthorized()
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
@@ -275,7 +315,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 {
                     IsAuthenticated = true,
                     UserAuthId = "auserid",
-                    Roles = new List<string>(feature.SubscriptionSearchRoles.SafeSplit(","))
+                    Roles = new List<string>(feature.SecureRelayRoles.SafeSplit(","))
                 });
                 var response = new MockHttpResponse(request);
 
@@ -314,7 +354,17 @@ namespace ServiceStack.Webhooks.UnitTests
                 throw new NotImplementedException();
             }
 
-            public List<SubscriptionConfig> Search(string eventName, bool? isActive)
+            public List<SubscriptionRelayConfig> Search(string eventName, bool? isActive)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Add(string subscriptionId, SubscriptionDeliveryResult result)
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<SubscriptionDeliveryResult> Search(string subscriptionId, int top)
             {
                 throw new NotImplementedException();
             }

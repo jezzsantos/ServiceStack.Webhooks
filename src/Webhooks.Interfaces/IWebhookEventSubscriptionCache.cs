@@ -8,6 +8,6 @@ namespace ServiceStack.Webhooks
         /// <summary>
         ///     Gets all the subscriptions for the specified event
         /// </summary>
-        List<SubscriptionConfig> GetAll(string eventName);
+        List<SubscriptionRelayConfig> GetAll(string eventName);
     }
 }

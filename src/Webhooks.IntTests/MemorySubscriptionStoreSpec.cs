@@ -4,7 +4,7 @@
     {
         public class GivenMemorySubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
         {
-            public override IWebhookSubscriptionStore GetSubscriptionStore()
+            public override ISubscriptionStore GetSubscriptionStore()
             {
                 return new MemorySubscriptionStore();
             }
@@ -12,7 +12,7 @@
 
         public class GivenMemorySubscriptionStoreAndAUser : GivenAUserWithSubscriptionStoreBase
         {
-            public override IWebhookSubscriptionStore GetSubscriptionStore()
+            public override ISubscriptionStore GetSubscriptionStore()
             {
                 return new MemorySubscriptionStore();
             }

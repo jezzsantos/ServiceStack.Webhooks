@@ -7,7 +7,7 @@ namespace ServiceStack.Webhooks.IntTests
     [TestFixture]
     public abstract class GivenNoUserWithSubscriptionStoreBase
     {
-        private IWebhookSubscriptionStore store;
+        private ISubscriptionStore store;
 
         [SetUp]
         public void Initialize()
@@ -220,13 +220,13 @@ namespace ServiceStack.Webhooks.IntTests
             Assert.That(result[0].Id, Is.EqualTo("aresultid"));
         }
 
-        public abstract IWebhookSubscriptionStore GetSubscriptionStore();
+        public abstract ISubscriptionStore GetSubscriptionStore();
     }
 
     [TestFixture]
     public abstract class GivenAUserWithSubscriptionStoreBase
     {
-        private IWebhookSubscriptionStore store;
+        private ISubscriptionStore store;
 
         [SetUp]
         public void Initialize()
@@ -442,6 +442,6 @@ namespace ServiceStack.Webhooks.IntTests
             Assert.That(result[0].Id, Is.EqualTo("aresultid"));
         }
 
-        public abstract IWebhookSubscriptionStore GetSubscriptionStore();
+        public abstract ISubscriptionStore GetSubscriptionStore();
     }
 }

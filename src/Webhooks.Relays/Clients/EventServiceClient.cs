@@ -7,7 +7,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Relays.Clients
 {
-    public class EventServiceClient : IWebhookEventServiceClient
+    public class EventServiceClient : IEventServiceClient
     {
         internal const int DefaultRetries = 3;
         internal const int DefaultTimeout = 60;

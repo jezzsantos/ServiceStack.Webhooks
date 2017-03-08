@@ -6,7 +6,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
 {
-    internal class MemorySubscriptionStore : IWebhookSubscriptionStore
+    internal class MemorySubscriptionStore : ISubscriptionStore
     {
         private readonly ConcurrentDictionary<string, SubscriptionDeliveryResult> deliveryResults = new ConcurrentDictionary<string, SubscriptionDeliveryResult>();
         private readonly ConcurrentDictionary<string, WebhookSubscription> subscriptions = new ConcurrentDictionary<string, WebhookSubscription>();

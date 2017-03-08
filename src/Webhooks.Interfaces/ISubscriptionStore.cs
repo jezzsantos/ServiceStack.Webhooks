@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
 {
-    public interface IWebhookSubscriptionStore
+    public interface ISubscriptionStore
     {
         /// <summary>
         ///     Returns the identity of the added subscription

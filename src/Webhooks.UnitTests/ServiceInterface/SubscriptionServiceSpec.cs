@@ -18,12 +18,12 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
         {
             private Mock<IRequest> request;
             private SubscriptionService service;
-            private Mock<IWebhookSubscriptionStore> store;
+            private Mock<ISubscriptionStore> store;
 
             [SetUp]
             public void Initialize()
             {
-                store = new Mock<IWebhookSubscriptionStore>();
+                store = new Mock<ISubscriptionStore>();
                 store.Setup(s => s.Add(It.Is<WebhookSubscription>(sub => sub.Event == "anevent1")))
                     .Returns("asubscriptionid1");
                 store.Setup(s => s.Add(It.Is<WebhookSubscription>(sub => sub.Event == "anevent2")))

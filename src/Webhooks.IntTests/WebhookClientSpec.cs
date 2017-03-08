@@ -41,7 +41,7 @@ namespace ServiceStack.Webhooks.IntTests
             public void Initialize()
             {
                 appHost.Resolve<ICacheClient>().FlushAll();
-                ((MemorySubscriptionStore) appHost.Resolve<IWebhookSubscriptionStore>()).Clear();
+                ((MemorySubscriptionStore) appHost.Resolve<ISubscriptionStore>()).Clear();
 
                 client.Put(new ResetConsumedEvents());
                 var subscriberUrl = BaseUrl.WithoutTrailingSlash() + new ConsumeEvent().ToPostUrl();

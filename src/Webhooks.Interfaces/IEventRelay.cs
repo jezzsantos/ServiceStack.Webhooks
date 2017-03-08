@@ -1,6 +1,6 @@
 ﻿namespace ServiceStack.Webhooks
 {
-    public interface IWebhookRelay
+    public interface IEventRelay
     {
         void NotifySubscribers();
     }

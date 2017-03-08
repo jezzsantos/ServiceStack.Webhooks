@@ -10,13 +10,13 @@ namespace ServiceStack.Webhooks.UnitTests
         [TestFixture]
         public class GivenAContext
         {
-            private Mock<IWebhookEventSink> eventSink;
+            private Mock<IEventSink> eventSink;
             private WebhooksClient webhooks;
 
             [SetUp]
             public void Initialize()
             {
-                eventSink = new Mock<IWebhookEventSink>();
+                eventSink = new Mock<IEventSink>();
                 webhooks = new WebhooksClient
                 {
                     EventSink = eventSink.Object

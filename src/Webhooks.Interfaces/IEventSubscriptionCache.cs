@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
 {
-    public interface IWebhookEventSubscriptionCache
+    public interface IEventSubscriptionCache
     {
         /// <summary>
         ///     Gets all the subscriptions for the specified event

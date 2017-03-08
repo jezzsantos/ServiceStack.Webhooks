@@ -6,7 +6,7 @@ namespace ServiceStack.Webhooks.IntTests
     {
         public class GivenCacheClientSubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
         {
-            public override IWebhookSubscriptionStore GetSubscriptionStore()
+            public override ISubscriptionStore GetSubscriptionStore()
             {
                 return new CacheClientSubscriptionStore
                 {
@@ -17,7 +17,7 @@ namespace ServiceStack.Webhooks.IntTests
 
         public class GivenCacheClientSubscriptionStoreAndAUser : GivenAUserWithSubscriptionStoreBase
         {
-            public override IWebhookSubscriptionStore GetSubscriptionStore()
+            public override ISubscriptionStore GetSubscriptionStore()
             {
                 return new CacheClientSubscriptionStore
                 {

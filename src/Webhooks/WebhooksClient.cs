@@ -8,10 +8,10 @@ namespace ServiceStack.Webhooks
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(WebhooksClient));
 
-        public IWebhookEventSink EventSink { get; set; }
+        public IEventSink EventSink { get; set; }
 
         /// <summary>
-        ///     Publishes webhook events to the <see cref="IWebhookEventSink" />
+        ///     Publishes webhook events to the <see cref="IEventSink" />
         /// </summary>
         public void Publish<TDto>(string eventName, TDto data) where TDto : class, new()
         {

@@ -1,6 +1,6 @@
 ﻿namespace ServiceStack.Webhooks
 {
-    public interface IWebhookPublisher
+    public interface IEventPublisher
     {
         /// <summary>
         ///     Publishes the specified event, with its data

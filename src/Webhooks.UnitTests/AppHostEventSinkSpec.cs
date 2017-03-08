@@ -8,23 +8,23 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.UnitTests
 {
-    public class AppHostWebhookEventSinkSpec
+    public class AppHostEventSinkSpec
     {
         [TestFixture]
         public class GivenACacheAndServiceClient
         {
-            private Mock<IWebhookEventServiceClient> serviceClient;
-            private AppHostWebhookEventSink sink;
-            private Mock<IWebhookEventSubscriptionCache> subscriptionCache;
+            private Mock<IEventServiceClient> serviceClient;
+            private AppHostEventSink sink;
+            private Mock<IEventSubscriptionCache> subscriptionCache;
             private Mock<ISubscriptionService> subscriptionService;
 
             [SetUp]
             public void Initialize()
             {
-                serviceClient = new Mock<IWebhookEventServiceClient>();
-                subscriptionCache = new Mock<IWebhookEventSubscriptionCache>();
+                serviceClient = new Mock<IEventServiceClient>();
+                subscriptionCache = new Mock<IEventSubscriptionCache>();
                 subscriptionService = new Mock<ISubscriptionService>();
-                sink = new AppHostWebhookEventSink
+                sink = new AppHostEventSink
                 {
                     ServiceClient = serviceClient.Object,
                     SubscriptionCache = subscriptionCache.Object,
@@ -63,8 +63,8 @@ namespace ServiceStack.Webhooks.UnitTests
                 sink.Write("aneventname", new Dictionary<string, string> {{"akey", "avalue"}});
 
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
-                serviceClient.VerifySet(sc => sc.Retries = AppHostWebhookEventSink.DefaultServiceClientRetries);
-                serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(AppHostWebhookEventSink.DefaultServiceClientTimeoutSeconds));
+                serviceClient.VerifySet(sc => sc.Retries = AppHostEventSink.DefaultServiceClientRetries);
+                serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(AppHostEventSink.DefaultServiceClientTimeoutSeconds));
                 serviceClient.Verify(sc => sc.Relay(config, "aneventname", It.Is<Dictionary<string, string>>(dic => dic["akey"] == "avalue")));
             }
 

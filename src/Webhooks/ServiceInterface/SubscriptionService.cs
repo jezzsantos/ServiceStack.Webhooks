@@ -14,7 +14,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(SubscriptionService));
 
-        public IWebhookSubscriptionStore Store { get; set; }
+        public ISubscriptionStore Store { get; set; }
 
         public ICurrentCaller Caller
         {

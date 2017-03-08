@@ -2,7 +2,7 @@
 
 namespace ServiceStack.Webhooks
 {
-    public interface IWebhookEventSink
+    public interface IEventSink
     {
         /// <summary>
         ///     Writes a new event with data

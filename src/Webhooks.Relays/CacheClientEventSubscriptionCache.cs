@@ -10,7 +10,7 @@ namespace ServiceStack.Webhooks.Relays
     ///     This cache stores subscriptions (by eventname) for some TTL before fetching them again from
     ///     <see cref="ISubscriptionService" />.
     /// </summary>
-    public class CacheClientEventSubscriptionCache : IWebhookEventSubscriptionCache
+    public class CacheClientEventSubscriptionCache : IEventSubscriptionCache
     {
         internal const string CachekeyPrefix = @"subscribers";
         internal const string CachekeyFormat = CachekeyPrefix + @":{0}";

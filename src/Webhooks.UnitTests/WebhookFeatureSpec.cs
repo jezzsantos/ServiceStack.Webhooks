@@ -80,17 +80,17 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 new WebhookFeature().Register(appHost);
 
-                Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<MemorySubscriptionStore>());
+                Assert.That(container.GetService(typeof(ISubscriptionStore)), Is.TypeOf<MemorySubscriptionStore>());
             }
 
             [Test, Category("Unit")]
             public void WhenRegisterAndSubscriptionStoreAlreadyRegistered_ThenDoesNotRegisterMemoryStoreByDefault()
             {
-                container.Register<IWebhookSubscriptionStore>(new TestSubscriptionStore());
+                container.Register<ISubscriptionStore>(new TestSubscriptionStore());
 
                 new WebhookFeature().Register(appHost);
 
-                Assert.That(container.GetService(typeof(IWebhookSubscriptionStore)), Is.TypeOf<TestSubscriptionStore>());
+                Assert.That(container.GetService(typeof(ISubscriptionStore)), Is.TypeOf<TestSubscriptionStore>());
             }
 
             [Test, Category("Unit")]
@@ -99,9 +99,9 @@ namespace ServiceStack.Webhooks.UnitTests
                 new WebhookFeature().Register(appHost);
 
                 Assert.That(container.GetService(typeof(IWebhooks)), Is.TypeOf<WebhooksClient>());
-                Assert.That(container.GetService(typeof(IWebhookEventSubscriptionCache)), Is.TypeOf<CacheClientEventSubscriptionCache>());
+                Assert.That(container.GetService(typeof(IEventSubscriptionCache)), Is.TypeOf<CacheClientEventSubscriptionCache>());
                 Assert.That(container.GetService(typeof(IEventServiceClientFactory)), Is.TypeOf<EventServiceClientFactory>());
-                Assert.That(container.GetService(typeof(IWebhookEventServiceClient)), Is.TypeOf<EventServiceClient>());
+                Assert.That(container.GetService(typeof(IEventServiceClient)), Is.TypeOf<EventServiceClient>());
             }
 
             [Test, Category("Unit")]
@@ -109,18 +109,18 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 new WebhookFeature().Register(appHost);
 
-                Assert.That(container.GetService(typeof(IWebhookEventSink)), Is.TypeOf<AppHostWebhookEventSink>());
+                Assert.That(container.GetService(typeof(IEventSink)), Is.TypeOf<AppHostEventSink>());
                 Assert.That(container.GetService(typeof(ISubscriptionService)), Is.TypeOf<SubscriptionService>());
             }
 
             [Test, Category("Unit")]
             public void WhenRegisterAndEventSinkAlreadyRegistered_ThenDoesNotRegisterAppHostSinkByDefault()
             {
-                container.Register<IWebhookEventSink>(new TestEventSink());
+                container.Register<IEventSink>(new TestEventSink());
 
                 new WebhookFeature().Register(appHost);
 
-                Assert.That(container.GetService(typeof(IWebhookEventSink)), Is.TypeOf<TestEventSink>());
+                Assert.That(container.GetService(typeof(IEventSink)), Is.TypeOf<TestEventSink>());
                 Assert.That(container.GetService(typeof(ISubscriptionService)), Is.Null);
             }
 
@@ -327,7 +327,7 @@ namespace ServiceStack.Webhooks.UnitTests
         {
         }
 
-        public class TestSubscriptionStore : IWebhookSubscriptionStore
+        public class TestSubscriptionStore : ISubscriptionStore
         {
             public string Add(WebhookSubscription subscription)
             {
@@ -375,7 +375,7 @@ namespace ServiceStack.Webhooks.UnitTests
             }
         }
 
-        public class TestEventSink : IWebhookEventSink
+        public class TestEventSink : IEventSink
         {
             public void Write(string eventName, Dictionary<string, string> data)
             {

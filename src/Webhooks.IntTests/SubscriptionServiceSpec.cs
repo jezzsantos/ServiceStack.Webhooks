@@ -41,7 +41,7 @@ namespace ServiceStack.Webhooks.IntTests
             [SetUp]
             public void Initialize()
             {
-                ((MemorySubscriptionStore) appHost.Resolve<IWebhookSubscriptionStore>()).Clear();
+                ((MemorySubscriptionStore) appHost.Resolve<ISubscriptionStore>()).Clear();
                 userId = appHost.LoginUser(client, "asubscriber", WebhookFeature.DefaultSubscriberRoles);
             }
 
@@ -282,7 +282,7 @@ namespace ServiceStack.Webhooks.IntTests
             [SetUp]
             public void Initialize()
             {
-                ((MemorySubscriptionStore) appHost.Resolve<IWebhookSubscriptionStore>()).Clear();
+                ((MemorySubscriptionStore) appHost.Resolve<ISubscriptionStore>()).Clear();
                 appHost.LoginUser(client, "aservice", WebhookFeature.DefaultRelayRoles);
             }
 

@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Clients
 {
-    public interface IWebhookEventServiceClient
+    public interface IEventServiceClient
     {
         /// <summary>
         ///     Gets or sets the timeout for requests

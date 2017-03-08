@@ -76,7 +76,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AppHostWebhookEventSinkSpec.cs" />
+    <Compile Include="AppHostEventSinkSpec.cs" />
     <Compile Include="CacheClientSubscriptionStoreSpec.cs" />
     <Compile Include="MemorySubscriptionStoreSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using ServiceStack.Webhooks;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace ServiceStack.WebHooks.OrmLite
+namespace ServiceStack.Webhooks.OrmLite
 {
     public class OrmLiteSubscriptionStore : ISubscriptionStore, IRequiresSchema
     {

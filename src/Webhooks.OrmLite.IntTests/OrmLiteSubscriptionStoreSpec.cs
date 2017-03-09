@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using ServiceStack.OrmLite;
 using ServiceStack.Webhooks.IntTests;
-using ServiceStack.WebHooks.OrmLite;
 
 namespace ServiceStack.Webhooks.OrmLite.IntTests
 {
@@ -12,7 +11,7 @@ namespace ServiceStack.Webhooks.OrmLite.IntTests
         public void OrmLiteTest()
         {
         }
-        
+
         public class GivenOrmLiteSubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
         {
             public override ISubscriptionStore GetSubscriptionStore()

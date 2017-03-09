@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using ServiceStack.Caching;
+using ServiceStack.Text;
 using ServiceStack.Webhooks.ServiceModel.Types;
 using ServiceStack.Webhooks.UnitTesting;
 
@@ -232,7 +232,7 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenAddHistory_ThenAddsHistory()
             {
-                var datum = DateTime.UtcNow.ToNearestSecond();
+                var datum = SystemTime.UtcNow.ToNearestSecond();
                 cacheClient.Setup(cc => cc.Get<object>("akey"))
                     .Returns(new WebhookSubscription
                     {
@@ -256,8 +256,8 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenSearchHistory_ThenReturnsSortedResults()
             {
-                var datum1 = DateTime.UtcNow;
-                var datum2 = DateTime.UtcNow.AddDays(1);
+                var datum1 = SystemTime.UtcNow;
+                var datum2 = SystemTime.UtcNow.AddDays(1);
                 var subscription = new WebhookSubscription
                 {
                     Id = "asubscriptionid",

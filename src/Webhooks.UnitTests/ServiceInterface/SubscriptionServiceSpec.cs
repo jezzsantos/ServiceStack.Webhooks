@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Moq;
 using NUnit.Framework;
+using ServiceStack.Text;
 using ServiceStack.Web;
 using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel;
@@ -120,7 +121,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 };
                 store.Setup(s => s.Get("asubscriptionid"))
                     .Returns(subscription);
-                var datum1 = DateTime.UtcNow.ToNearestSecond();
+                var datum1 = SystemTime.UtcNow.ToNearestSecond();
                 var datum2 = datum1.AddDays(1);
                 store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
                     .Returns(new List<SubscriptionDeliveryResult>

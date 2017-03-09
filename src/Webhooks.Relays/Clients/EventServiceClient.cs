@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using ServiceStack.Logging;
+using ServiceStack.Text;
 using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.Relays.Properties;
 using ServiceStack.Webhooks.ServiceModel.Types;
@@ -73,7 +74,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
             return new SubscriptionDeliveryResult
             {
                 Id = DataFormats.CreateEntityIdentifier(),
-                AttemptedDateUtc = DateTime.UtcNow.ToNearestMillisecond(),
+                AttemptedDateUtc = SystemTime.UtcNow.ToNearestMillisecond(),
                 SubscriptionId = subscriptionId,
                 StatusDescription = statusDescription,
                 StatusCode = statusCode

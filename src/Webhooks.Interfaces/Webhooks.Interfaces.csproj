@@ -50,6 +50,7 @@
     <Compile Include="ServiceModel\UpdateSubscriptionHistory.cs" />
     <Compile Include="WebhookEvent.cs" />
     <Compile Include="WebhookEventConstants.cs" />
+    <Compile Include="WebHookExtensions.cs" />
     <Compile Include="WebHookInterfaces.cs" />
     <Compile Include="IEventPublisher.cs" />
     <Compile Include="IEventRelay.cs" />

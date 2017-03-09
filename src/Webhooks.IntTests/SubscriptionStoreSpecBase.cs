@@ -13,6 +13,7 @@ namespace ServiceStack.Webhooks.IntTests
         public void Initialize()
         {
             store = GetSubscriptionStore();
+            store.InitSchema();
         }
 
         [Test, Category("Integration")]
@@ -232,6 +233,7 @@ namespace ServiceStack.Webhooks.IntTests
         public void Initialize()
         {
             store = GetSubscriptionStore();
+            store.InitSchema();
         }
 
         [Test, Category("Integration")]

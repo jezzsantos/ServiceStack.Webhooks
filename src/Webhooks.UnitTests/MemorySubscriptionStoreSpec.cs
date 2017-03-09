@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using ServiceStack.Text;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.UnitTests
@@ -324,7 +325,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 var subscription = new WebhookSubscription();
                 var subscriptionId = store.Add(subscription);
 
-                var datum1 = DateTime.UtcNow.ToNearestSecond();
+                var datum1 = SystemTime.UtcNow.ToNearestSecond();
                 var datum2 = datum1.AddDays(1);
                 var result1 = new SubscriptionDeliveryResult
                 {

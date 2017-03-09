@@ -39,14 +39,14 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             public void WhenRelayAndNullSubscription_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        client.Relay(null, "aneventname", "adata"));
+                    client.Relay(null, "aneventname", "adata"));
             }
 
             [Test, Category("Unit")]
             public void WhenRelayAndNullEvent_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        client.Relay(new SubscriptionRelayConfig(), null, "adata"));
+                    client.Relay(new SubscriptionRelayConfig(), null, "adata"));
             }
 
             [Test, Category("Unit")]

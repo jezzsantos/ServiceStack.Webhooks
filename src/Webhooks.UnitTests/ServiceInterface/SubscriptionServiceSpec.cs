@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Moq;
 using NUnit.Framework;
+using ServiceStack.Text;
 using ServiceStack.Web;
 using ServiceStack.Webhooks.ServiceInterface;
 using ServiceStack.Webhooks.ServiceModel;
@@ -53,24 +54,24 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 Assert.That(2, Is.EqualTo(results.Subscriptions.Count));
                 store.Verify(s => s.Add(It.Is<WebhookSubscription>(whs =>
-                        (whs.Id == "asubscriptionid1")
-                        && (whs.Name == "aname")
-                        && whs.IsActive
-                        && (whs.Event == "anevent1")
-                        && (whs.CreatedById == "auserid")
-                        && whs.CreatedDateUtc.IsNear(DateTime.UtcNow)
-                        && (whs.Config.Url == "aurl")
-                        && whs.LastModifiedDateUtc.IsNear(DateTime.UtcNow)
+                    whs.Id == "asubscriptionid1"
+                    && whs.Name == "aname"
+                    && whs.IsActive
+                    && whs.Event == "anevent1"
+                    && whs.CreatedById == "auserid"
+                    && whs.CreatedDateUtc.IsNear(DateTime.UtcNow)
+                    && whs.Config.Url == "aurl"
+                    && whs.LastModifiedDateUtc.IsNear(DateTime.UtcNow)
                 )));
                 store.Verify(s => s.Add(It.Is<WebhookSubscription>(whs =>
-                        (whs.Id == "asubscriptionid2")
-                        && (whs.Name == "aname")
-                        && whs.IsActive
-                        && (whs.Event == "anevent2")
-                        && (whs.CreatedById == "auserid")
-                        && whs.CreatedDateUtc.IsNear(DateTime.UtcNow)
-                        && (whs.Config.Url == "aurl")
-                        && whs.LastModifiedDateUtc.IsNear(DateTime.UtcNow)
+                    whs.Id == "asubscriptionid2"
+                    && whs.Name == "aname"
+                    && whs.IsActive
+                    && whs.Event == "anevent2"
+                    && whs.CreatedById == "auserid"
+                    && whs.CreatedDateUtc.IsNear(DateTime.UtcNow)
+                    && whs.Config.Url == "aurl"
+                    && whs.LastModifiedDateUtc.IsNear(DateTime.UtcNow)
                 )));
             }
 
@@ -120,7 +121,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 };
                 store.Setup(s => s.Get("asubscriptionid"))
                     .Returns(subscription);
-                var datum1 = DateTime.UtcNow.ToNearestSecond();
+                var datum1 = SystemTime.UtcNow.ToNearestSecond();
                 var datum2 = datum1.AddDays(1);
                 store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
                     .Returns(new List<SubscriptionDeliveryResult>
@@ -215,9 +216,9 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                 Assert.That(result.Subscription.Config.Url, Is.EqualTo("anewurl"));
                 store.Verify(s => s.Get("asubscriptionid"));
                 store.Verify(s => s.Update("asubscriptionid", It.Is<WebhookSubscription>(whs =>
-                    (whs.Config.Url == "anewurl")
-                    && (whs.Config.Secret == "anewsecret")
-                    && (whs.Config.ContentType == "anewcontenttype")
+                    whs.Config.Url == "anewurl"
+                    && whs.Config.Secret == "anewsecret"
+                    && whs.Config.ContentType == "anewcontenttype"
                     && whs.IsActive
                     && whs.LastModifiedDateUtc.IsNear(DateTime.UtcNow))));
             }
@@ -338,7 +339,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 store.Verify(s => s.Search("asubscriptionid", 2));
                 store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
-                        sdr.Id == "aresultid2")));
+                    sdr.Id == "aresultid2")));
                 store.Verify(s => s.Get(It.IsAny<string>()), Times.Never);
                 store.Verify(s => s.Update(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
             }
@@ -370,7 +371,7 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 store.Verify(s => s.Search("asubscriptionid", 1));
                 store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
-                        sdr.Id == "aresultid")));
+                    sdr.Id == "aresultid")));
                 store.Verify(s => s.Get(It.IsAny<string>()), Times.Never);
                 store.Verify(s => s.Update("asubscriptionid", It.IsAny<WebhookSubscription>()), Times.Never);
             }
@@ -403,11 +404,11 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
 
                 store.Verify(s => s.Search("asubscriptionid", 1));
                 store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
-                        sdr.Id == "aresultid")));
+                    sdr.Id == "aresultid")));
                 store.Verify(s => s.Get("asubscriptionid"));
                 store.Verify(s => s.Update("asubscriptionid", It.Is<WebhookSubscription>(sub =>
-                    (sub.Id == "asubscriptionid")
-                    && (sub.IsActive == false))));
+                    sub.Id == "asubscriptionid"
+                    && sub.IsActive == false)));
             }
         }
     }

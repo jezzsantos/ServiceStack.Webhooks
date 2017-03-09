@@ -57,7 +57,7 @@ namespace ServiceStack.Webhooks
             {
                 if (messageOrFormat.HasValue())
                 {
-                    if ((formatArgs != null) && (formatArgs.Length != 0))
+                    if (formatArgs != null && formatArgs.Length != 0)
                     {
                         throw new ArgumentNullException(GetParameterName(reference),
                             messageOrFormat.Fmt(formatArgs));
@@ -85,7 +85,7 @@ namespace ServiceStack.Webhooks
             {
                 if (messageOrFormat.HasValue())
                 {
-                    if ((formatArgs != null) && (formatArgs.Length != 0))
+                    if (formatArgs != null && formatArgs.Length != 0)
                     {
                         throw CreateException(typeof(TException), GetParameterName(reference),
                             messageOrFormat.Fmt(formatArgs));
@@ -147,7 +147,7 @@ namespace ServiceStack.Webhooks
             {
                 if (messageOrFormat.HasValue())
                 {
-                    if ((formatArgs != null) && (formatArgs.Length != 0))
+                    if (formatArgs != null && formatArgs.Length != 0)
                     {
                         throw new ArgumentOutOfRangeException(GetParameterName(reference),
                             messageOrFormat.Fmt(formatArgs));
@@ -178,7 +178,7 @@ namespace ServiceStack.Webhooks
             {
                 if (messageOrFormat.HasValue())
                 {
-                    if ((formatArgs != null) && (formatArgs.Length != 0))
+                    if (formatArgs != null && formatArgs.Length != 0)
                     {
                         throw CreateException(typeof(TException), GetParameterName(reference),
                             messageOrFormat.Fmt(formatArgs));

@@ -55,7 +55,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests
                 cacheClient.Verify(cc => cc.Get<CachedSubscription>(CacheClientEventSubscriptionCache.FormatCacheKey("aneventname")));
                 subscriptionService.Verify(ss => ss.Search("aneventname"));
                 cacheClient.Verify(cc => cc.Set(CacheClientEventSubscriptionCache.FormatCacheKey("aneventname"), It.Is<CachedSubscription>(cs =>
-                        cs.Subscribers == subscribers), TimeSpan.FromSeconds(cache.ExpiryTimeSeconds)));
+                    cs.Subscribers == subscribers), TimeSpan.FromSeconds(cache.ExpiryTimeSeconds)));
             }
 
             [Test, Category("Unit")]

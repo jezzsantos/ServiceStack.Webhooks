@@ -53,7 +53,7 @@ namespace ServiceStack.Webhooks.OrmLite
 
             using (var db = dbFactory.Open())
             {
-                return db.Single<WebhookSubscription>(x => (x.CreatedById == userId) && (x.Event == eventName));
+                return db.Single<WebhookSubscription>(x => x.CreatedById == userId && x.Event == eventName);
             }
         }
 

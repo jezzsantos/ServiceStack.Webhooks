@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using ServiceStack.Logging;
+using ServiceStack.Text;
 using ServiceStack.Webhooks.Properties;
 using ServiceStack.Webhooks.Relays;
 using ServiceStack.Webhooks.ServiceModel;
@@ -45,7 +45,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public CreateSubscriptionResponse Post(CreateSubscription request)
         {
-            var now = DateTime.UtcNow.ToNearestSecond();
+            var now = SystemTime.UtcNow.ToNearestSecond();
             var subscriptions = request.Events.Select(ev => new WebhookSubscription
             {
                 Config = request.Config,
@@ -111,7 +111,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public UpdateSubscriptionResponse Put(UpdateSubscription request)
         {
-            var now = DateTime.UtcNow.ToNearestSecond();
+            var now = SystemTime.UtcNow.ToNearestSecond();
             var subscription = Store.Get(request.Id);
             if (subscription == null)
             {
@@ -134,7 +134,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 subscription.Config.ContentType = request.ContentType;
             }
             if (request.IsActive.HasValue
-                && (request.IsActive.Value != subscription.IsActive))
+                && request.IsActive.Value != subscription.IsActive)
             {
                 subscription.IsActive = request.IsActive.Value;
             }
@@ -186,8 +186,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 {
                     Store.Add(incoming.SubscriptionId, incoming);
 
-                    if ((incoming.StatusCode >= HttpStatusCode.BadRequest)
-                        && (incoming.StatusCode < HttpStatusCode.InternalServerError))
+                    if (incoming.StatusCode >= HttpStatusCode.BadRequest
+                        && incoming.StatusCode < HttpStatusCode.InternalServerError)
                     {
                         var subscription = Store.Get(incoming.SubscriptionId);
                         subscription.IsActive = false;

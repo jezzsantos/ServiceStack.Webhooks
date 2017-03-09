@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using ServiceStack.Logging;
+using ServiceStack.Text;
 using ServiceStack.Webhooks.IntTests.Services;
 using ServiceStack.Webhooks.ServiceModel;
 using ServiceStack.Webhooks.ServiceModel.Types;
@@ -372,7 +373,7 @@ namespace ServiceStack.Webhooks.IntTests
                     }).Subscriptions
                     .First();
 
-                var datum1 = DateTime.UtcNow.ToNearestSecond();
+                var datum1 = SystemTime.UtcNow.ToNearestSecond();
                 var datum2 = datum1.AddDays(1);
                 var datum3 = datum1.AddDays(2);
                 var result1 = new SubscriptionDeliveryResult
@@ -439,7 +440,7 @@ namespace ServiceStack.Webhooks.IntTests
                     }).Subscriptions
                     .First();
 
-                var datum1 = DateTime.UtcNow.ToNearestSecond();
+                var datum1 = SystemTime.UtcNow.ToNearestSecond();
                 var datum2 = datum1.AddDays(1);
                 appHost.LoginUser(client, "arelay", WebhookFeature.DefaultRelayRoles);
                 client.Put(new UpdateSubscriptionHistory
@@ -487,7 +488,7 @@ namespace ServiceStack.Webhooks.IntTests
                     }).Subscriptions
                     .First();
 
-                var datum = DateTime.UtcNow.ToNearestSecond();
+                var datum = SystemTime.UtcNow.ToNearestSecond();
                 appHost.LoginUser(client, "arelay", WebhookFeature.DefaultRelayRoles);
                 client.Put(new UpdateSubscriptionHistory
                 {

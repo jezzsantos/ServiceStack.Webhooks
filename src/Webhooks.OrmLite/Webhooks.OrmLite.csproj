@@ -1,22 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{61C93A39-41BF-4ACA-80B4-CB1D50A8858A}</ProjectGuid>
+    <ProjectGuid>{26284E4C-D5BB-4E3A-AA24-312DA9A468AB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServiceStack.Webhooks</RootNamespace>
-    <AssemblyName>ServiceStack.Webhooks.Interfaces</AssemblyName>
+    <RootNamespace>ServiceStack.Webhooks.OrmLite</RootNamespace>
+    <AssemblyName>ServiceStack.Webhooks.OrmLite</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <Import Project="..\BuildConfiguration.targets" />
   <ItemGroup>
+    <Reference Include="ServiceStack.Common, Version=4.5.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Common.4.5.6\lib\net45\ServiceStack.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ServiceStack.Interfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
       <HintPath>..\packages\ServiceStack.Interfaces.4.5.6\lib\portable-wp80+sl5+net45+win8+wpa81+monotouch+monoandroid+xamarin.ios10\ServiceStack.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite, Version=4.5.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.OrmLite.4.5.6\lib\net45\ServiceStack.OrmLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ServiceStack.Text, Version=4.5.6.0, Culture=neutral, processorArchitecture=MSIL">
@@ -29,55 +38,28 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="DataFormats.cs" />
-    <Compile Include="Clients\IEventServiceClient.cs" />
-    <Compile Include="IEventSink.cs" />
-    <Compile Include="IEventSubscriptionCache.cs" />
-    <Compile Include="ServiceModel\DeleteSubscription.cs" />
-    <Compile Include="ServiceModel\SearchSubscriptions.cs" />
-    <Compile Include="ServiceModel\Subscription.cs" />
-    <Compile Include="ServiceModel\Types\SubscriptionDeliveryResult.cs" />
-    <Compile Include="ServiceModel\Types\SubscriptionRelayConfig.cs" />
-    <Compile Include="ServiceModel\UpdateSubscription.cs" />
-    <Compile Include="ServiceModel\ListSubscriptions.cs" />
-    <Compile Include="ServiceModel\GetSubscription.cs" />
-    <Compile Include="ServiceModel\UpdateSubscriptionHistory.cs" />
-    <Compile Include="WebhookEvent.cs" />
-    <Compile Include="WebhookEventConstants.cs" />
-    <Compile Include="WebHookExtensions.cs" />
-    <Compile Include="WebHookInterfaces.cs" />
-    <Compile Include="IEventPublisher.cs" />
-    <Compile Include="IEventRelay.cs" />
-    <Compile Include="ISubscriptionStore.cs" />
+    <Compile Include="OrmLiteSubscriptionStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ServiceModel\CreateSubscription.cs" />
-    <Compile Include="ServiceModel\Types\WebhookSubscription.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Webhooks.Common\Webhooks.Common.csproj">
       <Project>{9607b2fc-6b77-41a1-910c-257cb786bd9c}</Project>
       <Name>Webhooks.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Webhooks.Interfaces\Webhooks.Interfaces.csproj">
+      <Project>{61C93A39-41BF-4ACA-80B4-CB1D50A8858A}</Project>
+      <Name>Webhooks.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

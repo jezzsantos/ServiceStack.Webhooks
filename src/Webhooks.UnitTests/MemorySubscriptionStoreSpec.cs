@@ -22,7 +22,7 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenAddWithNullSubscription_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Add(null));
+                    store.Add(null));
             }
 
             [Test, Category("Unit")]
@@ -73,7 +73,7 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenGetByEventNameWithNullEventName_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Get("auserid", null));
+                    store.Get("auserid", null));
             }
 
             [Test, Category("Unit")]
@@ -107,7 +107,7 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenGetBySubscriptionIdWithNullSubscriptionId_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Get(null));
+                    store.Get(null));
             }
 
             [Test, Category("Unit")]
@@ -122,14 +122,14 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenUpdateBySubscriptionIdWithNullSubscriptionId_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Update(null, new WebhookSubscription()));
+                    store.Update(null, new WebhookSubscription()));
             }
 
             [Test, Category("Unit")]
             public void WhenUpdateBySubscriptionIdWithNullSubscription_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Update("asubscriptionid", null));
+                    store.Update("asubscriptionid", null));
             }
 
             [Test, Category("Unit")]
@@ -159,7 +159,7 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenDeleteBySubscriptionIdWithNullSubscriptionId_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Delete(null));
+                    store.Delete(null));
             }
 
             [Test, Category("Unit")]
@@ -188,7 +188,7 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenSearchForConfigWithNullEventName_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Search(null, null));
+                    store.Search(null, null));
             }
 
             [Test, Category("Unit")]
@@ -251,14 +251,14 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenAddDeliveryResultAndNullSubscriptionId_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Add(null, new SubscriptionDeliveryResult()));
+                    store.Add(null, new SubscriptionDeliveryResult()));
             }
 
             [Test, Category("Unit")]
             public void WhenAddDeliveryResultAndNullDeliveryResult_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Add("asubscriptionid", null));
+                    store.Add("asubscriptionid", null));
             }
 
             [Test, Category("Unit")]
@@ -290,14 +290,14 @@ namespace ServiceStack.Webhooks.UnitTests
             public void WhenSearchForDeliveryResultsWithNullSubscriptionId_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                        store.Search(null, 1));
+                    store.Search(null, 1));
             }
 
             [Test, Category("Unit")]
             public void WhenSearchForDeliveryResultsWithZeroTop_ThenThrows()
             {
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
-                        store.Search("asubscriptionid", 0));
+                    store.Search("asubscriptionid", 0));
             }
 
             [Test, Category("Unit")]

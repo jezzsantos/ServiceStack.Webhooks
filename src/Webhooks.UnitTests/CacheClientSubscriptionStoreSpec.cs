@@ -249,8 +249,8 @@ namespace ServiceStack.Webhooks.UnitTests
                 store.Add("asubscriptionid", result);
 
                 cacheClient.Verify(cc => cc.Add(CacheClientSubscriptionStore.FormatHistoryCacheKey("auserid", "aneventname", "aresultid"), It.Is<SubscriptionDeliveryResult>(sub =>
-                    (sub.Id == "aresultid")
-                    && (sub.AttemptedDateUtc == datum))));
+                    sub.Id == "aresultid"
+                    && sub.AttemptedDateUtc == datum)));
             }
 
             [Test, Category("Unit")]

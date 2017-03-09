@@ -82,7 +82,7 @@ namespace ServiceStack.Webhooks
 
             return subscriptions
                 .Where(kvp => kvp.Value.Event.EqualsIgnoreCase(eventName)
-                              && (!isActive.HasValue || (isActive.Value == kvp.Value.IsActive)))
+                              && (!isActive.HasValue || isActive.Value == kvp.Value.IsActive))
                 .Select(kvp => new SubscriptionRelayConfig
                 {
                     Config = kvp.Value.Config,

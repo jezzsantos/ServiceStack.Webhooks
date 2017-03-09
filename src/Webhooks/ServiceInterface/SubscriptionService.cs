@@ -134,7 +134,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 subscription.Config.ContentType = request.ContentType;
             }
             if (request.IsActive.HasValue
-                && (request.IsActive.Value != subscription.IsActive))
+                && request.IsActive.Value != subscription.IsActive)
             {
                 subscription.IsActive = request.IsActive.Value;
             }
@@ -186,8 +186,8 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 {
                     Store.Add(incoming.SubscriptionId, incoming);
 
-                    if ((incoming.StatusCode >= HttpStatusCode.BadRequest)
-                        && (incoming.StatusCode < HttpStatusCode.InternalServerError))
+                    if (incoming.StatusCode >= HttpStatusCode.BadRequest
+                        && incoming.StatusCode < HttpStatusCode.InternalServerError)
                     {
                         var subscription = Store.Get(incoming.SubscriptionId);
                         subscription.IsActive = false;

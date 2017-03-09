@@ -85,8 +85,8 @@ namespace ServiceStack.Webhooks.UnitTests
                 sink.Write("aneventname", data);
 
                 subscriptionService.Verify(ss => ss.UpdateResults(It.Is<List<SubscriptionDeliveryResult>>(results =>
-                    (results.Count == 1)
-                    && (results[0] == result))));
+                    results.Count == 1
+                    && results[0] == result)));
             }
         }
     }

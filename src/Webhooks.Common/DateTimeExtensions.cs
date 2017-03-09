@@ -28,8 +28,8 @@ namespace ServiceStack.Webhooks
         /// </remarks>
         public static bool HasValue(this DateTime current)
         {
-            if (((current.Kind == DateTimeKind.Local)
-                 || (current.Kind == DateTimeKind.Unspecified))
+            if ((current.Kind == DateTimeKind.Local
+                 || current.Kind == DateTimeKind.Unspecified)
                 && current.Equals(DateTime.MinValue))
             {
                 return false;
@@ -44,8 +44,8 @@ namespace ServiceStack.Webhooks
         /// </summary>
         public static string ToIso8601(this DateTime current)
         {
-            if ((current.Kind == DateTimeKind.Local)
-                || (current.Kind == DateTimeKind.Unspecified))
+            if (current.Kind == DateTimeKind.Local
+                || current.Kind == DateTimeKind.Unspecified)
             {
                 return current.ToString("O");
             }
@@ -177,8 +177,8 @@ namespace ServiceStack.Webhooks
         {
             var withinMilliseconds = within.TotalMilliseconds;
 
-            return (current.AddMilliseconds(withinMilliseconds) >= time)
-                   && (current.AddMilliseconds(-withinMilliseconds) <= time);
+            return current.AddMilliseconds(withinMilliseconds) >= time
+                   && current.AddMilliseconds(-withinMilliseconds) <= time;
         }
 
         /// <summary>
@@ -197,8 +197,8 @@ namespace ServiceStack.Webhooks
         /// </summary>
         public static bool IsNear(this TimeSpan current, TimeSpan duration, int withinMilliseconds)
         {
-            return (current.Add(TimeSpan.FromMilliseconds(withinMilliseconds)) >= duration)
-                   && (current.Subtract(TimeSpan.FromMilliseconds(withinMilliseconds)) <= duration);
+            return current.Add(TimeSpan.FromMilliseconds(withinMilliseconds)) >= duration
+                   && current.Subtract(TimeSpan.FromMilliseconds(withinMilliseconds)) <= duration;
         }
 
         /// <summary>
@@ -207,8 +207,8 @@ namespace ServiceStack.Webhooks
         /// </summary>
         public static bool IsBetween(this DateTime current, DateTime after, DateTime before)
         {
-            return (current >= after)
-                   && (current <= before);
+            return current >= after
+                   && current <= before;
         }
 
         private static DateTime RoundUp(this DateTime dateTime, TimeSpan interval)
@@ -218,7 +218,7 @@ namespace ServiceStack.Webhooks
                 return dateTime;
             }
 
-            var delta = (interval.Ticks - dateTime.Ticks%interval.Ticks)%interval.Ticks;
+            var delta = (interval.Ticks - dateTime.Ticks % interval.Ticks) % interval.Ticks;
             return new DateTime(dateTime.Ticks + delta, dateTime.Kind);
         }
 
@@ -229,14 +229,14 @@ namespace ServiceStack.Webhooks
                 return dateTime;
             }
 
-            var delta = dateTime.Ticks%interval.Ticks;
+            var delta = dateTime.Ticks % interval.Ticks;
             return new DateTime(dateTime.Ticks - delta, dateTime.Kind);
         }
 
         private static DateTime RoundToNearest(this DateTime dateTime, TimeSpan interval)
         {
-            var delta = dateTime.Ticks%interval.Ticks;
-            var roundUp = delta > interval.Ticks/2;
+            var delta = dateTime.Ticks % interval.Ticks;
+            var roundUp = delta > interval.Ticks / 2;
 
             return roundUp ? dateTime.RoundUp(interval) : dateTime.RoundDown(interval);
         }

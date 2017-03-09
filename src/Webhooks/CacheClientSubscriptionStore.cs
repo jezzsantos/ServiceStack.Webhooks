@@ -42,7 +42,7 @@ namespace ServiceStack.Webhooks
 
             return GetObjects<WebhookSubscription>(keys)
                 .Where(pair => pair.Value.Event.EqualsIgnoreCase(eventName)
-                               && (!isActive.HasValue || (pair.Value.IsActive == isActive.Value)))
+                               && (!isActive.HasValue || pair.Value.IsActive == isActive.Value))
                 .Select(pair => new SubscriptionRelayConfig
                 {
                     SubscriptionId = pair.Value.Id,

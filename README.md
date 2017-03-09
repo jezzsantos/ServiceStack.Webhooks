@@ -57,7 +57,7 @@ internal class HelloService : Service
 
     public HelloResponse Any(Hello request)
     {
-        Webhooks.Publish("hello", new HelloEvent{ Text = "Hello" });
+        Webhooks.Publish("hello", new HelloEvent{ Text = "I said hello" });
     }
 }
 ```
@@ -101,18 +101,18 @@ Expect: 100-continue
 Proxy-Connection: Keep-Alive
 
 {
-    "Text": "Hello"
+    "Text": "I said hello"
 }
 ```
 
-To consume this event with a ServiceStack service, the subscriber would standup a public API like the one below, that could receive the 'Hello' event being raised from `Webhooks.Publish("hello", new HelloEvent{ Text = "Hello" })`:
+To consume this event with a ServiceStack service, the subscriber would standup a public API like the one below, that could receive the 'Hello' event being raised from `Webhooks.Publish("hello", new HelloEvent{ Text = "I said hello" })`:
 
 ```
 internal class MyService : Service
 {
     public void Post(HelloDto request)
     {
-       // I got a webhook event!
+       // They said hello!
        
        // The event name, messaging metadata are included in the headers
        var eventName = Request.Headers["X-Webhook-Event"];

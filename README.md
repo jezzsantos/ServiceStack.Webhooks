@@ -71,10 +71,10 @@ They do this by POSTing something like the following, to your service:
 ```
 POST /webhooks/subscriptions
 {
-    name: "My Webhook",
-    events: ["hello", "goodbye"],
-    config: {
-        url: "http://myserver/api/incoming",
+    "name": "My Webhook",
+    "events": ["hello", "goodbye"],
+    "config": {
+        "url": "http://myserver/api/incoming",
     }
 }
 ```

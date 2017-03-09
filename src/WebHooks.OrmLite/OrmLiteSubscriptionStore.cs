@@ -1,26 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using ServiceStack.Webhooks;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
-namespace WebHooks.OrmLite
+namespace ServiceStack.WebHooks.OrmLite
 {
     public class OrmLiteSubscriptionStore : ISubscriptionStore, IRequiresSchema
     {
-        readonly IDbConnectionFactory dbFactory;
+        private readonly IDbConnectionFactory dbFactory;
 
         public OrmLiteSubscriptionStore(IDbConnectionFactory dbFactory)
         {
             this.dbFactory = dbFactory;
         }
 
+        public void InitSchema()
+        {
+            using (var db = dbFactory.Open())
+            {
+                db.CreateTableIfNotExists<WebhookSubscription>();
+                db.CreateTableIfNotExists<SubscriptionDeliveryResult>();
+            }
+        }
+
         public string Add(WebhookSubscription subscription)
         {
-            if (subscription == null)
-                throw new ArgumentNullException(nameof(subscription));
+            Guard.AgainstNull(() => subscription, subscription);
 
             var id = DataFormats.CreateEntityIdentifier();
             subscription.Id = id;
@@ -43,19 +50,17 @@ namespace WebHooks.OrmLite
 
         public WebhookSubscription Get(string userId, string eventName)
         {
-            if (string.IsNullOrEmpty(eventName))
-                throw new ArgumentNullException(nameof(eventName));
+            Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
             using (var db = dbFactory.Open())
             {
-                return db.Single<WebhookSubscription>(x => x.CreatedById == userId && x.Event == eventName);
+                return db.Single<WebhookSubscription>(x => (x.CreatedById == userId) && (x.Event == eventName));
             }
         }
 
         public WebhookSubscription Get(string subscriptionId)
         {
-            if (string.IsNullOrEmpty(subscriptionId))
-                throw new ArgumentNullException(nameof(subscriptionId));
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
 
             using (var db = dbFactory.Open())
             {
@@ -65,10 +70,8 @@ namespace WebHooks.OrmLite
 
         public void Update(string subscriptionId, WebhookSubscription subscription)
         {
-            if (string.IsNullOrEmpty(subscriptionId))
-                throw new ArgumentNullException(nameof(subscriptionId));
-            if (subscription == null)
-                throw new ArgumentNullException(nameof(subscription));
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
+            Guard.AgainstNull(() => subscription, subscription);
 
             using (var db = dbFactory.Open())
             {
@@ -78,8 +81,7 @@ namespace WebHooks.OrmLite
 
         public void Delete(string subscriptionId)
         {
-            if (string.IsNullOrEmpty(subscriptionId))
-                throw new ArgumentNullException(nameof(subscriptionId));
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
 
             using (var db = dbFactory.Open())
             {
@@ -89,8 +91,7 @@ namespace WebHooks.OrmLite
 
         public List<SubscriptionRelayConfig> Search(string eventName, bool? isActive)
         {
-            if (string.IsNullOrEmpty(eventName))
-                throw new ArgumentNullException(nameof(eventName));
+            Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
             using (var db = dbFactory.Open())
             {
@@ -103,16 +104,14 @@ namespace WebHooks.OrmLite
                 }
 
                 return db.Select<SubscriptionRelayConfig>(
-                    q.Select(x => new { x.Config, SubscriptionId = x.Id }));
+                    q.Select(x => new {x.Config, SubscriptionId = x.Id}));
             }
         }
 
         public void Add(string subscriptionId, SubscriptionDeliveryResult result)
         {
-            if (string.IsNullOrEmpty(subscriptionId))
-                throw new ArgumentNullException(nameof(subscriptionId));
-            if (result == null)
-                throw new ArgumentNullException(nameof(result));
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
+            Guard.AgainstNull(() => result, result);
 
             using (var db = dbFactory.Open())
             {
@@ -122,10 +121,11 @@ namespace WebHooks.OrmLite
 
         public List<SubscriptionDeliveryResult> Search(string subscriptionId, int top)
         {
-            if (string.IsNullOrEmpty(subscriptionId))
-                throw new ArgumentNullException(nameof(subscriptionId));
+            Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
             if (top <= 0)
-                throw new ArgumentOutOfRangeException(nameof(top));
+            {
+                throw new ArgumentOutOfRangeException("top");
+            }
 
             using (var db = dbFactory.Open())
             {
@@ -142,15 +142,6 @@ namespace WebHooks.OrmLite
             {
                 db.DeleteAll<SubscriptionDeliveryResult>();
                 db.DeleteAll<WebhookSubscription>();
-            }
-        }
-
-        public void InitSchema()
-        {
-            using (var db = dbFactory.Open())
-            {
-                db.CreateTableIfNotExists<WebhookSubscription>();
-                db.CreateTableIfNotExists<SubscriptionDeliveryResult>();
             }
         }
     }

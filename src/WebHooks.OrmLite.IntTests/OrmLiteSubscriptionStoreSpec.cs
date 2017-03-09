@@ -1,24 +1,20 @@
 ﻿using NUnit.Framework;
-using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using ServiceStack.Webhooks;
 using ServiceStack.Webhooks.IntTests;
-using WebHooks.OrmLite;
+using ServiceStack.WebHooks.OrmLite;
 
-namespace ServiceStack.WebHooks.OrmLite.Tests
+namespace ServiceStack.Webhooks.OrmLite.IntTests
 {
-    //For some reason R# wont run any tests if it can't find one
-    public class Dummy
-    {
-        [Test] public void test() {}
-    }
-
     public class OrmLiteSubscriptionStoreSpec
     {
-        public class GivenMemorySubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
+        //For some reason R# wont run any tests if it can't find one
+        [Test, Category("Integration")]
+        public void OrmLiteTest()
         {
-            private IDbConnectionFactory dbFactory;
-
+        }
+        
+        public class GivenOrmLiteSubscriptionStoreAndNoUser : GivenNoUserWithSubscriptionStoreBase
+        {
             public override ISubscriptionStore GetSubscriptionStore()
             {
                 return new OrmLiteSubscriptionStore(
@@ -26,7 +22,7 @@ namespace ServiceStack.WebHooks.OrmLite.Tests
             }
         }
 
-        public class GivenMemorySubscriptionStoreAndAUser : GivenAUserWithSubscriptionStoreBase
+        public class GivenOrmLiteSubscriptionStoreAndAUser : GivenAUserWithSubscriptionStoreBase
         {
             public override ISubscriptionStore GetSubscriptionStore()
             {

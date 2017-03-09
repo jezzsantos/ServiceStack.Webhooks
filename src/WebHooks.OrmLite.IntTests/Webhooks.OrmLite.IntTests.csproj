@@ -7,14 +7,15 @@
     <ProjectGuid>{FAEA8FB4-0B9D-4561-902B-5806707A4025}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServiceStack.Webhooks.OrmLite.Tests</RootNamespace>
-    <AssemblyName>ServiceStack.Webhooks.OrmLite.Tests</AssemblyName>
+    <RootNamespace>ServiceStack.Webhooks.OrmLite.IntTests</RootNamespace>
+    <AssemblyName>ServiceStack.Webhooks.OrmLite.IntTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
-  <Import Project="..\BuildConfiguration.targets"/>
+  <Import Project="..\BuildConfiguration.targets" />
   <ItemGroup>
     <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
@@ -69,9 +70,9 @@
       <Project>{6D27D512-5CF4-41EE-A05B-69EF18DCE05D}</Project>
       <Name>Webhooks.IntTests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebHooks.OrmLite\WebHooks.OrmLite.csproj">
+    <ProjectReference Include="..\WebHooks.OrmLite\Webhooks.OrmLite.csproj">
       <Project>{26284E4C-D5BB-4E3A-AA24-312DA9A468AB}</Project>
-      <Name>WebHooks.OrmLite</Name>
+      <Name>Webhooks.OrmLite</Name>
     </ProjectReference>
     <ProjectReference Include="..\Webhooks\Webhooks.csproj">
       <Project>{7ebcbf14-adda-4bda-89da-eed6c6c584eb}</Project>
@@ -89,7 +90,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.104.0\build\net45\System.Data.SQLite.Core.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

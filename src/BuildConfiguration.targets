@@ -3,7 +3,7 @@
 
   <!-- Strong naming for all projects -->
   <PropertyGroup>
-    <SignAssembly Condition="'$(SignAssembly)' == ''">true</SignAssembly>
+    <SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
     <AssemblyOriginatorKeyFile>$(SolutionDir)ServiceStack.Webhooks.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -15,34 +15,34 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\$(MSBuildProjectName)\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\$(MSBuildProjectName)\</IntermediateOutputPath>
     <DefineConstants Condition="'$(SignAssembly)' == 'true'">DEBUG;TRACE;ASSEMBLYSIGNED;TESTINGONLY</DefineConstants>
     <DefineConstants Condition="'$(SignAssembly)' != 'true'">DEBUG;TRACE;TESTINGONLY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1700</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\$(MSBuildProjectName)\</OutputPath>
+    <IntermediateOutputPath>obj\Release\$(MSBuildProjectName)\</IntermediateOutputPath>
     <DefineConstants Condition="'$(SignAssembly)' == 'true'">TRACE;ASSEMBLYSIGNED;TESTINGONLY</DefineConstants>
     <DefineConstants Condition="'$(SignAssembly)' != 'true'">TRACE;TESTINGONLY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1700</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseNoTestDeploy|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\ReleaseNoTestDeploy\</OutputPath>
+    <OutputPath>bin\ReleaseNoTestDeploy\$(MSBuildProjectName)\</OutputPath>
+    <IntermediateOutputPath>obj\ReleaseNoTestDeploy\$(MSBuildProjectName)\</IntermediateOutputPath>
     <DefineConstants Condition="'$(SignAssembly)' == 'true'">TRACE;ASSEMBLYSIGNED</DefineConstants>
     <DefineConstants Condition="'$(SignAssembly)' != 'true'">TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1700</NoWarn>
   </PropertyGroup>
 
   <!-- Enable NuGet Package Restore for all projects -->

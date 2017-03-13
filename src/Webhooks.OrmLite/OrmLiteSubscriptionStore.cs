@@ -123,7 +123,7 @@ namespace ServiceStack.Webhooks.OrmLite
             Guard.AgainstNullOrEmpty(() => subscriptionId, subscriptionId);
             if (top <= 0)
             {
-                throw new ArgumentOutOfRangeException("top");
+                throw new ArgumentOutOfRangeException(nameof(top));
             }
 
             using (var db = dbFactory.Open())

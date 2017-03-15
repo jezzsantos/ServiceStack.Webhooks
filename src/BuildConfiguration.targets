@@ -74,8 +74,15 @@
           Condition="Exists('$(ProjectDir)$(ProjectName).custom.nuspec')"/>
   </Target>
   <Target Name="DeleteNugetNuSpecPackages" AfterTargets="Clean">
+    <PropertyGroup>
+      <GlobalInfo>$([System.IO.File]::ReadAllText('$(SolutionDir)GlobalAssemblyInfo.cs'))</GlobalInfo>
+      <Pattern>^\s*\[assembly: AssemblyInformationalVersion\(\s*"([^"]+)"</Pattern>
+      <AssemblyInformationalVersion>$([System.Text.RegularExpressions.Regex]::Match($(GlobalInfo), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</AssemblyInformationalVersion>
+    </PropertyGroup>
+
     <ItemGroup>
-      <FilesToClean Include="$(ProjectDir)\**\*.nupkg" />
+      <FilesToClean Include="$(ProjectDir)\**\*.$(ProjectName).$(AssemblyInformationalVersion).nupkg" />
+      <FilesToClean Include="$(ProjectDir)\**\*.$(ProjectName).$(AssemblyInformationalVersion).symbols.nupkg" />
     </ItemGroup>
 
     <Delete Files="@(FilesToClean)"/>

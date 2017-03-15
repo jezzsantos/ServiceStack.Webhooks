@@ -16,6 +16,21 @@ namespace ServiceStack.Webhooks.Relays.Clients
         Action<HttpWebRequest> RequestFilter { get; set; }
 
         /// <summary>
+        ///     Gets or sets an action to perform when authentication is required by the request
+        /// </summary>
+        Action OnAuthenticationRequired { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the cookies to use in requests
+        /// </summary>
+        CookieContainer CookieContainer { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the bearer token to use in requests
+        /// </summary>
+        string BearerToken { get; set; }
+
+        /// <summary>
         ///     Posts the specified data to the specified URL
         /// </summary>
         HttpWebResponse Post<TRequest>(string url, TRequest data);

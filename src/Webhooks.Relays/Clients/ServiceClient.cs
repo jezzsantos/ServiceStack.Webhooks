@@ -38,5 +38,23 @@ namespace ServiceStack.Webhooks.Relays.Clients
         {
             return jsonClient.Put(request);
         }
+
+        public Action OnAuthenticationRequired
+        {
+            get { return jsonClient.OnAuthenticationRequired; }
+            set { jsonClient.OnAuthenticationRequired = value; }
+        }
+
+        public CookieContainer CookieContainer
+        {
+            get { return jsonClient.CookieContainer; }
+            set { jsonClient.CookieContainer = value; }
+        }
+
+        public string BearerToken
+        {
+            get { return jsonClient.BearerToken; }
+            set { jsonClient.BearerToken = value; }
+        }
     }
 }

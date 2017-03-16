@@ -7,6 +7,6 @@ namespace ServiceStack.Webhooks
         /// <summary>
         ///     Writes a new event with data
         /// </summary>
-        void Write(string eventName, Dictionary<string, string> data);
+        void Write(WebhookEvent webhookEvent);
     }
 }

@@ -53,7 +53,16 @@ namespace ServiceStack.Webhooks.IntTests.Services
 
         public object B { get; set; }
 
-        public object C { get; set; }
+        public ConsumedNestedObject C { get; set; }
+    }
+
+    public class ConsumedNestedObject
+    {
+        public object D { get; set; }
+
+        public object E { get; set; }
+
+        public object F { get; set; }
     }
 
     public class ConsumedEvent

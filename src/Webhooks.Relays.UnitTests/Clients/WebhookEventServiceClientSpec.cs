@@ -39,14 +39,14 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             public void WhenRelayAndNullSubscription_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                    client.Relay(null, "aneventname", "adata"));
+                    client.Relay(null, new WebhookEvent()));
             }
 
             [Test, Category("Unit")]
             public void WhenRelayAndNullEvent_ThenThrows()
             {
                 Assert.Throws<ArgumentNullException>(() =>
-                    client.Relay(new SubscriptionRelayConfig(), null, "adata"));
+                    client.Relay(new SubscriptionRelayConfig(), null));
             }
 
             [Test, Category("Unit")]
@@ -64,7 +64,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
                 request.VerifySet(req => req.ContentType = MimeTypes.Json);
@@ -90,7 +90,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                         Url = "aurl",
                         Secret = "asecret"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
@@ -116,7 +116,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                         Secret = "asecret",
                         ContentType = "acontenttype"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
                 request.VerifySet(req => req.ContentType = "acontenttype");
@@ -143,7 +143,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 AssertDeliveryResult(result, HttpStatusCode.BadRequest);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
@@ -166,7 +166,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 AssertDeliveryResult(result, HttpStatusCode.Unauthorized);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
@@ -189,7 +189,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 AssertDeliveryResult(result, HttpStatusCode.InternalServerError);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
@@ -208,7 +208,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 AssertDeliveryResult(result, HttpStatusCode.ServiceUnavailable, Resources.EventServiceClient_FailedDelivery.Fmt("aurl", 3));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
@@ -224,7 +224,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 AssertDeliveryResult(result, HttpStatusCode.OK);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
@@ -255,7 +255,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(2));
             }
@@ -274,7 +274,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, "aneventname", "adata");
+                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
 
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
             }

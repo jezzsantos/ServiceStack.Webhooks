@@ -18,6 +18,6 @@ namespace ServiceStack.Webhooks.Clients
         /// <summary>
         ///     Relays the specified event to the specified subscription configuration
         /// </summary>
-        SubscriptionDeliveryResult Relay(SubscriptionRelayConfig subscription, string eventName, object data);
+        SubscriptionDeliveryResult Relay(SubscriptionRelayConfig subscription, WebhookEvent webhookEvent);
     }
 }

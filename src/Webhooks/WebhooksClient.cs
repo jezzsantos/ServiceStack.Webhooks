@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ServiceStack.Logging;
+﻿using ServiceStack.Logging;
 using ServiceStack.Text;
 
 namespace ServiceStack.Webhooks
@@ -19,13 +18,13 @@ namespace ServiceStack.Webhooks
 
             logger.InfoFormat(@"Publishing webhook event {0}, with data {1}", eventName, data.ToJson());
 
-            EventSink.Write(eventName, CreateDictionary(data));
-        }
-
-        private static Dictionary<string, string> CreateDictionary(object data)
-        {
-            //ISSUE: if not a POCO of some kind (i.e. string or int etc)
-            return data.ToStringDictionary();
+            EventSink.Write(new WebhookEvent
+            {
+                Id = DataFormats.CreateEntityIdentifier(),
+                EventName = eventName,
+                Data = data,
+                CreatedDateUtc = SystemTime.UtcNow.ToNearestMillisecond()
+            });
         }
     }
 }

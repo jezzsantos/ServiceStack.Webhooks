@@ -68,7 +68,12 @@ namespace ServiceStack.Webhooks.IntTests
                     {
                         A = 1,
                         B = 2,
-                        C = 3
+                        C = new TestNestedEvent
+                        {
+                            D = 3,
+                            E = 4,
+                            F = 5
+                        }
                     }
                 });
 
@@ -78,7 +83,9 @@ namespace ServiceStack.Webhooks.IntTests
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));
                 Assert.That(events[0].Data.A, Is.EqualTo("1"));
                 Assert.That(events[0].Data.B, Is.EqualTo("2"));
-                Assert.That(events[0].Data.C, Is.EqualTo("3"));
+                Assert.That(events[0].Data.C.D, Is.EqualTo("3"));
+                Assert.That(events[0].Data.C.E, Is.EqualTo("4"));
+                Assert.That(events[0].Data.C.F, Is.EqualTo("5"));
             }
 
             [Test, Category("Integration")]
@@ -91,7 +98,12 @@ namespace ServiceStack.Webhooks.IntTests
                     {
                         A = 1,
                         B = 2,
-                        C = 3
+                        C = new TestNestedEvent
+                        {
+                            D = 3,
+                            E = 4,
+                            F = 5
+                        }
                     }
                 });
 
@@ -104,7 +116,12 @@ namespace ServiceStack.Webhooks.IntTests
                     {
                         A = 1,
                         B = 2,
-                        C = 3
+                        C = new TestNestedEvent
+                        {
+                            D = 3,
+                            E = 4,
+                            F = 5
+                        }
                     }
                 });
 

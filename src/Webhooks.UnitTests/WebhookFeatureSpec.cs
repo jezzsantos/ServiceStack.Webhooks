@@ -377,7 +377,7 @@ namespace ServiceStack.Webhooks.UnitTests
 
         public class TestEventSink : IEventSink
         {
-            public void Write(string eventName, Dictionary<string, string> data)
+            public void Write(WebhookEvent webhookEvent)
             {
                 throw new NotImplementedException();
             }

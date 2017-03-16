@@ -33,9 +33,9 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
-            public void WhenWriteWithNullEventName_ThenThrows()
+            public void WhenWriteWithNullEvent_ThenThrows()
             {
-                Assert.That(() => sink.Write(null, new Dictionary<string, string> {{"akey", "avalue"}}), Throws.ArgumentNullException);
+                Assert.That(() => sink.Write(null), Throws.ArgumentNullException);
             }
 
             [Test, Category("Unit")]
@@ -44,10 +44,13 @@ namespace ServiceStack.Webhooks.UnitTests
                 subscriptionCache.Setup(sc => sc.GetAll(It.IsAny<string>()))
                     .Returns(new List<SubscriptionRelayConfig>());
 
-                sink.Write("aneventname", new Dictionary<string, string> {{"akey", "avalue"}});
+                sink.Write(new WebhookEvent
+                {
+                    EventName = "aneventname"
+                });
 
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
-                serviceClient.Verify(sc => sc.Relay(It.IsAny<SubscriptionRelayConfig>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
+                serviceClient.Verify(sc => sc.Relay(It.IsAny<SubscriptionRelayConfig>(), It.IsAny<WebhookEvent>()), Times.Never);
             }
 
             [Test, Category("Unit")]
@@ -59,13 +62,16 @@ namespace ServiceStack.Webhooks.UnitTests
                     {
                         config
                     });
-
-                sink.Write("aneventname", new Dictionary<string, string> {{"akey", "avalue"}});
+                var whe = new WebhookEvent
+                {
+                    EventName = "aneventname"
+                };
+                sink.Write(whe);
 
                 subscriptionCache.Verify(sc => sc.GetAll("aneventname"));
                 serviceClient.VerifySet(sc => sc.Retries = AppHostEventSink.DefaultServiceClientRetries);
                 serviceClient.VerifySet(sc => sc.Timeout = TimeSpan.FromSeconds(AppHostEventSink.DefaultServiceClientTimeoutSeconds));
-                serviceClient.Verify(sc => sc.Relay(config, "aneventname", It.Is<Dictionary<string, string>>(dic => dic["akey"] == "avalue")));
+                serviceClient.Verify(sc => sc.Relay(config, whe));
             }
 
             [Test, Category("Unit")]
@@ -77,12 +83,15 @@ namespace ServiceStack.Webhooks.UnitTests
                     {
                         config
                     });
-                var data = new Dictionary<string, string> {{"akey", "avalue"}};
                 var result = new SubscriptionDeliveryResult();
-                serviceClient.Setup(sc => sc.Relay(config, "aneventname", data))
+                var whe = new WebhookEvent
+                {
+                    EventName = "aneventname"
+                };
+                serviceClient.Setup(sc => sc.Relay(config, whe))
                     .Returns(result);
 
-                sink.Write("aneventname", data);
+                sink.Write(whe);
 
                 subscriptionService.Verify(ss => ss.UpdateResults(It.Is<List<SubscriptionDeliveryResult>>(results =>
                     results.Count == 1

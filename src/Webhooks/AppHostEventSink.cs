@@ -28,15 +28,15 @@ namespace ServiceStack.Webhooks
 
         public int TimeoutSecs { get; set; }
 
-        public void Write(string eventName, Dictionary<string, string> data)
+        public void Write(WebhookEvent webhookEvent)
         {
-            Guard.AgainstNullOrEmpty(() => eventName, eventName);
+            Guard.AgainstNull(() => webhookEvent, webhookEvent);
 
-            var subscriptions = SubscriptionCache.GetAll(eventName);
+            var subscriptions = SubscriptionCache.GetAll(webhookEvent.EventName);
             var results = new List<SubscriptionDeliveryResult>();
             subscriptions.ForEach(sub =>
             {
-                var result = NotifySubscription(sub, eventName, data);
+                var result = NotifySubscription(sub, webhookEvent);
                 if (result != null)
                 {
                     results.Add(result);
@@ -49,11 +49,11 @@ namespace ServiceStack.Webhooks
             }
         }
 
-        private SubscriptionDeliveryResult NotifySubscription(SubscriptionRelayConfig subscription, string eventName, Dictionary<string, string> data)
+        private SubscriptionDeliveryResult NotifySubscription(SubscriptionRelayConfig subscription, WebhookEvent webhookEvent)
         {
             ServiceClient.Retries = Retries;
             ServiceClient.Timeout = TimeSpan.FromSeconds(TimeoutSecs);
-            return ServiceClient.Relay(subscription, eventName, data);
+            return ServiceClient.Relay(subscription, webhookEvent);
         }
     }
 }

@@ -26,12 +26,12 @@ namespace ServiceStack.Webhooks.Relays.Clients
 
         public int Retries { get; set; }
 
-        public SubscriptionDeliveryResult Relay(SubscriptionRelayConfig subscription, string eventName, object data)
+        public SubscriptionDeliveryResult Relay(SubscriptionRelayConfig subscription, WebhookEvent webhookEvent)
         {
             Guard.AgainstNull(() => subscription, subscription);
-            Guard.AgainstNullOrEmpty(() => eventName, eventName);
+            Guard.AgainstNull(() => webhookEvent, webhookEvent);
 
-            var serviceClient = CreateServiceClient(subscription, eventName, Timeout);
+            var serviceClient = CreateServiceClient(subscription, webhookEvent.EventName, Timeout);
 
             var attempts = 0;
 
@@ -41,7 +41,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
 
                 try
                 {
-                    using (var response = serviceClient.Post(subscription.Config.Url, data))
+                    using (var response = serviceClient.Post(subscription.Config.Url, webhookEvent.Data))
                     {
                         return CreateDeliveryResult(subscription.SubscriptionId, response.StatusCode, response.StatusDescription);
                     }

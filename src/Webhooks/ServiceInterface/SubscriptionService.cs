@@ -23,7 +23,9 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         List<SubscriptionRelayConfig> ISubscriptionService.Search(string eventName)
         {
-            return Store.Search(eventName, true);
+            return Store.Search(eventName, true)
+                .Safe()
+                .ToList();
         }
 
         void ISubscriptionService.UpdateResults(List<SubscriptionDeliveryResult> results)
@@ -33,7 +35,9 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public SearchSubscriptionsResponse Get(SearchSubscriptions request)
         {
-            var subscribers = Store.Search(request.EventName, true);
+            var subscribers = Store.Search(request.EventName, true)
+                .Safe()
+                .ToList();
 
             logger.InfoFormat(@"Searched subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
 
@@ -85,6 +89,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
             }
 
             var history = Store.Search(request.Id, 100)
+                .Safe()
                 .OrderByDescending(result => result.AttemptedDateUtc)
                 .ToList();
 
@@ -99,7 +104,9 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
         public ListSubscriptionsResponse Get(ListSubscriptions request)
         {
-            var subscriptions = Store.Find(Caller.UserId);
+            var subscriptions = Store.Find(Caller.UserId)
+                .Safe()
+                .ToList();
 
             logger.InfoFormat(@"Listed subscription for user {0}", Caller.UserId);
 
@@ -181,20 +188,40 @@ namespace ServiceStack.Webhooks.ServiceInterface
         {
             results.ForEach(incoming =>
             {
-                var existing = Store.Search(incoming.SubscriptionId, results.Count);
-                if (!existing.Any(exist => exist.Id.EqualsIgnoreCase(incoming.Id)))
+                if (!ExistsInStore(Store, results, incoming))
                 {
                     Store.Add(incoming.SubscriptionId, incoming);
 
-                    if (incoming.StatusCode >= HttpStatusCode.BadRequest
-                        && incoming.StatusCode < HttpStatusCode.InternalServerError)
+                    logger.InfoFormat(@"Added subscription history result {0}", incoming.Id);
+
+                    if (IsAny400(incoming.StatusCode))
                     {
                         var subscription = Store.Get(incoming.SubscriptionId);
-                        subscription.IsActive = false;
-                        Store.Update(incoming.SubscriptionId, subscription);
+                        if (subscription != null)
+                        {
+                            if (subscription.IsActive)
+                            {
+                                subscription.IsActive = false;
+                                Store.Update(incoming.SubscriptionId, subscription);
+
+                                logger.InfoFormat(@"Deactivated subscription {0}", incoming.SubscriptionId);
+                            }
+                        }
                     }
                 }
             });
+        }
+
+        private static bool ExistsInStore(ISubscriptionStore store, List<SubscriptionDeliveryResult> results, SubscriptionDeliveryResult incoming)
+        {
+            var existing = store.Search(incoming.SubscriptionId, results.Count).Safe();
+            return existing.Any(exist => exist.Id.EqualsIgnoreCase(incoming.Id));
+        }
+
+        private static bool IsAny400(HttpStatusCode statusCode)
+        {
+            return statusCode >= HttpStatusCode.BadRequest
+                   && statusCode < HttpStatusCode.InternalServerError;
         }
     }
 }

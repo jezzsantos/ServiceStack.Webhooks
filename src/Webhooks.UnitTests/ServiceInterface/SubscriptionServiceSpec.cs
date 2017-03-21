@@ -410,6 +410,68 @@ namespace ServiceStack.Webhooks.UnitTests.ServiceInterface
                     sub.Id == "asubscriptionid"
                     && sub.IsActive == false)));
             }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateHistoryAndResultIncludes4XXAndNoExistingSubscription_ThenDoesNotDeactivateSubscription()
+            {
+                var history = new List<SubscriptionDeliveryResult>
+                {
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid",
+                        SubscriptionId = "asubscriptionid",
+                        StatusCode = HttpStatusCode.BadRequest
+                    }
+                };
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(new List<SubscriptionDeliveryResult>());
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns((WebhookSubscription) null);
+
+                service.Put(new UpdateSubscriptionHistory
+                {
+                    Results = history
+                });
+
+                store.Verify(s => s.Search("asubscriptionid", 1));
+                store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
+                    sdr.Id == "aresultid")));
+                store.Verify(s => s.Get("asubscriptionid"));
+                store.Verify(s => s.Update(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
+            }
+
+            [Test, Category("Unit")]
+            public void WhenUpdateHistoryAndResultIncludes4XXAndExistingSubscriptionAlreadyDeactivated_ThenDoesNotDeactivateSubscription()
+            {
+                var history = new List<SubscriptionDeliveryResult>
+                {
+                    new SubscriptionDeliveryResult
+                    {
+                        Id = "aresultid",
+                        SubscriptionId = "asubscriptionid",
+                        StatusCode = HttpStatusCode.BadRequest
+                    }
+                };
+                store.Setup(s => s.Search("asubscriptionid", It.IsAny<int>()))
+                    .Returns(new List<SubscriptionDeliveryResult>());
+                store.Setup(s => s.Get("asubscriptionid"))
+                    .Returns(new WebhookSubscription
+                    {
+                        Id = "asubscriptionid",
+                        IsActive = false
+                    });
+
+                service.Put(new UpdateSubscriptionHistory
+                {
+                    Results = history
+                });
+
+                store.Verify(s => s.Search("asubscriptionid", 1));
+                store.Verify(s => s.Add("asubscriptionid", It.Is<SubscriptionDeliveryResult>(sdr =>
+                    sdr.Id == "aresultid")));
+                store.Verify(s => s.Get("asubscriptionid"));
+                store.Verify(s => s.Update(It.IsAny<string>(), It.IsAny<WebhookSubscription>()), Times.Never);
+            }
         }
     }
 }

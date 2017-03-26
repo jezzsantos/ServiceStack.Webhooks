@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Text;
 using Moq;
 using NUnit.Framework;
 using ServiceStack.Webhooks.Relays.Clients;
@@ -8,18 +10,27 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
 {
-    public class WebhookEventServiceClientSpec
+    public class EventServiceClientSpec
     {
         [TestFixture]
         public class GivenAContext
         {
             private EventServiceClient client;
+            private Mock<HttpWebRequest> request;
+            private MemoryStream requestStream;
             private Mock<Relays.Clients.IServiceClient> serviceClient;
             private Mock<IEventServiceClientFactory> serviceClientFactory;
 
             [SetUp]
             public void Initialize()
             {
+                requestStream = new MemoryStream(Encoding.UTF8.GetBytes("abody"));
+                request = new Mock<HttpWebRequest>();
+                request.Setup(req => req.Headers)
+                    .Returns(new WebHeaderCollection());
+                request.Setup(req => req.GetRequestStream())
+                    .Returns(requestStream);
+
                 serviceClientFactory = new Mock<IEventServiceClientFactory>();
                 serviceClient = new Mock<Relays.Clients.IServiceClient>();
                 var response = new Mock<HttpWebResponse>();
@@ -33,6 +44,15 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 {
                     ServiceClientFactory = serviceClientFactory.Object
                 };
+            }
+
+            [TearDown]
+            public void Cleanup()
+            {
+                if (requestStream != null)
+                {
+                    requestStream.Close();
+                }
             }
 
             [Test, Category("Unit")]
@@ -77,9 +97,6 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
             [Test, Category("Unit")]
             public void WhenRelayAndSubscriptionHasSecret_ThenRequestIncludesSecretSignatureHeader()
             {
-                var request = new Mock<HttpWebRequest>();
-                request.Setup(req => req.Headers)
-                    .Returns(new WebHeaderCollection());
                 serviceClient.SetupSet(sc => sc.RequestFilter = It.IsAny<Action<HttpWebRequest>>())
                     .Callback((Action<HttpWebRequest> action) => { action(request.Object); });
 
@@ -95,16 +112,13 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
                 Assert.That(request.Object.Headers[WebhookEventConstants.EventNameHeaderName], Is.EqualTo("aneventname"));
-                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.EqualTo(string.Empty));
+                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.EqualTo(request.Object.CreateHmacSignature("asecret")));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
             [Test, Category("Unit")]
             public void WhenRelayAndSubscriptionHasContentType_ThenSetsRequestContentType()
             {
-                var request = new Mock<HttpWebRequest>();
-                request.Setup(req => req.Headers)
-                    .Returns(new WebHeaderCollection());
                 serviceClient.SetupSet(sc => sc.RequestFilter = It.IsAny<Action<HttpWebRequest>>())
                     .Callback((Action<HttpWebRequest> action) => { action(request.Object); });
 
@@ -122,7 +136,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 request.VerifySet(req => req.ContentType = "acontenttype");
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
                 Assert.That(request.Object.Headers[WebhookEventConstants.EventNameHeaderName], Is.EqualTo("aneventname"));
-                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.EqualTo(string.Empty));
+                Assert.That(request.Object.Headers[WebhookEventConstants.SecretSignatureHeaderName], Is.EqualTo(request.Object.CreateHmacSignature("asecret")));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 

@@ -42,6 +42,7 @@
     <Compile Include="CacheClientEventSubscriptionCache.cs" />
     <Compile Include="Clients\EventServiceClient.cs" />
     <Compile Include="Clients\EventServiceClientFactory.cs" />
+    <Compile Include="Clients\HmacUtils.cs" />
     <Compile Include="Clients\IEventServiceClientFactory.cs" />
     <Compile Include="Clients\IServiceClient.cs" />
     <Compile Include="Clients\ServiceClient.cs" />

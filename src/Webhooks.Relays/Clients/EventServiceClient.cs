@@ -109,7 +109,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
                     }
                     if (relayConfig.Config.Secret.HasValue())
                     {
-                        request.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, CreateContentHmacSignature(request, relayConfig.Config.Secret));
+                        request.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, request.CreateHmacSignature(relayConfig.Config.Secret));
                     }
                     request.Headers.Add(WebhookEventConstants.RequestIdHeaderName, CreateRequestIdentifier());
                     request.Headers.Add(WebhookEventConstants.EventNameHeaderName, eventName);
@@ -126,18 +126,6 @@ namespace ServiceStack.Webhooks.Relays.Clients
         private static string CreateRequestIdentifier()
         {
             return Guid.NewGuid().ToString("N");
-        }
-
-        /// <summary>
-        ///     Returns the computed HMAC hex digest of the body (RFC3174), using the secret as the key.
-        ///     See https://developer.github.com/v3/repos/hooks/#example, and
-        ///     https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html#authednotify
-        /// </summary>
-        private static string CreateContentHmacSignature(HttpWebRequest request, string secret)
-        {
-            //TODO: calculate the HMAC SHA1 digest
-
-            return string.Empty;
         }
     }
 }

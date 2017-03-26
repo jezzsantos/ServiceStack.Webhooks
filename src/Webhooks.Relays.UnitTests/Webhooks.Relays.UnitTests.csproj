@@ -63,7 +63,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CacheClientEventSubscriptionCacheSpec.cs" />
-    <Compile Include="Clients\WebhookEventServiceClientSpec.cs" />
+    <Compile Include="Clients\EventServiceClientSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

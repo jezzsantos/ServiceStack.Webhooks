@@ -1,16 +1,28 @@
 ﻿using System.Collections.Generic;
+using ServiceStack.Webhooks.Security;
 
 namespace ServiceStack.Webhooks.IntTests.Services
 {
     internal class StubSubscriberService : Service
     {
+        public const string SubscriberSecret = "asignaturesecret";
+
         private static readonly List<ConsumedEvent> Events = new List<ConsumedEvent>();
 
         public void Post(ConsumeEvent request)
         {
+            var isValidSignature = false;
+            var incomingSignature = Request.Headers[WebhookEventConstants.SecretSignatureHeaderName];
+            if (incomingSignature != null)
+            {
+                isValidSignature = Request.VerifySignature(incomingSignature, SubscriberSecret);
+            }
+
             Events.Add(new ConsumedEvent
             {
                 EventName = Request.Headers[WebhookEventConstants.EventNameHeaderName],
+                Signature = incomingSignature,
+                IsAuthenticated = isValidSignature,
                 Data = request.ConvertTo<TestEvent>()
             });
         }
@@ -70,5 +82,9 @@ namespace ServiceStack.Webhooks.IntTests.Services
         public string EventName { get; set; }
 
         public TestEvent Data { get; set; }
+
+        public string Signature { get; set; }
+
+        public bool IsAuthenticated { get; set; }
     }
 }

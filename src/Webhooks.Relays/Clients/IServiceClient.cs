@@ -16,6 +16,11 @@ namespace ServiceStack.Webhooks.Relays.Clients
         Action<HttpWebRequest> RequestFilter { get; set; }
 
         /// <summary>
+        ///     Gets or sets the filter to run when the request is about to be serialized
+        /// </summary>
+        Action<HttpWebRequest, byte[], object> OnSerializeRequest { get; set; }
+
+        /// <summary>
         ///     Gets or sets an action to perform when authentication is required by the request
         /// </summary>
         Action OnAuthenticationRequired { get; set; }

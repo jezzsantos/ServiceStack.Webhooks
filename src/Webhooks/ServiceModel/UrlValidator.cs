@@ -17,7 +17,7 @@ namespace ServiceStack.Webhooks.ServiceModel
         ///     Creates a new instance of the <see cref="UrlValidator" /> class.
         /// </summary>
         public UrlValidator()
-            : base(Resources.UrlValidator_ErrorMessage, "IsUrl")
+            : base(Resources.UrlValidator_ErrorMessage)
         {
         }
 

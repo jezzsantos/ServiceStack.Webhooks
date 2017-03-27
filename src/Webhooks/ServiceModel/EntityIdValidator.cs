@@ -17,7 +17,7 @@ namespace ServiceStack.Webhooks.ServiceModel
         ///     Creates a new instance of the <see cref="EntityIdValidator" /> class.
         /// </summary>
         public EntityIdValidator()
-            : base(Resources.EntityIdValidator_ErrorMessage, "IsEntityId")
+            : base(Resources.EntityIdValidator_ErrorMessage)
         {
         }
 

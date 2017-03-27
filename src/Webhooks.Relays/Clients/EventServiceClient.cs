@@ -4,14 +4,15 @@ using ServiceStack.Logging;
 using ServiceStack.Text;
 using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.Relays.Properties;
+using ServiceStack.Webhooks.Security;
 using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.Relays.Clients
 {
     public class EventServiceClient : IEventServiceClient
     {
-        internal const int DefaultRetries = 3;
-        internal const int DefaultTimeout = 60;
+        private const int DefaultRetries = 3;
+        private const int DefaultTimeout = 60;
         private readonly ILog logger = LogManager.GetLogger(typeof(EventServiceClient));
 
         public EventServiceClient()
@@ -69,7 +70,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
             return null;
         }
 
-        private SubscriptionDeliveryResult CreateDeliveryResult(string subscriptionId, HttpStatusCode statusCode, string statusDescription)
+        private static SubscriptionDeliveryResult CreateDeliveryResult(string subscriptionId, HttpStatusCode statusCode, string statusDescription)
         {
             return new SubscriptionDeliveryResult
             {
@@ -107,12 +108,16 @@ namespace ServiceStack.Webhooks.Relays.Clients
                     {
                         request.ContentType = relayConfig.Config.ContentType;
                     }
-                    if (relayConfig.Config.Secret.HasValue())
-                    {
-                        request.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, request.CreateHmacSignature(relayConfig.Config.Secret));
-                    }
                     request.Headers.Add(WebhookEventConstants.RequestIdHeaderName, CreateRequestIdentifier());
                     request.Headers.Add(WebhookEventConstants.EventNameHeaderName, eventName);
+                };
+                client.OnSerializeRequest = (httpRequest, body, request) =>
+                {
+                    if (relayConfig.Config.Secret.HasValue())
+                    {
+                        var hash = body.CreateHmacSignature(relayConfig.Config.Secret);
+                        httpRequest.Headers.Add(WebhookEventConstants.SecretSignatureHeaderName, hash);
+                    }
                 };
                 return client;
             }

@@ -18,6 +18,9 @@ namespace ServiceStack.Webhooks.IntTests.Services
             RegisterAuthentication(container);
             Plugins.Add(new ValidationFeature());
             Plugins.Add(new WebhookFeature());
+
+            // We need this filter to allow us to read the request body in IRequest.GetRawBody()
+            PreRequestFilters.Insert(0, (httpReq, httpRes) => { httpReq.UseBufferedStream = true; });
         }
 
         private void RegisterAuthentication(Container container)

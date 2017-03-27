@@ -1,60 +1,42 @@
 ﻿using System;
 using System.Net;
+using ServiceStack.Text;
 
 namespace ServiceStack.Webhooks.Relays.Clients
 {
-    internal class ServiceClient : IServiceClient
+    internal class ServiceClient : JsonServiceClient, IServiceClient
     {
-        private readonly JsonServiceClient jsonClient;
-
-        public ServiceClient(string url)
+        public ServiceClient(string url) : base(url)
         {
-            jsonClient = new JsonServiceClient(url);
-        }
-
-        public TimeSpan? Timeout
-        {
-            get { return jsonClient.Timeout; }
-            set { jsonClient.Timeout = value; }
-        }
-
-        public Action<HttpWebRequest> RequestFilter
-        {
-            get { return jsonClient.RequestFilter; }
-            set { jsonClient.RequestFilter = value; }
         }
 
         public HttpWebResponse Post<TRequest>(string url, TRequest request)
         {
-            return jsonClient.Post<HttpWebResponse>(url, request);
+            return Post<HttpWebResponse>(url, request);
         }
 
-        public TResponse Get<TResponse>(IReturn<TResponse> request)
-        {
-            return jsonClient.Get(request);
-        }
+        public Action<HttpWebRequest, byte[], object> OnSerializeRequest { get; set; }
 
-        public TResponse Put<TResponse>(IReturn<TResponse> request)
+        protected override WebRequest SendRequest(string httpMethod, string requestUri, object request)
         {
-            return jsonClient.Put(request);
-        }
+            if (OnSerializeRequest == null)
+            {
+                return base.SendRequest(httpMethod, requestUri, request);
+            }
 
-        public Action OnAuthenticationRequired
-        {
-            get { return jsonClient.OnAuthenticationRequired; }
-            set { jsonClient.OnAuthenticationRequired = value; }
-        }
+            return PrepareWebRequest(httpMethod, requestUri, request, client =>
+            {
+                using (var tempStream = MemoryStreamFactory.GetStream())
+                using (var requestStream = PclExport.Instance.GetRequestStream(client))
+                {
+                    SerializeRequestToStream(request, tempStream, true);
+                    var bytes = tempStream.ToArray();
 
-        public CookieContainer CookieContainer
-        {
-            get { return jsonClient.CookieContainer; }
-            set { jsonClient.CookieContainer = value; }
-        }
+                    OnSerializeRequest(client, bytes, request);
 
-        public string BearerToken
-        {
-            get { return jsonClient.BearerToken; }
-            set { jsonClient.BearerToken = value; }
+                    requestStream.Write(bytes, 0, bytes.Length);
+                }
+            });
         }
     }
 }

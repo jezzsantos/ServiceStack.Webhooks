@@ -2,6 +2,7 @@
 using Funq;
 using ServiceStack.Auth;
 using ServiceStack.Validation;
+using ServiceStack.Webhooks.Subscribers.Security;
 
 namespace ServiceStack.Webhooks.IntTests.Services
 {
@@ -28,7 +29,12 @@ namespace ServiceStack.Webhooks.IntTests.Services
             Plugins.Add(new AuthFeature(() => new AuthUserSession(), new IAuthProvider[]
             {
                 new BasicAuthProvider(),
-                new CredentialsAuthProvider()
+                new CredentialsAuthProvider(),
+                new HmacAuthProvider
+                {
+                    RequireSecureConnection = false,
+                    Secret = StubSubscriberService.SubscriberSecret
+                }
             }));
             Plugins.Add(new RegistrationFeature());
             container.Register<IUserAuthRepository>(new InMemoryAuthRepository());

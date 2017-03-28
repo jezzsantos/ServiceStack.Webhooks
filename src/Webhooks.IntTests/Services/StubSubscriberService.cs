@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ServiceStack.Webhooks.Security;
+using ServiceStack.Webhooks.Subscribers.Security;
 
 namespace ServiceStack.Webhooks.IntTests.Services
 {
@@ -9,7 +10,19 @@ namespace ServiceStack.Webhooks.IntTests.Services
 
         private static readonly List<ConsumedEvent> Events = new List<ConsumedEvent>();
 
+        [Route("/consume", "POST")]
         public void Post(ConsumeEvent request)
+        {
+            ConsumeEvent(request);
+        }
+
+        [Authenticate(HmacAuthProvider.Name), Route("/consume/secured", "POST")]
+        public void Post(ConsumeEventWithAuth request)
+        {
+            ConsumeEvent(request);
+        }
+
+        private void ConsumeEvent(ConsumeEvent request)
         {
             var isValidSignature = false;
             var incomingSignature = Request.Headers[WebhookEventConstants.SecretSignatureHeaderName];
@@ -58,7 +71,6 @@ namespace ServiceStack.Webhooks.IntTests.Services
         public ResponseStatus ResponseStatus { get; set; }
     }
 
-    [Route("/consume", "POST")]
     public class ConsumeEvent : IReturnVoid
     {
         public object A { get; set; }
@@ -66,6 +78,10 @@ namespace ServiceStack.Webhooks.IntTests.Services
         public object B { get; set; }
 
         public ConsumedNestedObject C { get; set; }
+    }
+
+    public class ConsumeEventWithAuth : ConsumeEvent
+    {
     }
 
     public class ConsumedNestedObject

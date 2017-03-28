@@ -45,6 +45,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Relays.Signed", "W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.OrmLite.Signed", "Webhooks.OrmLite\Webhooks.OrmLite.Signed.csproj", "{636336CD-087B-4371-9F34-B092954843C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Subscribers", "Webhooks.Subscribers\Webhooks.Subscribers.csproj", "{670BBDD7-0CD5-4049-AC74-83E97C20DF38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Subscribers.Signed", "Webhooks.Subscribers\Webhooks.Subscribers.Signed.csproj", "{73950491-D0D1-4601-A3AE-F4957EA2C7D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Subscribers.UnitTests", "Webhooks.Subscribers.UnitTests\Webhooks.Subscribers.UnitTests.csproj", "{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -148,6 +154,24 @@ Global
 		{636336CD-087B-4371-9F34-B092954843C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{636336CD-087B-4371-9F34-B092954843C2}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
 		{636336CD-087B-4371-9F34-B092954843C2}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
+		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
+		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
+		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
+		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,5 +183,6 @@ Global
 		{6468D272-EBA8-46BB-8D57-19E9EC3AB100} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 		{FAEA8FB4-0B9D-4561-902B-5806707A4025} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
+		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 	EndGlobalSection
 EndGlobal

@@ -28,7 +28,5 @@ namespace ServiceStack.Webhooks.ServiceModel.Types
         public string ContentType { get; set; }
 
         public string Secret { get; set; }
-
-        public bool IsInsecureSsl { get; set; }
     }
 }

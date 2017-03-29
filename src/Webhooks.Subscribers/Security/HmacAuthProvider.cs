@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using ServiceStack.Auth;
+using ServiceStack.Configuration;
 using ServiceStack.Text;
 using ServiceStack.Web;
 using ServiceStack.Webhooks.Security;
@@ -12,10 +13,21 @@ namespace ServiceStack.Webhooks.Subscribers.Security
     {
         public const string Name = "hmac";
         public const string Realm = "/auth/hmac";
+        public const string SecretSettingsName = "hmac.Secret";
 
         public HmacAuthProvider()
             : base(null, Realm, Name)
         {
+            RequireSecureConnection = true;
+        }
+
+        public HmacAuthProvider(IAppSettings settings)
+            : this()
+        {
+            Guard.AgainstNull(() => settings, settings);
+
+            Secret = settings.GetString(SecretSettingsName);
+
             RequireSecureConnection = true;
         }
 

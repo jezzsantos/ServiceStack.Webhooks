@@ -5,6 +5,7 @@ using System.Text;
 using Moq;
 using NUnit.Framework;
 using ServiceStack.Auth;
+using ServiceStack.Configuration;
 using ServiceStack.Testing;
 using ServiceStack.Text;
 using ServiceStack.Webhooks.Subscribers.Security;
@@ -41,7 +42,27 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
             }
 
             [Test, Category("Unit")]
-            public void When_ThenThrows()
+            public void WhenCtorAndAppSettingsWithNullSettings_ThenThrows()
+            {
+                Assert.Throws<ArgumentNullException>(() =>
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new HmacAuthProvider(null));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenCtorWithAppSettings_ThenSecretReadFromAppSettings()
+            {
+                var appSettings = new Mock<IAppSettings>();
+                appSettings.Setup(settings => settings.GetString(It.IsAny<string>()))
+                    .Returns("asecret");
+
+                provider = new HmacAuthProvider(appSettings.Object);
+
+                Assert.That(provider.Secret, Is.EqualTo("asecret"));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenAuthenticate_ThenThrows()
             {
                 Assert.Throws<NotImplementedException>(() =>
                     provider.Authenticate(null, null, null));

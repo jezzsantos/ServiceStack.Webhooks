@@ -46,7 +46,7 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
             {
                 Assert.Throws<ArgumentNullException>(() =>
                     // ReSharper disable once ObjectCreationAsStatement
-                    new HmacAuthProvider(null));
+                        new HmacAuthProvider(null));
             }
 
             [Test, Category("Unit")]
@@ -220,6 +220,38 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
                     };
 
                     provider.Secret = "asecret";
+
+                    provider.PreAuthenticate(request, new MockHttpResponse(request));
+
+                    var session = request.GetSession();
+                    Assert.That(session.Id, Is.Not.Null);
+                    Assert.That(session.IsAuthenticated, Is.True);
+                    Assert.That(session.UserAuthId, Is.EqualTo("arequestid"));
+                    Assert.That(session.UserAuthName, Is.EqualTo("localhost"));
+                    Assert.That(session.UserName, Is.EqualTo("localhost"));
+                }
+            }
+
+            [Test, Category("Unit")]
+            public void WhenPreAuthenticateWithOnGetSecretAndRightSignature_ThenPopulatesSession()
+            {
+                var body = Encoding.UTF8.GetBytes("abody");
+                var signature = Webhooks.Security.HmacUtils.CreateHmacSignature(body, "asecret");
+                using (var stream = MemoryStreamFactory.GetStream(body))
+                {
+                    var request = new MockHttpRequest
+                    {
+                        InputStream = stream,
+                        Headers = new NameValueCollectionWrapper(new NameValueCollection
+                        {
+                            {WebhookEventConstants.SecretSignatureHeaderName, signature},
+                            {WebhookEventConstants.RequestIdHeaderName, "arequestid"}
+                        }),
+                        IsSecureConnection = true
+                    };
+
+                    provider.Secret = null;
+                    provider.OnGetSecret = (req, name) => provider.Secret = "asecret";
 
                     provider.PreAuthenticate(request, new MockHttpResponse(request));
 

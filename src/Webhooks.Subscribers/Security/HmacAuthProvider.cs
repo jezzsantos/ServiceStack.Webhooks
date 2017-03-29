@@ -33,6 +33,8 @@ namespace ServiceStack.Webhooks.Subscribers.Security
 
         public string Secret { get; set; }
 
+        public Action<IRequest, string> OnGetSecret { get; set; }
+
         public bool RequireSecureConnection { get; set; }
 
         public void PreAuthenticate(IRequest req, IResponse res)
@@ -45,6 +47,8 @@ namespace ServiceStack.Webhooks.Subscribers.Security
                     throw HttpError.Forbidden(Resources.HmacAuthProvider_NotHttps);
                 }
 
+                var eventName = req.Headers[WebhookEventConstants.EventNameHeaderName];
+                OnGetSecret?.Invoke(req, eventName);
                 if (!Secret.HasValue())
                 {
                     throw HttpError.Unauthorized(Resources.HmacAuthProvider_IncorrectlyConfigured);

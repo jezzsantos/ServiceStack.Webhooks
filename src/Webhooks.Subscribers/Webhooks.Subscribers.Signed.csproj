@@ -17,23 +17,23 @@
   <Import Project="..\BuildConfiguration.targets" />
   <ItemGroup>
     <Reference Include="ServiceStack, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
-      <HintPath>..\packages\ServiceStack.Signed.4.5.7\lib\net45\ServiceStack.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Signed.4.5.8\lib\net45\ServiceStack.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ServiceStack.Client, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
-      <HintPath>..\packages\ServiceStack.Client.Signed.4.5.7\lib\net45\ServiceStack.Client.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Client.Signed.4.5.8\lib\net45\ServiceStack.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ServiceStack.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
-      <HintPath>..\packages\ServiceStack.Common.Signed.4.5.7\lib\net45\ServiceStack.Common.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Common.Signed.4.5.8\lib\net45\ServiceStack.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ServiceStack.Interfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
-      <HintPath>..\packages\ServiceStack.Interfaces.4.5.7\lib\portable-wp80+sl5+net45+win8+wpa81+monotouch+monoandroid+xamarin.ios10\ServiceStack.Interfaces.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Interfaces.4.5.8\lib\portable-wp80+sl5+net45+win8+wpa81+monotouch+monoandroid+xamarin.ios10\ServiceStack.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ServiceStack.Text, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
-      <HintPath>..\packages\ServiceStack.Text.Signed.4.5.7\lib\net45\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Text.Signed.4.5.8\lib\net45\ServiceStack.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -58,7 +58,6 @@
     </Compile>
     <Compile Include="*.cs" />
     <Compile Include="Security\**" />
-    <None Include="packages.Webhooks.Subscribers.Signed.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Webhooks.Common\Webhooks.Common.Signed.csproj">
@@ -75,6 +74,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.Webhooks.Subscribers.Signed.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

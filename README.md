@@ -1,9 +1,11 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build status](https://ci.appveyor.com/api/projects/status/j2a8skqibee6d7vt/branch/master?svg=true)](https://ci.appveyor.com/project/JezzSantos/servicestack-webhooks/branch/master)
+
+
 [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg?label=ServiceStack.Webhooks)](https://www.nuget.org/packages/ServiceStack.Webhooks) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.Ormlite.svg?label=ServiceStack.Webhooks.Ormlite)](https://www.nuget.org/packages/ServiceStack.Webhooks.Ormlite)
 
 # Add Webhooks to your ServiceStack services
 
-[![Release Notes](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg?label=Release%20Notes)](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Release-Notes)
+[![Release Notes](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg?label=Release%20Notes&colorB=green)](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Release-Notes)
 
 # Overview
 
@@ -11,20 +13,18 @@ This project makes it very easy to expose your own Webhooks to your ServiceStack
 
 By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to raise and manage the events raised by your services. 
 
-We _know_ that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. Now you can, with the `WebhookFeature`.
+We _know_ that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. All you have to do is plug into the `WebhookFeature`.
 
-For example: In one service, you may want to store the Webhook subscriptions in a _MongoDB database_, and have an _Azure worker role_ relay the events to subscribers from a (reliable) cloud _queue_.
+**For example:** 
+In one service, you may want to store the Webhook subscriptions in a _MongoDB database_, and have an _Azure worker role_ relay the events to subscribers from a (reliable) cloud _queue_.
+
 In another service, you may want to store subscriptions in _Ormlite SQL database_, and relay events to subscribers directly from within the same service _on a background thread_, or throw the event to an _AWS lambda_ to process. Whatever works for you, the choice is yours.
 
-_Oh, don't worry, we haven't left it all entirely up to you, just to get started with the `WebhookFeature`. We got your back with a built-in subscription store and built-in event sink that will get you going seeing how it all works. But eventually you'll want to swap those out for your own pieces that fit your architecture, which is easy._
+_Oh, don't worry, getting started is easy. We got your back with a built-in subscription store and built-in event sink that will get you going seeing how it all works. But eventually you'll want to swap those out for your own pieces that fit your architecture, which is dead easy._
 
 ![](https://raw.githubusercontent.com/jezzsantos/ServiceStack.Webhooks/master/docs/images/Webhooks.Architecture.PNG)
 
 If you cant find the component you want for your architecture (see [Plugins](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Plugins)), it should be easy for you to build add your own and _just plug it in_.
-
-### Contribute!
-
-Want to get involved in this project? or want to help improve this capability for your services? just send us a message or pull-request!
 
 # [Getting Started](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Getting-Started)
 
@@ -48,7 +48,12 @@ See [Getting Started](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/G
 
 ## Raising Events
 
-To raise events from your own services, add the `IWebhooks` dependency to your service, and call: `IWebhooks.Publish<TDto>(string eventName, TDto data)`. As simple as this:
+To raise events from your own services:
+
+1. Add the `IWebhooks` dependency to your service
+2. Call: `IWebhooks.Publish<TDto>(string eventName, TDto data)`
+
+As simple as this:
 
 ```
 internal class HelloService : Service
@@ -135,3 +140,8 @@ Note: Webhook events can be delivered securely to subscribers using signatures, 
 # [Documentation](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki)
 
 More documentation about how the `WebhookFeature` works, and how to customize it are available in [here](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki)
+
+### Contribute?
+
+Want to get involved in this project? or want to help improve this capability for your services? just send us a message or pull-request!
+

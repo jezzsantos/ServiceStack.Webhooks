@@ -1,9 +1,9 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build status](https://ci.appveyor.com/api/projects/status/j2a8skqibee6d7vt/branch/master?svg=true)](https://ci.appveyor.com/project/JezzSantos/servicestack-webhooks/branch/master) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg?label=ServiceStack.Webhooks)](https://www.nuget.org/packages/ServiceStack.Webhooks)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build status](https://ci.appveyor.com/api/projects/status/j2a8skqibee6d7vt/branch/master?svg=true)](https://ci.appveyor.com/project/JezzSantos/servicestack-webhooks/branch/master)
+[![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg?label=ServiceStack.Webhooks)](https://www.nuget.org/packages/ServiceStack.Webhooks) [![NuGet](https://img.shields.io/nuget/v/ServiceStack.Webhooks.Ormlite.svg?label=ServiceStack.Webhooks.Ormlite)](https://www.nuget.org/packages/ServiceStack.Webhooks.Ormlite)
 
-# ServiceStack.Webhooks
-Add Webhooks to your ServiceStack services
+# Add Webhooks to your ServiceStack services
 
-## [Release Notes](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Release-Notes)
+[![Release Notes](https://img.shields.io/nuget/v/ServiceStack.Webhooks.svg?label=Release%20Notes)](https://github.com/jezzsantos/ServiceStack.Webhooks/wiki/Release-Notes)
 
 # Overview
 

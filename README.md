@@ -9,9 +9,9 @@
 
 # Overview
 
-This project makes it very easy to expose your own Webhooks to your ServiceStack services, and to manage your user's subscriptions to those webhooks.
+This project makes it very easy to expose webhook notifications from your ServiceStack services, and helps you manage your user's subscriptions to those webhooks.
 
-By adding the `WebhookFeature` to the AppHost of your service, you automatically get all the pieces you need to raise and manage the events raised by your services. 
+By adding the `WebhookFeature` to the `AppHost` of your service, you automatically get all the pieces you need to raise and manage the events raised by your services.
 
 We _know_ that most services are built for scalability and to be hosted in the cloud, so we know that you are going to want to use your own components and technologies that fit in with your own architecture. All you have to do is plug into the `WebhookFeature`.
 

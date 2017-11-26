@@ -19,7 +19,7 @@ namespace ServiceStack.Webhooks.IntTests
         {
             private static AppHostForTesting appHost;
             private static JsonServiceClient client;
-            private const string BaseUrl = "http://localhost:5567/";
+            private const string BaseUrl = "http://localhost:5568/";
             private string userId;
 
             [OneTimeTearDown]
@@ -261,7 +261,7 @@ namespace ServiceStack.Webhooks.IntTests
         {
             private static AppHostForTesting appHost;
             private static JsonServiceClient client;
-            private const string BaseUrl = "http://localhost:5567/";
+            private const string BaseUrl = "http://localhost:5569/";
 
             [OneTimeTearDown]
             public void CleanupContext()

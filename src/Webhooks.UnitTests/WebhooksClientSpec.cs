@@ -34,9 +34,27 @@ namespace ServiceStack.Webhooks.UnitTests
                 var poco = new TestPoco();
                 webhooks.Publish("aneventname", poco);
 
-                eventSink.Verify(es => es.Write(It.Is<WebhookEvent>(whe =>
-                    whe.EventName == "aneventname"
-                    && whe.Data == poco)));
+                eventSink.Verify(es => es.Write(It.Is<WebhookEvent>(we =>
+                    we.EventName == "aneventname"
+                    && we.Data == poco)));
+            }
+
+            [Test, Category("Unit")]
+            public void WhenPublishAndPublishEventFilter_ThenAugmentsPublishedEvent()
+            {
+                var poco = new TestPoco();
+                var poco2 = new TestPoco();
+                webhooks.PublishFilter = @event =>
+                {
+                    @event.Id = "anewid";
+                    @event.Data = poco2;
+                };
+                webhooks.Publish("aneventname", poco);
+
+                eventSink.Verify(es => es.Write(It.Is<WebhookEvent>(we =>
+                    we.Id == "anewid"
+                    && we.EventName == "aneventname"
+                    && we.Data == poco2)));
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using ServiceStack.Logging;
+﻿using System;
+using ServiceStack.Logging;
 using ServiceStack.Text;
 
 namespace ServiceStack.Webhooks
@@ -9,8 +10,10 @@ namespace ServiceStack.Webhooks
 
         public IEventSink EventSink { get; set; }
 
+        public Action<WebhookEvent> PublishFilter { get; set; }
+
         /// <summary>
-        ///     Publishes webhook events to the <see cref="IEventSink" />
+        ///     Publishes webhook events to the <see cref="T:ServiceStack.Webhooks.IEventSink" />
         /// </summary>
         public void Publish<TDto>(string eventName, TDto data) where TDto : class, new()
         {
@@ -18,13 +21,27 @@ namespace ServiceStack.Webhooks
 
             logger.InfoFormat(@"Publishing webhook event {0}, with data {1}", eventName, data.ToJson());
 
-            EventSink.Write(new WebhookEvent
+            var @event = CreateEvent(eventName, data);
+            if (@event != null)
+            {
+                EventSink.Write(@event);
+            }
+        }
+
+        public virtual WebhookEvent CreateEvent<TDto>(string eventName, TDto data) where TDto : class, new()
+        {
+            var @event = new WebhookEvent
             {
                 Id = DataFormats.CreateEntityIdentifier(),
                 EventName = eventName,
                 Data = data,
-                CreatedDateUtc = SystemTime.UtcNow.ToNearestMillisecond()
-            });
+                CreatedDateUtc = SystemTime.UtcNow.ToNearestMillisecond(),
+                Origin = null,
+            };
+
+            PublishFilter?.Invoke(@event);
+
+            return @event;
         }
     }
 }

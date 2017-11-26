@@ -13,5 +13,7 @@ namespace ServiceStack.Webhooks
         public object Data { get; set; }
 
         public string Id { get; set; }
+
+        public string Origin { get; set; }
     }
 }

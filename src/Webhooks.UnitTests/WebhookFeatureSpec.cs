@@ -48,6 +48,18 @@ namespace ServiceStack.Webhooks.UnitTests
             }
 
             [Test, Category("Unit")]
+            public void WhenRegisterAndPublishEventFilter_ThenWebhooksClientRegisteredWithPublishFilter()
+            {
+                var filter = new Action<WebhookEvent>(e => { });
+                new WebhookFeature
+                {
+                    PublishEventFilter = filter
+                }.Register(appHost);
+
+                Assert.That(((WebhooksClient)container.GetService(typeof(IWebhooks))).PublishFilter, Is.EqualTo(filter));
+            }
+
+            [Test, Category("Unit")]
             public void WhenRegisterAndIncludeSubscriptionService_ThenSubscriptionServiceDependenciesRegistered()
             {
                 new WebhookFeature().Register(appHost);

@@ -28,6 +28,8 @@ namespace ServiceStack.Webhooks
 
         public string SecureRelayRoles { get; set; }
 
+        public System.Action<WebhookEvent> PublishEventFilter { get; internal set; }
+
         public void Register(IAppHost appHost)
         {
             var container = appHost.GetContainer();
@@ -37,7 +39,7 @@ namespace ServiceStack.Webhooks
             RegisterClient(container);
         }
 
-        private static void RegisterClient(Container container)
+        private void RegisterClient(Container container)
         {
             if (!container.Exists<IEventSink>())
             {
@@ -47,7 +49,11 @@ namespace ServiceStack.Webhooks
                 container.RegisterAutoWiredAs<EventServiceClient, IEventServiceClient>();
                 container.RegisterAutoWiredAs<AppHostEventSink, IEventSink>();
             }
-            container.RegisterAutoWiredAs<WebhooksClient, IWebhooks>();
+            container.Register<IWebhooks>(x => new WebhooksClient
+            {
+                EventSink = x.Resolve<IEventSink>(),
+                PublishFilter = PublishEventFilter
+            });
         }
 
         private static void RegisterSubscriptionStore(Container container)

@@ -110,7 +110,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                         Url = "aurl",
                         Secret = "asecret"
                     }
-                }, new WebhookEvent { EventName = "aneventname", Data = null });
+                }, new WebhookEvent {EventName = "aneventname", Data = null});
 
                 serviceClient.VerifySet(sc => sc.Timeout = client.Timeout);
                 Assert.That(request.Object.Headers[WebhookEventConstants.RequestIdHeaderName].IsGuid());
@@ -157,9 +157,9 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
+                }, new WebhookEvent {Id = "aneventid", EventName = "aneventname", Data = "adata"});
 
-                AssertDeliveryResult(result, HttpStatusCode.BadRequest);
+                AssertDeliveryResult(result, "aneventid", HttpStatusCode.BadRequest);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
@@ -180,9 +180,9 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
+                }, new WebhookEvent {Id = "aneventid", EventName = "aneventname", Data = "adata"});
 
-                AssertDeliveryResult(result, HttpStatusCode.Unauthorized);
+                AssertDeliveryResult(result, "aneventid", HttpStatusCode.Unauthorized);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Once);
             }
 
@@ -203,9 +203,9 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
+                }, new WebhookEvent {Id = "aneventid", EventName = "aneventname", Data = "adata"});
 
-                AssertDeliveryResult(result, HttpStatusCode.InternalServerError);
+                AssertDeliveryResult(result, "aneventid", HttpStatusCode.InternalServerError);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
             }
 
@@ -222,9 +222,9 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
+                }, new WebhookEvent {Id = "aneventid", EventName = "aneventname", Data = "adata"});
 
-                AssertDeliveryResult(result, HttpStatusCode.ServiceUnavailable, Resources.EventServiceClient_FailedDelivery.Fmt("aurl", 3));
+                AssertDeliveryResult(result, "aneventid", HttpStatusCode.ServiceUnavailable, Resources.EventServiceClient_FailedDelivery.Fmt("aurl", 3));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
             }
 
@@ -238,9 +238,9 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     {
                         Url = "aurl"
                     }
-                }, new WebhookEvent {EventName = "aneventname", Data = "adata"});
+                }, new WebhookEvent {Id = "aneventid", EventName = "aneventname", Data = "adata"});
 
-                AssertDeliveryResult(result, HttpStatusCode.OK);
+                AssertDeliveryResult(result, "aneventid", HttpStatusCode.OK);
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
             }
 
@@ -293,13 +293,14 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(1));
             }
 
-            private static void AssertDeliveryResult(SubscriptionDeliveryResult result, HttpStatusCode statusCode, string statusDescription = null)
+            private static void AssertDeliveryResult(SubscriptionDeliveryResult result, string eventId, HttpStatusCode statusCode, string statusDescription = null)
             {
                 Assert.That(result.Id.IsEntityId);
                 Assert.That(result.SubscriptionId, Is.EqualTo("asubscriptionid"));
                 Assert.That(result.AttemptedDateUtc, Is.EqualTo(DateTime.UtcNow).Within(1).Seconds);
                 Assert.That(result.StatusCode, Is.EqualTo(statusCode));
                 Assert.That(result.StatusDescription, Is.EqualTo(statusDescription.HasValue() ? statusDescription : "astatusdescription"));
+                Assert.That(result.EventId, Is.EqualTo(eventId));
             }
         }
     }

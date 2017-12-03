@@ -15,5 +15,7 @@ namespace ServiceStack.Webhooks.ServiceModel.Types
         public string SubscriptionId { get; set; }
 
         public string Id { get; set; }
+
+        public string EventId { get; set; }
     }
 }

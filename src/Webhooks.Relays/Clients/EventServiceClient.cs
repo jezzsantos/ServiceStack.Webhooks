@@ -44,7 +44,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
                 {
                     using (var response = serviceClient.Post(subscription.Config.Url, webhookEvent.Data))
                     {
-                        return CreateDeliveryResult(subscription.SubscriptionId, response.StatusCode, response.StatusDescription);
+                        return CreateDeliveryResult(subscription.SubscriptionId, webhookEvent.Id, response.StatusCode, response.StatusDescription);
                     }
                 }
                 catch (WebServiceException ex)
@@ -52,7 +52,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
                     if (HasNoMoreRetries(attempts) || ex.IsAny400())
                     {
                         logger.Warn(Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts), ex);
-                        return CreateDeliveryResult(subscription.SubscriptionId, (HttpStatusCode) ex.StatusCode, ex.StatusDescription);
+                        return CreateDeliveryResult(subscription.SubscriptionId, webhookEvent.Id, (HttpStatusCode) ex.StatusCode, ex.StatusDescription);
                     }
                 }
                 catch (Exception ex)
@@ -62,7 +62,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
                     {
                         var message = Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts);
                         logger.Warn(message, ex);
-                        return CreateDeliveryResult(subscription.SubscriptionId, HttpStatusCode.ServiceUnavailable, message);
+                        return CreateDeliveryResult(subscription.SubscriptionId, webhookEvent.Id, HttpStatusCode.ServiceUnavailable, message);
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
             return null;
         }
 
-        private static SubscriptionDeliveryResult CreateDeliveryResult(string subscriptionId, HttpStatusCode statusCode, string statusDescription)
+        private static SubscriptionDeliveryResult CreateDeliveryResult(string subscriptionId, string messageId, HttpStatusCode statusCode, string statusDescription)
         {
             return new SubscriptionDeliveryResult
             {
@@ -78,7 +78,8 @@ namespace ServiceStack.Webhooks.Relays.Clients
                 AttemptedDateUtc = SystemTime.UtcNow.ToNearestMillisecond(),
                 SubscriptionId = subscriptionId,
                 StatusDescription = statusDescription,
-                StatusCode = statusCode
+                StatusCode = statusCode,
+                EventId = messageId,
             };
         }
 

@@ -28,7 +28,7 @@ namespace ServiceStack.Webhooks
 
         public string SecureRelayRoles { get; set; }
 
-        public System.Action<WebhookEvent> PublishEventFilter { get; internal set; }
+        public System.Action<WebhookEvent> PublishEventFilter { get; set; }
 
         public void Register(IAppHost appHost)
         {

@@ -53,7 +53,7 @@ namespace ServiceStack.Webhooks
             {
                 EventSink = x.Resolve<IEventSink>(),
                 PublishFilter = PublishEventFilter
-            });
+            }).ReusedWithin(ReuseScope.None); // To support multi-tenanted scenarios
         }
 
         private static void RegisterSubscriptionStore(Container container)
@@ -76,7 +76,7 @@ namespace ServiceStack.Webhooks
                 container.RegisterAutoWiredAs<SubscriptionConfigValidator, ISubscriptionConfigValidator>();
                 container.RegisterAutoWiredAs<SubscriptionDeliveryResultValidator, ISubscriptionDeliveryResultValidator>();
 
-                container.RegisterAutoWiredAs<AuthSessionCurrentCaller, ICurrentCaller>();
+                container.RegisterAutoWiredAs<AuthSessionCurrentCaller, ICurrentCaller>().ReusedWithin(ReuseScope.Request);
 
                 if (appHost.Plugins.Exists(plugin => plugin is AuthFeature))
                 {

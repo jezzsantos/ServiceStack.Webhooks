@@ -53,7 +53,7 @@ namespace ServiceStack.Webhooks
             {
                 EventSink = x.Resolve<IEventSink>(),
                 PublishFilter = PublishEventFilter
-            }).ReusedWithin(ReuseScope.None); // To support multi-tenanted scenarios
+            }).ReusedWithin(ReuseScope.None);
         }
 
         private static void RegisterSubscriptionStore(Container container)

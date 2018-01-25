@@ -19,11 +19,10 @@ namespace ServiceStack.Webhooks
         {
             Guard.AgainstNullOrEmpty(() => eventName, eventName);
 
-            logger.InfoFormat(@"Publishing webhook event {0}, with data {1}", eventName, data.ToJson());
-
             var @event = CreateEvent(eventName, data);
             if (@event != null)
             {
+                logger.InfoFormat(@"[ServiceStack.Webhooks.WebhooksClient] Publishing webhook event {0}, with data {1}", eventName, @event.ToJson());
                 EventSink.Write(@event);
             }
         }

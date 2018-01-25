@@ -42,7 +42,9 @@ namespace ServiceStack.Webhooks.Relays.Clients
 
                 try
                 {
-                    using (var response = serviceClient.Post(subscription.Config.Url, webhookEvent.Data))
+                    var url = subscription.Config.Url;
+                    logger.InfoFormat("[ServiceStack.Webhooks.Relays.Clients.EventServiceClient] Notifying {0} of webhook event {1}", url, webhookEvent.ToJson());
+                    using (var response = serviceClient.Post(url, webhookEvent.Data))
                     {
                         return CreateDeliveryResult(subscription.SubscriptionId, webhookEvent.Id, response.StatusCode, response.StatusDescription);
                     }
@@ -51,7 +53,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
                 {
                     if (HasNoMoreRetries(attempts) || ex.IsAny400())
                     {
-                        logger.Warn(Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts), ex);
+                        logger.Warn("[ServiceStack.Webhooks.Relays.Clients.EventServiceClient] " + Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts), ex);
                         return CreateDeliveryResult(subscription.SubscriptionId, webhookEvent.Id, (HttpStatusCode) ex.StatusCode, ex.StatusDescription);
                     }
                 }
@@ -60,7 +62,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
                     // Timeout (WebException) or other Exception
                     if (HasNoMoreRetries(attempts))
                     {
-                        var message = Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts);
+                        var message = "[ServiceStack.Webhooks.Relays.Clients.EventServiceClient] " + Resources.EventServiceClient_FailedDelivery.Fmt(subscription.Config.Url, attempts);
                         logger.Warn(message, ex);
                         return CreateDeliveryResult(subscription.SubscriptionId, webhookEvent.Id, HttpStatusCode.ServiceUnavailable, message);
                     }
@@ -124,7 +126,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
             }
             catch (Exception ex)
             {
-                logger.Error(@"Failed to connect to subscriber: {0}, this URL is not valid".Fmt(relayConfig.Config.Url), ex);
+                logger.Error(@"[ServiceStack.Webhooks.Relays.Clients.EventServiceClient] Failed to connect to subscriber: {0}, the URL is not valid".Fmt(relayConfig.Config.Url), ex);
                 return null;
             }
         }

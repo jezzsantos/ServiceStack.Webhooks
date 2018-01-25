@@ -15,7 +15,7 @@ namespace ServiceStack.Webhooks.Relays.Clients
             }
             catch (Exception ex)
             {
-                logger.Error(@"Failed to create a serviceclient to subscriber at {0}".Fmt(url), ex);
+                logger.Error(@"[ServiceStack.Webhooks.Relays.Clients.EventServiceClientFactory] Failed to create a serviceclient to subscriber at {0}".Fmt(url), ex);
                 return null;
             }
         }

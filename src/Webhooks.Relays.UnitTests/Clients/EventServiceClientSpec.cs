@@ -224,7 +224,7 @@ namespace ServiceStack.Webhooks.Relays.UnitTests.Clients
                     }
                 }, new WebhookEvent {Id = "aneventid", EventName = "aneventname", Data = "adata"});
 
-                AssertDeliveryResult(result, "aneventid", HttpStatusCode.ServiceUnavailable, Resources.EventServiceClient_FailedDelivery.Fmt("aurl", 3));
+                AssertDeliveryResult(result, "aneventid", HttpStatusCode.ServiceUnavailable, "[ServiceStack.Webhooks.Relays.Clients.EventServiceClient] " + Resources.EventServiceClient_FailedDelivery.Fmt("aurl", 3));
                 serviceClient.Verify(sc => sc.Post<object>("aurl", "adata"), Times.Exactly(3));
             }
 

@@ -39,7 +39,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 .Safe()
                 .ToList();
 
-            logger.InfoFormat(@"Searched subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
+            logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Searched subscriptions for event {0} by user {1}", request.EventName, Caller.UserId);
 
             return new SearchSubscriptionsResponse
             {
@@ -71,7 +71,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 var id = Store.Add(sub);
                 sub.Id = id;
 
-                logger.InfoFormat(@"Created subscription {0} to event {1} by user {2}", sub.Id, sub.Event, Caller.UserId);
+                logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Created subscription {0} to event {1} by user {2}", sub.Id, sub.Event, Caller.UserId);
             });
 
             return new CreateSubscriptionResponse
@@ -93,7 +93,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 .OrderByDescending(result => result.AttemptedDateUtc)
                 .ToList();
 
-            logger.InfoFormat(@"Retrieved subscription {0} by user {1}", subscription.Id, Caller.UserId);
+            logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Retrieved subscription {0} by user {1}", subscription.Id, Caller.UserId);
 
             return new GetSubscriptionResponse
             {
@@ -108,7 +108,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 .Safe()
                 .ToList();
 
-            logger.InfoFormat(@"Listed subscription for user {0}", Caller.UserId);
+            logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Listed subscription for user {0}", Caller.UserId);
 
             return new ListSubscriptionsResponse
             {
@@ -149,7 +149,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
             Store.Update(request.Id, subscription);
 
-            logger.InfoFormat(@"Updated subscription {0} by user {1}", subscription.Id, Caller.UserId);
+            logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Updated subscription {0} by user {1}", subscription.Id, Caller.UserId);
 
             return new UpdateSubscriptionResponse
             {
@@ -167,7 +167,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
 
             Store.Delete(subscription.Id);
 
-            logger.InfoFormat(@"Deleted subscription {0} by user {1}", subscription.Id, Caller.UserId);
+            logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Deleted subscription {0} by user {1}", subscription.Id, Caller.UserId);
 
             return new DeleteSubscriptionResponse();
         }
@@ -178,7 +178,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
             {
                 UpdateDeliveryHistory(request.Results);
 
-                logger.InfoFormat(@"Added subscription history by user {0}", Caller.UserId);
+                logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Added subscription history by user {0}", Caller.UserId);
             }
 
             return new UpdateSubscriptionHistoryResponse();
@@ -192,7 +192,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                 {
                     Store.Add(incoming.SubscriptionId, incoming);
 
-                    logger.InfoFormat(@"Added subscription history result {0}", incoming.Id);
+                    logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Added subscription history result {0}", incoming.Id);
 
                     if (IsAny400(incoming.StatusCode))
                     {
@@ -204,7 +204,7 @@ namespace ServiceStack.Webhooks.ServiceInterface
                                 subscription.IsActive = false;
                                 Store.Update(incoming.SubscriptionId, subscription);
 
-                                logger.InfoFormat(@"Deactivated subscription {0}", incoming.SubscriptionId);
+                                logger.InfoFormat(@"[ServiceStack.Webhooks.ServiceInterface.SubscriptionService] Deactivated subscription {0}", incoming.SubscriptionId);
                             }
                         }
                     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Funq;
 using NUnit.Framework;
+using ServiceStack.Auth;
 using ServiceStack.Testing;
 using ServiceStack.Webhooks.Clients;
 using ServiceStack.Webhooks.Relays;
@@ -70,7 +71,7 @@ namespace ServiceStack.Webhooks.UnitTests
             [Test, Category("Unit")]
             public void WhenRegisterAndIncludeSubscriptionServiceAndAuthFeature_ThenAuthorizeSubscriptionServiceRequestsAdded()
             {
-                appHost.Plugins.Add(new AuthFeature(() => null, null));
+                appHost.Plugins.Add(new AuthFeature(null, new IAuthProvider[0]));
 
                 var feature = new WebhookFeature();
                 feature.Register(appHost);

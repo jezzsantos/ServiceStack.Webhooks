@@ -7,10 +7,10 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks
 {
-    internal class AppHostEventSink : IEventSink
+    public class AppHostEventSink : IEventSink
     {
-        internal const int DefaultServiceClientRetries = 3;
-        internal const int DefaultServiceClientTimeoutSeconds = 60;
+        public const int DefaultServiceClientRetries = 3;
+        public const int DefaultServiceClientTimeoutSeconds = 60;
 
         public AppHostEventSink()
         {

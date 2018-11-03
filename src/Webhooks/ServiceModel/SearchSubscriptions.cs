@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.Properties;
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
-    internal class SearchSubscriptionsValidator : AbstractValidator<SearchSubscriptions>
+    public class SearchSubscriptionsValidator : AbstractValidator<SearchSubscriptions>
     {
         public SearchSubscriptionsValidator()
         {

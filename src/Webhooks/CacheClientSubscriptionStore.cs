@@ -7,10 +7,10 @@ namespace ServiceStack.Webhooks
 {
     public class CacheClientSubscriptionStore : ISubscriptionStore
     {
-        internal const string CachekeyPrefix = @"subscriptions";
-        internal const string CachekeyFormat = CachekeyPrefix + @":{0}:{1}";
+        public const string CachekeyPrefix = @"subscriptions";
+        public const string CachekeyFormat = CachekeyPrefix + @":{0}:{1}";
         internal const string HistoryCachekeyFormat = CachekeyFormat + @":{2}";
-        internal const string CacheKeyForAnonymousUser = @"everyone";
+        public const string CacheKeyForAnonymousUser = @"everyone";
 
         public ICacheClient CacheClient { get; set; }
 
@@ -136,14 +136,14 @@ namespace ServiceStack.Webhooks
             return subscriptions.FirstOrDefault(sub => sub.Value.Id.EqualsIgnoreCase(subscriptionId));
         }
 
-        internal static string FormatCacheKey(string userId, string eventName)
+        public static string FormatCacheKey(string userId, string eventName)
         {
             var usrId = userId.HasValue() ? userId : CacheKeyForAnonymousUser;
 
             return CachekeyFormat.Fmt(usrId, eventName);
         }
 
-        internal static string FormatHistoryCacheKey(string userId, string eventName, string historyId)
+        public static string FormatHistoryCacheKey(string userId, string eventName, string historyId)
         {
             var usrId = userId.HasValue() ? userId : CacheKeyForAnonymousUser;
 

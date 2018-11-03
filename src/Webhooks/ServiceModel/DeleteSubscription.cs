@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.Properties;
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
-    internal class DeleteSubscriptionValidator : AbstractValidator<DeleteSubscription>
+    public class DeleteSubscriptionValidator : AbstractValidator<DeleteSubscription>
     {
         public DeleteSubscriptionValidator()
         {

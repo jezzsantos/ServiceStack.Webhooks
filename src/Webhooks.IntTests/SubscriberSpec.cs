@@ -106,11 +106,11 @@ namespace ServiceStack.Webhooks.IntTests
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));
-                Assert.That(events[0].Data.A, Is.EqualTo("1"));
-                Assert.That(events[0].Data.B, Is.EqualTo("2"));
-                Assert.That(events[0].Data.C.D, Is.EqualTo("3"));
-                Assert.That(events[0].Data.C.E, Is.EqualTo("4"));
-                Assert.That(events[0].Data.C.F, Is.EqualTo("5"));
+                Assert.That(events[0].Data.A, Is.EqualTo(1));
+                Assert.That(events[0].Data.B, Is.EqualTo(2));
+                Assert.That(events[0].Data.C.D, Is.EqualTo(3));
+                Assert.That(events[0].Data.C.E, Is.EqualTo(4));
+                Assert.That(events[0].Data.C.F, Is.EqualTo(5));
                 Assert.That(events[0].IsAuthenticated, Is.False);
             }
 
@@ -230,11 +230,11 @@ namespace ServiceStack.Webhooks.IntTests
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));
-                Assert.That(events[0].Data.A, Is.EqualTo("1"));
-                Assert.That(events[0].Data.B, Is.EqualTo("2"));
-                Assert.That(events[0].Data.C.D, Is.EqualTo("3"));
-                Assert.That(events[0].Data.C.E, Is.EqualTo("4"));
-                Assert.That(events[0].Data.C.F, Is.EqualTo("5"));
+                Assert.That(events[0].Data.A, Is.EqualTo(1));
+                Assert.That(events[0].Data.B, Is.EqualTo(2));
+                Assert.That(events[0].Data.C.D, Is.EqualTo(3));
+                Assert.That(events[0].Data.C.E, Is.EqualTo(4));
+                Assert.That(events[0].Data.C.F, Is.EqualTo(5));
                 Assert.That(events[0].IsAuthenticated, Is.True);
             }
 
@@ -354,11 +354,11 @@ namespace ServiceStack.Webhooks.IntTests
 
                 Assert.That(events.Count, Is.EqualTo(1));
                 Assert.That(events[0].EventName, Is.EqualTo("aneventname"));
-                Assert.That(events[0].Data.A, Is.EqualTo("1"));
-                Assert.That(events[0].Data.B, Is.EqualTo("2"));
-                Assert.That(events[0].Data.C.D, Is.EqualTo("3"));
-                Assert.That(events[0].Data.C.E, Is.EqualTo("4"));
-                Assert.That(events[0].Data.C.F, Is.EqualTo("5"));
+                Assert.That(events[0].Data.A, Is.EqualTo(1));
+                Assert.That(events[0].Data.B, Is.EqualTo(2));
+                Assert.That(events[0].Data.C.D, Is.EqualTo(3));
+                Assert.That(events[0].Data.C.E, Is.EqualTo(4));
+                Assert.That(events[0].Data.C.F, Is.EqualTo(5));
                 Assert.That(events[0].IsAuthenticated, Is.True);
             }
 

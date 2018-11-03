@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.Properties;
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
-    internal class UpdateSubscriptionValidator : AbstractValidator<UpdateSubscription>
+    public class UpdateSubscriptionValidator : AbstractValidator<UpdateSubscription>
     {
         public UpdateSubscriptionValidator()
         {

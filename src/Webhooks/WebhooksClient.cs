@@ -4,7 +4,7 @@ using ServiceStack.Text;
 
 namespace ServiceStack.Webhooks
 {
-    internal class WebhooksClient : IWebhooks
+    public class WebhooksClient : IWebhooks
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(WebhooksClient));
 
@@ -27,7 +27,7 @@ namespace ServiceStack.Webhooks
             }
         }
 
-        public virtual WebhookEvent CreateEvent<TDto>(string eventName, TDto data) where TDto : class, new()
+        protected virtual WebhookEvent CreateEvent<TDto>(string eventName, TDto data) where TDto : class, new()
         {
             var @event = new WebhookEvent
             {

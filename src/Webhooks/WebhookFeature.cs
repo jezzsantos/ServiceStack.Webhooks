@@ -1,4 +1,7 @@
-﻿using Funq;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Funq;
 using ServiceStack.Validation;
 using ServiceStack.Web;
 using ServiceStack.Webhooks.Clients;
@@ -85,11 +88,12 @@ namespace ServiceStack.Webhooks
             }
         }
 
-        internal void AuthorizeSubscriptionServiceRequests(IRequest request, IResponse response, object dto)
+        public void AuthorizeSubscriptionServiceRequests(IRequest request, IResponse response, object dto)
         {
             if (IsSubscriptionService(request.PathInfo))
             {
-                new AuthenticateAttribute().Execute(request, response, dto);
+                var attribute = new AuthenticateAttribute();
+                AsyncHelper.RunSync(()=> attribute.ExecuteAsync(request, response, dto));
 
                 var requiredRoles = GetRequiredRoles(request.Dto);
                 if (requiredRoles.Length > 0)

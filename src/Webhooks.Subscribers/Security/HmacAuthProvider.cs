@@ -75,7 +75,7 @@ namespace ServiceStack.Webhooks.Subscribers.Security
                 session.IsAuthenticated = true;
                 session.CreatedAt = SystemTime.UtcNow;
 
-                HostContext.AppHost.OnSessionFilter(session, sessionId);
+                HostContext.AppHost.OnSessionFilter(req, session, sessionId);
 
                 req.Items[Keywords.Session] = session;
             }

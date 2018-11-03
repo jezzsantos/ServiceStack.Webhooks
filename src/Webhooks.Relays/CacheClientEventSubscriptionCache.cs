@@ -51,13 +51,13 @@ namespace ServiceStack.Webhooks.Relays
             return fetched;
         }
 
-        internal static string FormatCacheKey(string eventName)
+        public static string FormatCacheKey(string eventName)
         {
             return CachekeyFormat.Fmt(eventName);
         }
     }
 
-    internal class CachedSubscription
+    public class CachedSubscription
     {
         public List<SubscriptionRelayConfig> Subscribers { get; set; }
     }

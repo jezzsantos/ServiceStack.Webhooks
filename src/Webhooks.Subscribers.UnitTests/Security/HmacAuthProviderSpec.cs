@@ -139,10 +139,10 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
                     var request = new MockHttpRequest
                     {
                         InputStream = stream,
-                        Headers = new NameValueCollectionWrapper(new NameValueCollection
+                        Headers = new NameValueCollection
                         {
                             {WebhookEventConstants.SecretSignatureHeaderName, signature}
-                        }),
+                        },
                         IsSecureConnection = false
                     };
 
@@ -163,10 +163,10 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
                     var request = new MockHttpRequest
                     {
                         InputStream = stream,
-                        Headers = new NameValueCollectionWrapper(new NameValueCollection
+                        Headers = new NameValueCollection
                         {
                             {WebhookEventConstants.SecretSignatureHeaderName, signature}
-                        }),
+                        },
                         IsSecureConnection = true
                     };
 
@@ -187,10 +187,10 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
                     var request = new MockHttpRequest
                     {
                         InputStream = stream,
-                        Headers = new NameValueCollectionWrapper(new NameValueCollection
+                        Headers = new NameValueCollection
                         {
                             {WebhookEventConstants.SecretSignatureHeaderName, signature}
-                        }),
+                        },
                         IsSecureConnection = true
                     };
 
@@ -211,11 +211,11 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
                     var request = new MockHttpRequest
                     {
                         InputStream = stream,
-                        Headers = new NameValueCollectionWrapper(new NameValueCollection
+                        Headers = new NameValueCollection
                         {
                             {WebhookEventConstants.SecretSignatureHeaderName, signature},
                             {WebhookEventConstants.RequestIdHeaderName, "arequestid"}
-                        }),
+                        },
                         IsSecureConnection = true
                     };
 
@@ -242,11 +242,11 @@ namespace ServiceStack.Webhooks.Subscribers.UnitTests.Security
                     var request = new MockHttpRequest
                     {
                         InputStream = stream,
-                        Headers = new NameValueCollectionWrapper(new NameValueCollection
+                        Headers = new NameValueCollection
                         {
                             {WebhookEventConstants.SecretSignatureHeaderName, signature},
                             {WebhookEventConstants.RequestIdHeaderName, "arequestid"}
-                        }),
+                        },
                         IsSecureConnection = true
                     };
 

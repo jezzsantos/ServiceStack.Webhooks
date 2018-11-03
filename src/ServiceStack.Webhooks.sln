@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Interfaces", "Webhooks.Interfaces\Webhooks.Interfaces.csproj", "{61C93A39-41BF-4ACA-80B4-CB1D50A8858A}"
 EndProject
@@ -35,19 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.OrmLite", "Webhook
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.OrmLite.IntTests", "Webhooks.OrmLite.IntTests\Webhooks.OrmLite.IntTests.csproj", "{FAEA8FB4-0B9D-4561-902B-5806707A4025}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Interfaces.Signed", "Webhooks.Interfaces\Webhooks.Interfaces.Signed.csproj", "{4B07751F-086D-4471-8C69-4D91C0F622D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Common.Signed", "Webhooks.Common\Webhooks.Common.Signed.csproj", "{BA85FEB9-3804-4369-808E-D087A3DBF441}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Signed", "Webhooks\Webhooks.Signed.csproj", "{2A5F17AB-E931-43E7-98D0-715F19982A48}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Relays.Signed", "Webhooks.Relays\Webhooks.Relays.Signed.csproj", "{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.OrmLite.Signed", "Webhooks.OrmLite\Webhooks.OrmLite.Signed.csproj", "{636336CD-087B-4371-9F34-B092954843C2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Subscribers", "Webhooks.Subscribers\Webhooks.Subscribers.csproj", "{670BBDD7-0CD5-4049-AC74-83E97C20DF38}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Subscribers.Signed", "Webhooks.Subscribers\Webhooks.Subscribers.Signed.csproj", "{73950491-D0D1-4601-A3AE-F4957EA2C7D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.Subscribers.UnitTests", "Webhooks.Subscribers.UnitTests\Webhooks.Subscribers.UnitTests.csproj", "{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}"
 EndProject
@@ -124,48 +112,12 @@ Global
 		{FAEA8FB4-0B9D-4561-902B-5806707A4025}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FAEA8FB4-0B9D-4561-902B-5806707A4025}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
 		{FAEA8FB4-0B9D-4561-902B-5806707A4025}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
-		{4B07751F-086D-4471-8C69-4D91C0F622D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B07751F-086D-4471-8C69-4D91C0F622D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B07751F-086D-4471-8C69-4D91C0F622D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B07751F-086D-4471-8C69-4D91C0F622D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B07751F-086D-4471-8C69-4D91C0F622D3}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
-		{4B07751F-086D-4471-8C69-4D91C0F622D3}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
-		{BA85FEB9-3804-4369-808E-D087A3DBF441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA85FEB9-3804-4369-808E-D087A3DBF441}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA85FEB9-3804-4369-808E-D087A3DBF441}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA85FEB9-3804-4369-808E-D087A3DBF441}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA85FEB9-3804-4369-808E-D087A3DBF441}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
-		{BA85FEB9-3804-4369-808E-D087A3DBF441}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
-		{2A5F17AB-E931-43E7-98D0-715F19982A48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A5F17AB-E931-43E7-98D0-715F19982A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A5F17AB-E931-43E7-98D0-715F19982A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A5F17AB-E931-43E7-98D0-715F19982A48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A5F17AB-E931-43E7-98D0-715F19982A48}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
-		{2A5F17AB-E931-43E7-98D0-715F19982A48}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
-		{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
-		{82E6E2B6-3FEA-4F3A-8940-21D50EEE6032}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
-		{636336CD-087B-4371-9F34-B092954843C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{636336CD-087B-4371-9F34-B092954843C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{636336CD-087B-4371-9F34-B092954843C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{636336CD-087B-4371-9F34-B092954843C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{636336CD-087B-4371-9F34-B092954843C2}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
-		{636336CD-087B-4371-9F34-B092954843C2}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
 		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.Release|Any CPU.Build.0 = Release|Any CPU
 		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
 		{670BBDD7-0CD5-4049-AC74-83E97C20DF38}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
-		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.ReleaseNoTestDeploy|Any CPU.ActiveCfg = ReleaseNoTestDeploy|Any CPU
-		{73950491-D0D1-4601-A3AE-F4957EA2C7D7}.ReleaseNoTestDeploy|Any CPU.Build.0 = ReleaseNoTestDeploy|Any CPU
 		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -184,5 +136,8 @@ Global
 		{700D6CD9-2D37-4358-BEC4-5E84CA86E85A} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 		{FAEA8FB4-0B9D-4561-902B-5806707A4025} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
 		{35E2FFEC-7789-4E1A-8306-5243E2A15CB2} = {9A706EE6-B1B4-4E8E-965F-AB23DF61F1A5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B3ED2D98-1B9F-40F9-B836-B97014BBD1A7}
 	EndGlobalSection
 EndGlobal

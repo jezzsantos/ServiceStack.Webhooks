@@ -10,7 +10,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.ServiceInterface
 {
-    internal class SubscriptionService : Service, ISubscriptionService
+    public class SubscriptionService : Service, ISubscriptionService
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(SubscriptionService));
 

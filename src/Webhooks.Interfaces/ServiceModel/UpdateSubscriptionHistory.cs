@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
-    [Route(Subscription.RootPath + "/subscriptions/history", "PUT")]
+    [Route("/webhooks/subscriptions/history", "PUT")]
     public class UpdateSubscriptionHistory : IPut, IReturn<UpdateSubscriptionHistoryResponse>
     {
         public List<SubscriptionDeliveryResult> Results { get; set; }

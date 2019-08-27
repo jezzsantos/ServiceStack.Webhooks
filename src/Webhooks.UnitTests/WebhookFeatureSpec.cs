@@ -57,7 +57,7 @@ namespace ServiceStack.Webhooks.UnitTests
                     PublishEventFilter = filter
                 }.Register(appHost);
 
-                Assert.That(((WebhooksClient)container.GetService(typeof(IWebhooks))).PublishFilter, Is.EqualTo(filter));
+                Assert.That(((WebhooksClient) container.GetService(typeof(IWebhooks))).PublishFilter, Is.EqualTo(filter));
             }
 
             [Test, Category("Unit")]
@@ -142,8 +142,10 @@ namespace ServiceStack.Webhooks.UnitTests
             {
                 var feature = new WebhookFeature();
                 feature.Register(appHost);
-                var request = new MockHttpRequest();
-                request.PathInfo = "/aresource";
+                var request = new MockHttpRequest
+                {
+                    Dto = "anotherresource"
+                };
 
                 feature.AuthorizeSubscriptionServiceRequests(request, null, new TestDto());
             }
@@ -155,10 +157,7 @@ namespace ServiceStack.Webhooks.UnitTests
                 feature.Register(appHost);
                 var request = new MockHttpRequest
                 {
-                    PathInfo = new GetSubscription
-                    {
-                        Id = "asubscriptionid"
-                    }.ToGetUrl()
+                    Dto = new GetSubscription()
                 };
                 var response = new MockHttpResponse(request);
 

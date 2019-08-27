@@ -1,7 +1,18 @@
-﻿namespace ServiceStack.Webhooks.ServiceModel
+﻿using System;
+
+namespace ServiceStack.Webhooks.ServiceModel
 {
     public static class Subscription
     {
-        public const string RootPath = @"/webhooks";
+        public static Type[] AllSubscriptionDtos =
+        {
+            typeof(CreateSubscription),
+            typeof(DeleteSubscription),
+            typeof(GetSubscription),
+            typeof(ListSubscriptions),
+            typeof(SearchSubscriptions),
+            typeof(UpdateSubscription),
+            typeof(UpdateSubscriptionHistory)
+        };
     }
 }

@@ -3,7 +3,7 @@ using ServiceStack.Webhooks.ServiceModel.Types;
 
 namespace ServiceStack.Webhooks.ServiceModel
 {
-    [Route(Subscription.RootPath + "/subscriptions", "POST")]
+    [Route("/webhooks/subscriptions", "POST")]
     public class CreateSubscription : IPost, IReturn<CreateSubscriptionResponse>
     {
         public string Name { get; set; }

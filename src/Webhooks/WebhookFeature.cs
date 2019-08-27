@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 using Funq;
 using ServiceStack.Validation;
 using ServiceStack.Web;
@@ -31,7 +30,7 @@ namespace ServiceStack.Webhooks
 
         public string SecureRelayRoles { get; set; }
 
-        public System.Action<WebhookEvent> PublishEventFilter { get; set; }
+        public Action<WebhookEvent> PublishEventFilter { get; set; }
 
         public void Register(IAppHost appHost)
         {
@@ -52,6 +51,7 @@ namespace ServiceStack.Webhooks
                 container.RegisterAutoWiredAs<EventServiceClient, IEventServiceClient>();
                 container.RegisterAutoWiredAs<AppHostEventSink, IEventSink>();
             }
+
             container.Register<IWebhooks>(x => new WebhooksClient
             {
                 EventSink = x.Resolve<IEventSink>(),
@@ -90,10 +90,10 @@ namespace ServiceStack.Webhooks
 
         public void AuthorizeSubscriptionServiceRequests(IRequest request, IResponse response, object dto)
         {
-            if (IsSubscriptionService(request.PathInfo))
+            if (IsSubscriptionService(request.Dto.GetType()))
             {
                 var attribute = new AuthenticateAttribute();
-                AsyncHelper.RunSync(()=> attribute.ExecuteAsync(request, response, dto));
+                AsyncHelper.RunSync(() => attribute.ExecuteAsync(request, response, dto));
 
                 var requiredRoles = GetRequiredRoles(request.Dto);
                 if (requiredRoles.Length > 0)
@@ -103,9 +103,9 @@ namespace ServiceStack.Webhooks
             }
         }
 
-        private static bool IsSubscriptionService(string pathInfo)
+        private static bool IsSubscriptionService(Type dtoType)
         {
-            return pathInfo.StartsWith(Subscription.RootPath);
+            return Subscription.AllSubscriptionDtos.Contains(dtoType);
         }
 
         private string[] GetRequiredRoles(object dto)

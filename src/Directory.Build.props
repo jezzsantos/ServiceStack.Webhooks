@@ -1,0 +1,74 @@
+<Project>
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <!-- NuGet package information -->
+  <PropertyGroup>
+    <Info>$([System.IO.File]::ReadAllText('$(SolutionDir)GlobalAssemblyInfo.cs'))</Info>
+    <Pattern>^\s*\[assembly: AssemblyDescription\(\s*"([^"]+)"</Pattern>
+    <Description>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</Description>
+    <Pattern>^\s*\[assembly: AssemblyCompany\(\s*"([^"]+)"</Pattern>
+    <Authors>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</Authors>
+    <Pattern>^\s*\[assembly: AssemblyCopyright\(\s*"([^"]+)"</Pattern>
+    <Copyright>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</Copyright>
+    <Pattern>^\s*\[assembly: AssemblyInformationalVersion\(\s*"([^"]+)"</Pattern>
+    <PackageVersion>$([System.Text.RegularExpressions.Regex]::Match($(Info), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups[1].Value)</PackageVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageLicenseUrl>https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/jezzsantos/ServiceStack.Webhooks</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/jezzsantos/ServiceStack.Webhooks</PackageProjectUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageReleaseNotes>https://github.com/jezzsantos/ServiceStack.Webhooks/blob/master/README</PackageReleaseNotes>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <!-- Strong naming for all projects -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\ServiceStack.Webhooks.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>436</NoWarn>
+  </PropertyGroup>
+
+  <!-- Build flavors for all projects -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">DEBUG;TRACE;ASSEMBLYSIGNED;TESTINGONLY</DefineConstants>
+    <DefineConstants Condition="'$(SignAssembly)' != 'true'">DEBUG;TRACE;TESTINGONLY</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">TRACE;ASSEMBLYSIGNED;TESTINGONLY</DefineConstants>
+    <DefineConstants Condition="'$(SignAssembly)' != 'true'">TRACE;TESTINGONLY</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseNoTestDeploy|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\ReleaseNoTestDeploy\</OutputPath>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">TRACE;ASSEMBLYSIGNED</DefineConstants>
+    <DefineConstants Condition="'$(SignAssembly)' != 'true'">TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>

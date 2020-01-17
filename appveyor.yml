@@ -1,0 +1,40 @@
+version: 3.0.{build}
+image: Visual Studio 2017
+environment:
+  matrix:
+  - SERVICESTACK_LICENSE:
+      secure: tMsbGPJshJkc1KCrm/TKRm1gk9GIkaQ3ZMrwoJxzLZkz6LHTdt57VqvYPCLHylNdc29wcYeQMRbskATh1a8c7HalRxazKtK5uS9PuK5EbSJBZd4gaatiYt/0CtWKQuktRQ4BjKE0/tlCDKXQuxNPROHH2SHSyP3l3iQvcgPk96J3M6uNFrECOWKiR6FXqwpgT0qzCwyML+Ug/c+68QyYHI+YOAKiAw5xj4FLmfuY4Bd4wQgqUXA/fWElJG6zSA2gv26k8aLLrhbjLuyXt/KHO+pHoFTh1JZzIAA3Z171vIGpWlH4D8CbBBqGhLc1IOo4XeqqQWER3f19XjVyoaPC9h+ryYlgQDK8XNTaYc/DysgzrJQxFvSm72pmw+putLb+ZuFN6FhQSqZtqrh7hl/iUeRbL9KNfqb/fy88R5fetP2NjaNdqFRZsThTwJ4sZRmE
+    buildconfig: Release
+    buildfrx: net472
+  - SERVICESTACK_LICENSE:
+      secure: tMsbGPJshJkc1KCrm/TKRm1gk9GIkaQ3ZMrwoJxzLZkz6LHTdt57VqvYPCLHylNdc29wcYeQMRbskATh1a8c7HalRxazKtK5uS9PuK5EbSJBZd4gaatiYt/0CtWKQuktRQ4BjKE0/tlCDKXQuxNPROHH2SHSyP3l3iQvcgPk96J3M6uNFrECOWKiR6FXqwpgT0qzCwyML+Ug/c+68QyYHI+YOAKiAw5xj4FLmfuY4Bd4wQgqUXA/fWElJG6zSA2gv26k8aLLrhbjLuyXt/KHO+pHoFTh1JZzIAA3Z171vIGpWlH4D8CbBBqGhLc1IOo4XeqqQWER3f19XjVyoaPC9h+ryYlgQDK8XNTaYc/DysgzrJQxFvSm72pmw+putLb+ZuFN6FhQSqZtqrh7hl/iUeRbL9KNfqb/fy88R5fetP2NjaNdqFRZsThTwJ4sZRmE
+    buildconfig: ReleaseNoTestDeploy
+    buildfrx: net472
+build_script:
+- cmd: >-
+    cd src
+    
+    cd .nuget
+    
+    appveyor-retry nuget.exe restore ..\ServiceStack.Webhooks.sln -DisableParallelProcessing
+    
+    cd ..
+    
+    msbuild.exe ServiceStack.Webhooks.sln /t:Rebuild /p:Configuration=%buildconfig% /verbosity:minimal
+    
+    cd..
+test_script:
+- cmd: >-
+    nunit3-console "C:\projects\servicestack-webhooks\src\Webhooks.Interfaces.UnitTests\bin\%buildconfig%\%buildfrx%\ServiceStack.Webhooks.Interfaces.UnitTests.dll" "C:\projects\servicestack-webhooks\src\Webhooks.Relays.UnitTests\bin\%buildconfig%\%buildfrx%\ServiceStack.Webhooks.Relays.UnitTests.dll" "C:\projects\servicestack-webhooks\src\Webhooks.Subscribers.UnitTests\bin\%buildconfig%\%buildfrx%\ServiceStack.Webhooks.Subscribers.UnitTests.dll" "C:\projects\servicestack-webhooks\src\Webhooks.UnitTests\bin\%buildconfig%\%buildfrx%\ServiceStack.Webhooks.UnitTests.dll" --result=myresults.xml;format=AppVeyor
+
+
+    nunit3-console "C:\projects\servicestack-webhooks\src\Webhooks.IntTests\bin\%buildconfig%\%buildfrx%\ServiceStack.Webhooks.IntTests.dll" "C:\projects\servicestack-webhooks\src\Webhooks.OrmLite.IntTests\bin\%buildconfig%\%buildfrx%\ServiceStack.Webhooks.OrmLite.IntTests.dll" --inprocess --result=myresults.xml;format=AppVeyor
+artifacts:
+- path: '**\ServiceStack.Webhooks.*.nupkg'
+deploy:
+- provider: NuGet
+  api_key:
+    secure: ouXO+JncruHh/QCmfUIrxaho6E8wocItwEWxePF9uziuEWe0jruLGyuFxzcoUKy3
+  skip_symbols: true
+  on:
+    branch: master

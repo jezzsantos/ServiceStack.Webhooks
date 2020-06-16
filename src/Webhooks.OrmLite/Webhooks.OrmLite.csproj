@@ -12,12 +12,12 @@
     <Compile Include="..\GlobalAssemblyInfo.cs" Link="Properties\GlobalAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Webhooks.Common\Webhooks.Common.csproj"/>
-    <ProjectReference Include="..\Webhooks.Interfaces\Webhooks.Interfaces.csproj"/>
+    <ProjectReference Include="..\Webhooks.Common\Webhooks.Common.csproj" />
+    <ProjectReference Include="..\Webhooks.Interfaces\Webhooks.Interfaces.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ServiceStack.OrmLite">
-      <Version>5.5.0</Version>
+      <Version>5.9.0</Version>
     </PackageReference>
   </ItemGroup>
 </Project>
